@@ -30,18 +30,18 @@ If not, see <https://www.gnu.org/licenses/>. */
  *   https://dx.doi.org/10.1145/2710016
  *   https://arxiv.org/abs/1303.6257
  *
- * Note: the algorithm implemented here has been improved in
- * Du, Fan and Wei in "An improved exact sampling algorithm for the standard
- * normal distribution", Computational Statistics, 2021,
- * https://doi.org/10.1007/s00180-021-01136-w
+ * and the improvements to this algorithm given in:
+ *   Yusong Du, Baoying Fan, and Baodian Wei,
+ *   "An improved exact sampling algorithm for the standard normal
+ *   distribution",
+ *   Computational Statistics 37(2), 721-737 (Apr. 2022).
+ *   https://doi.org/10.1007/s00180-021-01136-w
+ *   https://arxiv.org/abs/2008.03855
  *
- * The implementation here closely follows the C++ one given in the paper
- * above.  However, here, C is simplified by using gmp_urandomm_ui; the initial
- * rejection step in H just tests the leading bit of p; and the assignment of
- * the sign to the deviate using gmp_urandomb_ui.  Finally, the C++
- * implementation benefits from caching temporary random deviates across calls.
- * This isn't possible in C without additional machinery which would complicate
- * the interface.
+ * The implementation here closely follows the C++ one given in the ACM paper
+ * with the algorithmic improvements given by Du et al. as detailed in
+ *
+ *   http://exrandom.sourceforge.net/3.0/algorithm.html
  *
  * There are a few "weasel words" regarding the accuracy of this
  * implementation.  The algorithm produces exactly rounded normal deviates
@@ -97,60 +97,53 @@ G (gmp_randstate_t r, mpfr_random_deviate_t p, mpfr_random_deviate_t q)
   return n;
 }
 
-/* Step N2: true with probability exp(-m*n/2). */
-static int
-P (unsigned long m, unsigned long n, gmp_randstate_t r,
-   mpfr_random_deviate_t p, mpfr_random_deviate_t q)
-{
-  /* p and q are temporaries.  m*n is passed as two separate parameters to deal
-   * with the case where m*n overflows an unsigned long.  This may be called
-   * with m = 0 and n = (unsigned long)(-1) and, because m in handled in to the
-   * outer loop, this routine will correctly return 1. */
-  while (m--)
-    {
-      unsigned long k = n;
-      while (k--)
-        {
-          if (!H (r, p, q))
-            return 0;
-        }
-    }
-  return 1;
+/* Step N2: return square root of n if it's a perfect square else -1 */
+static long
+S (unsigned long n) {
+  for (unsigned k = 0, k2 = 0; k2 <= n; ++k, k2 += 2*k - 1) {
+    /* Here k2 = k * k; note that k^2 - (k - 1)^2 = 2*k - 1 */
+    if (n == k2) return (long)k;
+  }
+  return -1;
 }
 
-/* Algorithm C: return (-1, 0, 1) with prob (1/m, 1/m, 1-2/m). */
+/* Algorithm E: true with probability exp(-x) for x in (0, 1). */
+/* This same routine appears in erandom.c */
 static int
-C (unsigned long m, gmp_randstate_t r)
-{
-  unsigned long n =  gmp_urandomm_ui (r, m);
-  return n == 0 ? -1 : (n == 1 ? 0 : 1);
-}
-
-/* Algorithm B: true with prob exp(-x * (2*k + x) / (2*k + 2)). */
-static int
-B (unsigned long k, mpfr_random_deviate_t x, gmp_randstate_t r,
+E (mpfr_random_deviate_t x, gmp_randstate_t r,
    mpfr_random_deviate_t p, mpfr_random_deviate_t q)
 {
   /* p and q are temporaries */
+  mpfr_random_deviate_reset (p);
+  if (!mpfr_random_deviate_less (p, x, r))
+    return 1;
+  for (;;)
+    {
+      mpfr_random_deviate_reset (q);
+      if (!mpfr_random_deviate_less (q, p, r))
+        return 0;
+      mpfr_random_deviate_reset (p);
+      if (!mpfr_random_deviate_less (p, q, r))
+        return 1;
+    }
+}
 
-  unsigned long m = 2 * k + 2;
+/* Algorithm B: true with prob exp(-x^2/2). */
+static int
+B (mpfr_random_deviate_t x, gmp_randstate_t r,
+   mpfr_random_deviate_t p, mpfr_random_deviate_t q)
+{
+  /* p and q are temporaries */
   /* n tracks the parity of the loop; s == 1 on first trip through loop. */
   unsigned n = 0, s = 1;
-  int f;
-
-  /* Check if 2 * k + 2 would overflow; for a 32-bit unsigned long, the
-   * probability of this is exp(-2^61)).  */
-  MPFR_ASSERTN (k < ((unsigned long)(-1) >> 1));
-
   for (;; ++n, s = 0)           /* overflow of n is innocuous */
     {
-      if ( ((f = k ? 0 : C (m, r)) < 0) ||
-           (mpfr_random_deviate_reset (q),
-            !mpfr_random_deviate_less (q, s ? x : p, r)) ||
-           ((f = k ? C (m, r) : f) < 0) ||
-           (f == 0 &&
-            (mpfr_random_deviate_reset (p),
-             !mpfr_random_deviate_less (p, x, r))) )
+      if ( gmp_urandomb_ui (r, 1)                           /* Step B2(a) */
+           || (mpfr_random_deviate_reset (q),
+               !mpfr_random_deviate_less (q, s ? x : p, r)) /* Step B2(b) */
+           || ((mpfr_random_deviate_reset (p),
+                !mpfr_random_deviate_less (p, x, r)))       /* Step B2(c) */
+           )
         break;
       mpfr_random_deviate_swap (p, q); /* an efficient way of doing p = q */
     }
@@ -163,7 +156,8 @@ mpfr_nrandom (mpfr_ptr z, gmp_randstate_t r, mpfr_rnd_t rnd)
 {
   mpfr_random_deviate_t x, p, q;
   int inex;
-  unsigned long k, j;
+  unsigned long k;
+  long j;
 
   mpfr_random_deviate_init (x);
   mpfr_random_deviate_init (p);
@@ -171,16 +165,17 @@ mpfr_nrandom (mpfr_ptr z, gmp_randstate_t r, mpfr_rnd_t rnd)
   for (;;)
     {
       k = G (r, p, q);                               /* step 1 */
-      if (!P (k, k - 1, r, p, q))
-        continue;                                    /* step 2 */
+      if ((j = S (k)) < 0) continue;                 /* step 2 */
+      k = (unsigned long) j;
       mpfr_random_deviate_reset (x);                 /* step 3 */
-      for (j = 0; j <= k && B (k, x, r, p, q); ++j); /* step 4 */
-      if (j > k)
-        break;
+      while (j-- && E (x, r, p, q)) {};              /* step 4 */
+      if (!( j < 0 )) continue;
+      if (! B (x, r, p, q) ) continue;               /* step 5 */
+      break;
     }
   mpfr_random_deviate_clear (q);
   mpfr_random_deviate_clear (p);
-  /* steps 5, 6, 7 */
+  /* steps 6, 7 */
   inex = mpfr_random_deviate_value (gmp_urandomb_ui (r, 1), k, x, z, r, rnd);
   mpfr_random_deviate_clear (x);
   return inex;
