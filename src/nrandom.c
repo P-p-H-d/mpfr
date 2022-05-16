@@ -97,7 +97,9 @@ G (gmp_randstate_t r, mpfr_random_deviate_t p, mpfr_random_deviate_t q)
   return n;
 }
 
-/* Step N2: return square root of n if it's a perfect square else -1 */
+/* Step N2: return square root of n if it's a perfect square else -1.
+   The probability distribution of n is exp(-n/2), so that realistically
+   the maximum value of n is 100 or so, thus a naive search is enough. */
 static long
 S (unsigned long n) {
   for (unsigned k = 0, k2 = 0; k2 <= n; ++k, k2 += 2*k - 1) {
