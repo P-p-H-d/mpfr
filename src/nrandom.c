@@ -103,14 +103,19 @@ half_exp_geom (gmp_randstate_t r,
    The probability distribution of n is exp(-n/2), so that realistically
    the maximum value of n is 100 or so, thus a naive search is enough. */
 static long
-int_sqrt (unsigned long n) {
+int_sqrt (unsigned long n)
+{
+  unsigned long k, k2, k3;
+
   /* k2 >= k3 test is to guard against overflow in k2 += 2*k - 1 */
-  for (unsigned long k = 0, k2 = 0, k3 = 0;
+  for (k = 0, k2 = 0, k3 = 0;
        k2 <= n && k2 >= k3;
-       ++k, k3 = k2, k2 += 2*k - 1) {
-    /* Here k2 = k * k; note that k^2 - (k - 1)^2 = 2*k - 1 */
-    if (n == k2) return (long)k;
-  }
+       ++k, k3 = k2, k2 += 2*k - 1)
+    {
+      /* Here k2 = k * k; note that k^2 - (k - 1)^2 = 2*k - 1 */
+      if (n == k2)
+        return (long) k;
+    }
   return -1;
 }
 
@@ -143,14 +148,15 @@ trunc_norm_bern (mpfr_random_deviate_t x, gmp_randstate_t r,
   /* p and q are temporaries */
   /* n tracks the parity of the loop; s == 1 on first trip through loop. */
   unsigned n = 0, s = 1;
+
   for (;; ++n, s = 0)           /* overflow of n is innocuous */
     {
-      if ( gmp_urandomb_ui (r, 1)                           /* Step B2(a) */
-           || (mpfr_random_deviate_reset (q),
-               !mpfr_random_deviate_less (q, s ? x : p, r)) /* Step B2(b) */
-           || ((mpfr_random_deviate_reset (p),
-                !mpfr_random_deviate_less (p, x, r)))       /* Step B2(c) */
-           )
+      if (gmp_urandomb_ui (r, 1)                           /* Step B2(a) */
+          || (mpfr_random_deviate_reset (q),
+              !mpfr_random_deviate_less (q, s ? x : p, r)) /* Step B2(b) */
+          || ((mpfr_random_deviate_reset (p),
+               !mpfr_random_deviate_less (p, x, r)))       /* Step B2(c) */
+          )
         break;
       mpfr_random_deviate_swap (p, q); /* an efficient way of doing p = q */
     }
@@ -175,8 +181,8 @@ mpfr_nrandom (mpfr_ptr z, gmp_randstate_t r, mpfr_rnd_t rnd)
       if ((j = int_sqrt (k)) < 0) continue;          /* step 2 */
       k = (unsigned long) j;
       mpfr_random_deviate_reset (x);                 /* step 3 */
-      while (j-- && trunc_exp_bern (x, r, p, q)) {}; /* step 4 */
-      if (!( j < 0 )) continue;
+      while (j-- && trunc_exp_bern (x, r, p, q)) {}  /* step 4 */
+      if (! (j < 0)) continue;
       if (! trunc_norm_bern (x, r, p, q) ) continue; /* step 5 */
       break;
     }
