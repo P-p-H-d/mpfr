@@ -63,7 +63,8 @@ If not, see <https://www.gnu.org/licenses/>. */
 
 /* Algorithm H: true with probability exp(-1/2). */
 static int
-H (gmp_randstate_t r, mpfr_random_deviate_t p, mpfr_random_deviate_t q)
+half_exp_bern (gmp_randstate_t r,
+               mpfr_random_deviate_t p, mpfr_random_deviate_t q)
 {
   /* p and q are temporaries */
   mpfr_random_deviate_reset (p);
@@ -82,12 +83,13 @@ H (gmp_randstate_t r, mpfr_random_deviate_t p, mpfr_random_deviate_t q)
 
 /* Step N1: return n >= 0 with prob. exp(-n/2) * (1 - exp(-1/2)). */
 static unsigned long
-G (gmp_randstate_t r, mpfr_random_deviate_t p, mpfr_random_deviate_t q)
+half_exp_geom (gmp_randstate_t r,
+               mpfr_random_deviate_t p, mpfr_random_deviate_t q)
 {
   /* p and q are temporaries */
   unsigned long n = 0;
 
-  while (H (r, p, q))
+  while (half_exp_bern (r, p, q))
     {
       ++n;
       /* Catch n wrapping around to 0; for a 32-bit unsigned long, the
@@ -101,8 +103,11 @@ G (gmp_randstate_t r, mpfr_random_deviate_t p, mpfr_random_deviate_t q)
    The probability distribution of n is exp(-n/2), so that realistically
    the maximum value of n is 100 or so, thus a naive search is enough. */
 static long
-S (unsigned long n) {
-  for (unsigned k = 0, k2 = 0; k2 <= n; ++k, k2 += 2*k - 1) {
+int_sqrt (unsigned long n) {
+  /* k2 >= k3 test is to guard against overflow in k2 += 2*k - 1 */
+  for (unsigned long k = 0, k2 = 0, k3 = 0;
+       k2 <= n && k2 >= k3;
+       ++k, k3 = k2, k2 += 2*k - 1) {
     /* Here k2 = k * k; note that k^2 - (k - 1)^2 = 2*k - 1 */
     if (n == k2) return (long)k;
   }
@@ -112,8 +117,8 @@ S (unsigned long n) {
 /* Algorithm E: true with probability exp(-x) for x in (0, 1). */
 /* This same routine appears in erandom.c */
 static int
-E (mpfr_random_deviate_t x, gmp_randstate_t r,
-   mpfr_random_deviate_t p, mpfr_random_deviate_t q)
+trunc_exp_bern (mpfr_random_deviate_t x, gmp_randstate_t r,
+                mpfr_random_deviate_t p, mpfr_random_deviate_t q)
 {
   /* p and q are temporaries */
   mpfr_random_deviate_reset (p);
@@ -130,10 +135,10 @@ E (mpfr_random_deviate_t x, gmp_randstate_t r,
     }
 }
 
-/* Algorithm B: true with prob exp(-x^2/2). */
+/* Algorithm B: true with prob exp(-x^2/2) for x in (0,1). */
 static int
-B (mpfr_random_deviate_t x, gmp_randstate_t r,
-   mpfr_random_deviate_t p, mpfr_random_deviate_t q)
+trunc_norm_bern (mpfr_random_deviate_t x, gmp_randstate_t r,
+                 mpfr_random_deviate_t p, mpfr_random_deviate_t q)
 {
   /* p and q are temporaries */
   /* n tracks the parity of the loop; s == 1 on first trip through loop. */
@@ -166,13 +171,13 @@ mpfr_nrandom (mpfr_ptr z, gmp_randstate_t r, mpfr_rnd_t rnd)
   mpfr_random_deviate_init (q);
   for (;;)
     {
-      k = G (r, p, q);                               /* step 1 */
-      if ((j = S (k)) < 0) continue;                 /* step 2 */
+      k = half_exp_geom (r, p, q);                   /* step 1 */
+      if ((j = int_sqrt (k)) < 0) continue;          /* step 2 */
       k = (unsigned long) j;
       mpfr_random_deviate_reset (x);                 /* step 3 */
-      while (j-- && E (x, r, p, q)) {};              /* step 4 */
+      while (j-- && trunc_exp_bern (x, r, p, q)) {}; /* step 4 */
       if (!( j < 0 )) continue;
-      if (! B (x, r, p, q) ) continue;               /* step 5 */
+      if (! trunc_norm_bern (x, r, p, q) ) continue; /* step 5 */
       break;
     }
   mpfr_random_deviate_clear (q);
