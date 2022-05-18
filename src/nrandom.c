@@ -101,7 +101,12 @@ half_exp_geom (gmp_randstate_t r,
 
 /* Step N2: return square root of n if it's a perfect square else -1.
    The probability distribution of n is exp(-n/2), so that realistically
-   the maximum value of n is 100 or so, thus a naive search is enough. */
+   the maximum value of n is 100 or so, thus a naive search is enough.
+   Moreover, step N1 is in Theta(n) while this step is in Theta(sqrt(n)).
+   TODO(?): merge this step into step N1 (half_exp_geom); the square root
+   could then be computed in a straightforward way by comparing n with
+   the successive perfect squares, since n is incremented by 1 at each
+   iteration. */
 static long
 int_sqrt (unsigned long n)
 {
