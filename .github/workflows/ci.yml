@@ -1,0 +1,174 @@
+name: C/C++ CI
+
+on: [push, pull_request]
+
+jobs:
+  build_linux:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: CPU Information
+      run:  lscpu || echo "CPU information not available"
+    - name: update package list
+      run: sudo apt-get update
+    - name: install GMP
+      run: sudo apt-get install libgmp-dev
+    - name: autoreconf
+      run: ./autogen.sh
+    - name: Get system
+      run: ./config.guess
+    - name: configure with default behavior
+      run: ./configure --enable-tests-timeout=60
+    - name: make (default)
+      run: make -j2
+    - name: make check (default)
+      run: make check -j2
+    - name: Cleanup
+      run: make distclean
+    - name: configure with assert behavior
+      run: ./configure --enable-decimal-float --enable-float128 --enable-assert=full --enable-thread-safe --enable-tests-timeout=60 CC="gcc" CFLAGS="-Wall -O2 -g -fstack-protector -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Wmissing-prototypes -Wlogical-op"
+    - name: make (assert)
+      run: make -j2
+    - name: make check (assert)
+      run: make check -j2
+      env:
+        GMP_CHECK_RANDOMIZE: 1
+        MPFR_SUSPICIOUS_OVERFLOW: 1
+        MPFR_CHECK_LIBC_PRINTF: 1
+        MPFR_SKIP_EXTREME: 1
+        VERBOSE: 1
+      # Building with a C++ compiler on Ubuntu is currently broken. See https://savannah.gnu.org/support/index.php?110532
+    - name: Cleanup
+      run: make distclean
+    - name: install multilib
+      run: sudo apt-get install gcc-multilib g++-multilib
+    - name: Get GMP
+      working-directory: /tmp
+      run: wget https://ftp.gnu.org/gnu/gmp/gmp-6.2.1.tar.bz2 && tar xf gmp-6.2.1.tar.bz2
+    - name: Build & Install GMP (32 bits)
+      working-directory: /tmp/gmp-6.2.1
+      run: ./configure --prefix=/tmp/gmp32 --disable-assembly ABI=32 && make -j2 && make install
+    - name: configure 32 bits with assert behavior
+      run: ./configure --enable-decimal-float --enable-float128 --enable-assert=full --enable-thread-safe --enable-tests-timeout=60 --with-gmp=/tmp/gmp32
+    - name: make (assert 32 bits)
+      run: make -j2
+    - name: make check (assert 32 bits)
+      run: make check -j2
+      env:
+        GMP_CHECK_RANDOMIZE: 1
+        MPFR_SUSPICIOUS_OVERFLOW: 1
+        MPFR_CHECK_LIBC_PRINTF: 1
+        MPFR_SKIP_EXTREME: 1
+        VERBOSE: 1
+
+  build_macos:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: CPU Information
+      run:  sysctl -a|grep cpu || echo "CPU information not available"
+    - name: Install autotools
+      run: brew install autoconf && brew install automake && brew install libtool
+    - name: Get GMP
+      working-directory: /tmp
+      run: wget https://ftp.gnu.org/gnu/gmp/gmp-6.2.1.tar.bz2 && tar xf gmp-6.2.1.tar.bz2
+    - name: Build & Install GMP
+      working-directory: /tmp/gmp-6.2.1
+      run: ./configure --prefix=/tmp/gmp --disable-assembly CC=clang && make -j2 && make install
+    - name: autoreconf
+      run: ./autogen.sh
+    - name: Get system
+      run: ./config.guess
+    - name: configure
+      run: ./configure --enable-assert=full --enable-thread-safe --enable-tests-timeout=60 --with-gmp=/tmp/gmp
+    - name: make (assert)
+      run: make -j2
+    - name: make check (assert)
+      run: make check -j2
+      env:
+        GMP_CHECK_RANDOMIZE: 1
+        MPFR_SUSPICIOUS_OVERFLOW: 1
+        MPFR_CHECK_LIBC_PRINTF: 1
+        MPFR_SKIP_EXTREME: 1
+        VERBOSE: 1
+
+  build_windows_mingw64_msys:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}    
+    steps:
+    - uses: actions/checkout@v3
+    - uses: msys2/setup-msys2@v2
+      with:
+          msystem: MINGW64
+          update: true
+          install: git mingw-w64-x86_64-toolchain make wget autotools texinfo
+    - name: Get GMP
+      run: cd /tmp && wget https://ftp.gnu.org/gnu/gmp/gmp-6.2.1.tar.bz2 && tar xf gmp-6.2.1.tar.bz2
+    - name: Build & Install GMP (static)
+      run: cd /tmp/gmp-6.2.1 && ./configure --prefix=/tmp/gmp-static --disable-assembly --enable-static --disable-shared CC="gcc -D__USE_MINGW_ANSI_STDIO" && make -j2 && make install
+    - name: Build & Install GMP (shared)
+      run: cd /tmp/gmp-6.2.1 && make distclean && ./configure --prefix=/tmp/gmp-shared --disable-assembly --enable-shared --disable-static CC="gcc -D__USE_MINGW_ANSI_STDIO" && make -j2 && make install
+    - name: autoreconf
+      run: ./autogen.sh
+    - name: Get system
+      run: ./config.guess
+    - name: configure with static GMP
+      run: ./configure --enable-decimal-float --enable-float128 --enable-assert=full --enable-thread-safe --with-gmp=/tmp/gmp-static --enable-static --disable-shared
+    - name: make (assert)
+      run: make -j2
+    - name: make check (assert)
+      run: make check -j2
+      env:
+        GMP_CHECK_RANDOMIZE: 1
+        MPFR_SUSPICIOUS_OVERFLOW: 1
+        MPFR_CHECK_LIBC_PRINTF: 1
+        MPFR_SKIP_EXTREME: 1
+        VERBOSE: 1
+    - name: Cleanup
+      run: make distclean
+    - name: configure with shared GMP
+      run: ./configure --enable-decimal-float --enable-float128 --enable-assert=full --enable-thread-safe --with-gmp=/tmp/gmp-shared --enable-shared --disable-static
+    - name: make (assert)
+      run: make -j2
+    - name: make check (assert)
+      run: make check -j2
+      env:
+        GMP_CHECK_RANDOMIZE: 1
+        MPFR_SUSPICIOUS_OVERFLOW: 1
+        MPFR_CHECK_LIBC_PRINTF: 1
+        MPFR_SKIP_EXTREME: 1
+        VERBOSE: 1
+
+  build_windows_visual_cpp:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install GMP
+      run:  vcpkg install gmp:x64-windows
+    - name: Build MPFR
+      run:  .github\visual\build.bat
+      
+  build_freebsd:
+    runs-on: macos-12
+    steps:
+    - uses: actions/checkout@v3
+    - name: Test in FreeBSD
+      id: test
+      uses: vmactions/freebsd-vm@v0
+      with:
+        usesh: true
+        prepare: |
+          pkg install -y autoconf automake libtool gmp texinfo
+        run: |
+             freebsd-version
+             ./autogen.sh
+             ./config.guess
+             ./configure --enable-assert=full --enable-thread-safe --enable-tests-timeout=60 --with-gmp=/usr/local
+             export GMP_CHECK_RANDOMIZE=1
+             export MPFR_SUSPICIOUS_OVERFLOW=1
+             export MPFR_CHECK_LIBC_PRINTF=1
+             export MPFR_SKIP_EXTREME=1
+             export VERBOSE=1
+             make check -j2 && make clean
