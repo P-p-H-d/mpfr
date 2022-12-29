@@ -1,0 +1,35 @@
+diff --git a/Makefile.am b/Makefile.am
+index a15787bc9..04300f5ec 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -38,12 +38,14 @@ AUTOMAKE_OPTIONS = gnu
+ # old Automake version.
+ ACLOCAL_AMFLAGS = -I m4
+
+-SUBDIRS = doc src tests tune tools/bench
++SUBDIRS = src tests # Skipping: doc tune tools/bench
+
+ pkgconfigdir = $(libdir)/pkgconfig
+ pkgconfig_DATA = mpfr.pc
+
+ nobase_dist_doc_DATA = AUTHORS BUGS COPYING COPYING.LESSER NEWS TODO \
++  # BREAK
++VCPKG_SKIP_EXAMPLES = \
+   examples/ReadMe examples/can_round.c examples/divworst.c \
+   examples/rndo-add.c examples/sample.c examples/threads.c \
+   examples/version.c
+diff --git a/tests/Makefile.am b/tests/Makefile.am
+index 88deb53dd..6e711e1a6 100644
+--- a/tests/Makefile.am
++++ b/tests/Makefile.am
+@@ -49,8 +49,7 @@ output_info = { \
+   $(GREP) -v '^\(PASS\|FAIL\) ' tversion.log 2> /dev/null || true; \
+ }
+
+-TESTS_NO_TVERSION = tabort_prec_max tassert tabort_defalloc1            \
+-     tabort_defalloc2 talloc tinternals tinits tisqrt tsgn tcheck       \
++TESTS_NO_TVERSION = talloc tinternals tinits tisqrt tsgn tcheck       \
+      tisnan texceptions tset_exp tset mpf_compat mpfr_compat reuse      \
+      tabs tacos tacosh tacosu tadd tadd1sp tadd_d tadd_ui tagm tai      \
+      talloc-cache tasin tasinh tasinu tatan tatanh tatanu tatan2u taway \
+
