@@ -1,0 +1,23 @@
+name: GITLAB Synchronization
+
+on:
+ schedule:
+    - cron:  '0 1 * * *'
+    
+jobs:
+  sync_linux64:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+          fetch-depth: 0
+          token: ${{ secrets.MPFR_TOKEN }}
+    - name: Synchronization
+      run: |
+           git config user.email "16360675+P-p-H-d@users.noreply.github.com"
+           git config user.name "Synchronization bot"
+           git remote add gitlab https://gitlab.inria.fr/mpfr/mpfr.git
+           git fetch gitlab
+           git rebase gitlab/master
+           git remote remove gitlab
+           git push origin --force-with-lease --follow-tags
