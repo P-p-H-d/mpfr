@@ -6,7 +6,7 @@ jobs:
   build_linux:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: CPU Information
       run:  lscpu || echo "CPU information not available"
     - name: update package list
@@ -64,7 +64,7 @@ jobs:
   build_macos:
     runs-on: macos-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: CPU Information
       run:  sysctl -a|grep cpu || echo "CPU information not available"
     - name: Install autotools
@@ -98,7 +98,7 @@ jobs:
       run:
         shell: msys2 {0}    
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - uses: msys2/setup-msys2@v2
       with:
           msystem: MINGW64
@@ -144,19 +144,20 @@ jobs:
   build_windows_visual_cpp:
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Install GMP
       run:  vcpkg install gmp:x64-windows
     - name: Build MPFR
       run:  .github\visual\build.bat
       
   build_freebsd:
-    runs-on: macos-12
+    runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Test in FreeBSD
       id: test
-      uses: vmactions/freebsd-vm@v0
+      uses: vmactions/freebsd-vm@v1
+      timeout-minutes: 60
       with:
         usesh: true
         prepare: |
@@ -172,3 +173,29 @@ jobs:
              export MPFR_SKIP_EXTREME=1
              export VERBOSE=1
              make check -j2 && make clean
+
+  build_aarch64:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: uraimo/run-on-arch-action@v2.5.0
+        name: Run commands on aarch64
+        id: make
+        timeout-minutes: 60
+        with:
+          arch: aarch64
+          distro: bullseye
+          shell: /bin/sh
+          run: |
+               apt-get update -q -y
+               apt-get install -q -y  build-essential git gcc libgmp-dev autoconf automake libtool texinfo
+               lscpu
+                ./autogen.sh
+                ./config.guess
+                ./configure --enable-assert=full --enable-thread-safe
+                export GMP_CHECK_RANDOMIZE=1
+                export MPFR_SUSPICIOUS_OVERFLOW=1
+                export MPFR_CHECK_LIBC_PRINTF=1
+                export MPFR_SKIP_EXTREME=1
+                export VERBOSE=1
+                make -j2 && make check -j2 && make clean
