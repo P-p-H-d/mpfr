@@ -41,7 +41,7 @@ If not, see <https://www.gnu.org/licenses/>. */
  * The implementation here closely follows the C++ one given in the ACM paper
  * with the algorithmic improvements given by Du et al. as detailed in
  *
- *   http://exrandom.sourceforge.net/3.0/algorithm.html
+ *   https://exrandom.sourceforge.net/3.0/algorithm.html
  *
  * There are a few "weasel words" regarding the accuracy of this
  * implementation.  The algorithm produces exactly rounded normal deviates
