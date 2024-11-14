@@ -119,7 +119,11 @@ int_sqrt (unsigned long n)
     {
       /* Here k2 = k * k; note that k^2 - (k - 1)^2 = 2*k - 1 */
       if (n == k2)
-        return (long) k;
+        {
+          /* k = sqrt(n), thus it fits in a long. */
+          MPFR_ASSERTD (k <= LONG_MAX);
+          return (long) k;
+        }
     }
   return -1;
 }
