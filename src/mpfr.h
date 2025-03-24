@@ -871,6 +871,9 @@ __MPFR_DECLSPEC int mpfr_custom_get_kind (mpfr_srcptr);
 
 __MPFR_DECLSPEC int mpfr_total_order_p (mpfr_srcptr, mpfr_srcptr);
 
+__MPFR_DECLSPEC int mpfr_fpif_export_mem (unsigned char *, size_t, mpfr_srcptr);
+__MPFR_DECLSPEC int mpfr_fpif_import_mem (mpfr_ptr, unsigned char *, size_t);
+
 #if defined (__cplusplus)
 }
 #endif
@@ -1239,10 +1242,9 @@ __MPFR_DECLSPEC size_t mpfr_out_str (FILE*, int, size_t, mpfr_srcptr,
 #define mpfr_fprintf __gmpfr_fprintf
 __MPFR_DECLSPEC int mpfr_fprintf (FILE*, const char*, ...);
 #endif
-#define mpfr_fpif_export __gmpfr_fpif_export
-#define mpfr_fpif_import __gmpfr_fpif_import
-__MPFR_DECLSPEC int mpfr_fpif_export (FILE*, mpfr_srcptr);
-__MPFR_DECLSPEC int mpfr_fpif_import (mpfr_ptr, FILE*);
+
+__MPFR_DECLSPEC int mpfr_fpif_export (FILE *, mpfr_srcptr);
+__MPFR_DECLSPEC int mpfr_fpif_import (mpfr_ptr, FILE *);
 
 #if defined (__cplusplus)
 }

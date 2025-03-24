@@ -2848,6 +2848,25 @@ Note: this function is experimental and its interface might change in future
 versions.
 @end deftypefun
 
+@deftypefun int mpfr_fpif_export_mem (unsigned char *@var{buffer}, size_t @var{buffer_size}, const mpfr_t @var{x})
+Export the number @var{x} to the byte array @var{buffer} of size @var{buffer_size}
+(expressed in bytes) in a floating-point interchange format.
+The precision of @var{x} and the sign bit of a NaN are stored too.
+Return 0 iff the export was successful.
+@end deftypefun
+
+@deftypefun int mpfr_fpif_import_mem (mpfr_t @var{x}, unsigned char *@var{buffer}, size_t @var{buffer_size})
+Import the number @var{x} from the byte array @var{buffer} of size
+@var{buffer_size} (expressed in bytes) in a floating-point interchange
+format (see @code{mpfr_fpif_export_mem}).
+Also note that the precision of @var{x} is set to the one read from the stream,
+and the sign bit is always retrieved (even for NaN)@.
+If the stored precision is zero or greater than @code{MPFR_PREC_MAX}, the
+function fails (it returns non-zero) and @var{x} is unchanged.
+If the function fails for another reason, @var{x} is set to NaN@.
+Return 0 iff the import was successful.
+@end deftypefun
+
 @deftypefun void mpfr_dump (const mpfr_t @var{op})
 Output @var{op} on @code{stdout} in some unspecified format, then a newline
 character. This function is mainly for debugging purpose. Thus invalid data
@@ -4475,6 +4494,8 @@ in MPFR@tie{}4.0.
 
 @item @code{mpfr_fpif_export} and @code{mpfr_fpif_import} in MPFR@tie{}4.0.
 
+@item @code{mpfr_fpif_export_mem} and @code{mpfr_fpif_import_mem} in MPFR@tie{}4.3.
+
 @item @code{mpfr_fprintf} in MPFR@tie{}2.4.
 
 @item @code{mpfr_free_cache2} in MPFR@tie{}4.0.
@@ -4890,6 +4911,7 @@ functions, and helped to the Microsoft Windows porting.
 Damien Stehl@'e contributed the @code{mpfr_get_ld_2exp} function.
 Charles Karney contributed the @code{mpfr_nrandom} and @code{mpfr_erandom}
 functions.
+Matteo Nicoli contributed the memory export/import functions.
 
 We would like to thank Jean-Michel Muller and Joris van der Hoeven for very
 fruitful discussions at the beginning of that project, Torbj@"orn Granlund
