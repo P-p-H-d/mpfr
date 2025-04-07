@@ -2772,9 +2772,9 @@ extern "C" {
    possible to do pointer type checking with a type-generic macros,
    previously done with code like
 
-     #define MPFR_ZEXP(x)                            \
-       ((void) sizeof ((x)->_mpfr_exp),              \
-        ((mpfr_ubf_ptr) (x))->_mpfr_zexp)
+   | #define MPFR_ZEXP(x)                            \
+   |   ((void) sizeof ((x)->_mpfr_exp),              \
+   |    ((mpfr_ubf_ptr) (x))->_mpfr_zexp)
 
    That said, a version with _Generic could be used conditionally (with
    support detected at configure time), and as long as one develops and/or
