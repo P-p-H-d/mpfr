@@ -1739,6 +1739,8 @@ Initialize @var{x} and set its value from
 the string @var{s} in base @var{base},
 rounded in the direction @var{rnd}.
 See @code{mpfr_set_str}.
+The precision of @var{x} will be taken from the active default precision,
+as set by @code{mpfr_set_default_prec}.
 @end deftypefun
 
 @node Conversion Functions, Arithmetic Functions, Combined Initialization and Assignment Functions, MPFR Interface
