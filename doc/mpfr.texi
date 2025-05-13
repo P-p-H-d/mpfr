@@ -324,8 +324,7 @@ see @cite{\title\}.
 @end ifnothtml
 @end ifnottex
 
-@node Copying, Introduction to MPFR, Top, Top
-@comment  node-name, next, previous,  up
+@node Copying
 @unnumbered MPFR Copying Conditions
 @cindex Copying conditions
 @cindex Conditions for copying MPFR
@@ -360,8 +359,7 @@ The precise conditions of the license for the GNU MPFR library are found in the
 Lesser General Public License that accompanies the source code.
 See the file COPYING.LESSER.@.
 
-@node Introduction to MPFR, Installing MPFR, Copying, Top
-@comment  node-name,  next,  previous,  up
+@node Introduction to MPFR
 @chapter Introduction to MPFR
 
 MPFR is a portable library written in C for arbitrary precision arithmetic
@@ -412,8 +410,7 @@ To use the library you will need to refer to @ref{MPFR Interface}.
 The rest of the manual can be used for later reference, although it is
 probably a good idea to glance through it.
 
-@node Installing MPFR, Reporting Bugs, Introduction to MPFR, Top
-@comment  node-name,  next,  previous,  up
+@node Installing MPFR
 @chapter Installing MPFR
 @cindex Installation
 
@@ -594,8 +591,7 @@ MPFR@tie{}4.3.0 web page @url{https://www.mpfr.org/mpfr-4.3.0/}.
 The latest version of MPFR is available from
 @url{https://ftp.gnu.org/gnu/mpfr/} or @url{https://www.mpfr.org/}.
 
-@node Reporting Bugs, MPFR Basics, Installing MPFR, Top
-@comment  node-name,  next,  previous,  up
+@node Reporting Bugs
 @chapter Reporting Bugs
 @cindex Reporting bugs
 
@@ -639,8 +635,7 @@ Send your bug report to the MPFR mailing-list @samp{mpfr@@inria.fr}.
 If you think something in this manual is unclear, or downright incorrect, or if
 the language needs to be improved, please send a note to the same address.
 
-@node MPFR Basics, MPFR Interface, Reporting Bugs, Top
-@comment  node-name,  next,  previous,  up
+@node MPFR Basics
 @chapter MPFR Basics
 
 @menu
@@ -654,8 +649,7 @@ the language needs to be improved, please send a note to the same address.
 * Getting the Best Efficiency Out of MPFR::
 @end menu
 
-@node Headers and Libraries, Nomenclature and Types, MPFR Basics, MPFR Basics
-@comment  node-name,  next,  previous,  up
+@node Headers and Libraries
 @section Headers and Libraries
 
 @cindex @file{mpfr.h}
@@ -758,8 +752,7 @@ or indirectly) and system headers/libraries should not define macros and
 symbols using these prefixes.
 @c Concerning system headers/libraries: those that may be used by MPFR.
 
-@node Nomenclature and Types, MPFR Variable Conventions, Headers and Libraries, MPFR Basics
-@comment  node-name,  next,  previous,  up
+@node Nomenclature and Types
 @section Nomenclature and Types
 
 @cindex Floating-point number
@@ -853,8 +846,7 @@ define @code{mpfr_float128} as @samp{_Float128} by default, but mainly for
 compatibility with software written for MPFR@tie{}4.1.x and 4.2.0, where
 the prototypes used @samp{_Float128}.
 
-@node MPFR Variable Conventions, Rounding, Nomenclature and Types, MPFR Basics
-@comment  node-name,  next,  previous,  up
+@node MPFR Variable Conventions
 @section MPFR Variable Conventions
 
 Before you can assign to a MPFR variable, you need to initialize it by calling
@@ -881,8 +873,7 @@ expression.  For example, the main function for floating-point multiplication,
 This computes the square of @var{x} with rounding mode @code{rnd}
 and puts the result back in @var{x}.
 
-@node Rounding, Floating-Point Values on Special Numbers, MPFR Variable Conventions, MPFR Basics
-@comment  node-name,  next,  previous,  up
+@node Rounding
 @section Rounding
 
 The following rounding modes are supported:
@@ -1019,8 +1010,7 @@ Unless documented otherwise, functions returning as result the value @code{1}
 for special cases (like @code{acos(0)}) yield an overflow or
 an underflow if that value is not representable in the current exponent range.
 
-@node Floating-Point Values on Special Numbers, Exceptions, Rounding, MPFR Basics
-@comment  node-name,  next,  previous,  up
+@node Floating-Point Values on Special Numbers
 @section Floating-Point Values on Special Numbers
 
 This section specifies the floating-point values (of type @code{mpfr_t})
@@ -1090,8 +1080,7 @@ Any difference with IEEE@tie{}754 that is not explicitly mentioned, other
 than those due to the single NaN, is unintended and might be regarded as a
 bug. See also @ref{MPFR and the IEEE 754 Standard}.
 
-@node Exceptions, Memory Handling, Floating-Point Values on Special Numbers, MPFR Basics
-@comment  node-name,  next,  previous,  up
+@node Exceptions
 @section Exceptions
 
 MPFR defines a global (or per-thread) flag for each supported exception.
@@ -1176,8 +1165,7 @@ a range error in MPFR@.
 
 @end itemize
 
-@node Memory Handling, Getting the Best Efficiency Out of MPFR, Exceptions, MPFR Basics
-@comment  node-name,  next,  previous,  up
+@node Memory Handling
 @section Memory Handling
 
 MPFR functions may create caches, e.g., when computing constants such
@@ -1252,8 +1240,7 @@ using MPFR should also be careful when changing such a value if they use
 a library using MPFR (directly or indirectly), in order to make sure that
 such a change is compatible with the library.
 
-@node Getting the Best Efficiency Out of MPFR, , Memory Handling, MPFR Basics
-@comment  node-name,  next,  previous,  up
+@node Getting the Best Efficiency Out of MPFR
 @section Getting the Best Efficiency Out of MPFR
 
 Here are a few hints to get the best efficiency out of MPFR:
@@ -1278,8 +1265,7 @@ Here are a few hints to get the best efficiency out of MPFR:
 
 @end itemize
 
-@node MPFR Interface, API Compatibility, MPFR Basics, Top
-@comment  node-name,  next,  previous,  up
+@node MPFR Interface
 @chapter MPFR Interface
 @cindex Floating-point functions
 
@@ -1336,8 +1322,7 @@ MPFR code (libc functions, memory allocator, etc.) may do so.
 * Internals::
 @end menu
 
-@node Initialization Functions, Assignment Functions, MPFR Interface, MPFR Interface
-@comment  node-name,  next,  previous,  up
+@node Initialization Functions
 @cindex Initialization functions
 @section Initialization Functions
 
@@ -1520,8 +1505,7 @@ Return the precision of @var{x}, i.e., the
 number of bits used to store its significand.
 @end deftypefun
 
-@node Assignment Functions, Combined Initialization and Assignment Functions, Initialization Functions, MPFR Interface
-@comment  node-name,  next,  previous,  up
+@node Assignment Functions
 @cindex Assignment functions
 @section Assignment Functions
 
@@ -1716,8 +1700,7 @@ and/or @var{y} does not permit it. This is the case when @var{x} and/or
 possibly with @code{mpfr_custom_init_set} (@pxref{Custom Interface}).
 @end deftypefun
 
-@node Combined Initialization and Assignment Functions, Conversion Functions, Assignment Functions, MPFR Interface
-@comment  node-name,  next,  previous,  up
+@node Combined Initialization and Assignment Functions
 @cindex Combined initialization and assignment functions
 @section Combined Initialization and Assignment Functions
 
@@ -1744,8 +1727,7 @@ The precision of @var{x} will be taken from the active default precision,
 as set by @code{mpfr_set_default_prec}.
 @end deftypefun
 
-@node Conversion Functions, Arithmetic Functions, Combined Initialization and Assignment Functions, MPFR Interface
-@comment  node-name,  next,  previous,  up
+@node Conversion Functions
 @cindex Conversion functions
 @section Conversion Functions
 
@@ -1989,8 +1971,7 @@ As a consequence, for @code{MPFR_RNDF}, @code{mpfr_fits_ulong_p} will return
 non-zero for a non-negative number less than or equal to @code{ULONG_MAX}.
 @end deftypefun
 
-@node Arithmetic Functions, Comparison Functions, Conversion Functions, MPFR Interface
-@comment  node-name,  next,  previous,  up
+@node Arithmetic Functions
 @cindex Arithmetic functions
 @section Arithmetic Functions
 
@@ -2220,8 +2201,7 @@ and underflows.
 For the power functions (with an integer exponent or not), see @ref{mpfr_pow}
 in @ref{Transcendental Functions}.
 
-@node Comparison Functions, Transcendental Functions, Arithmetic Functions, MPFR Interface
-@comment  node-name,  next,  previous,  up
+@node Comparison Functions
 @cindex Comparison functions
 @section Comparison Functions
 
@@ -2323,7 +2303,7 @@ In particular, @code{mpfr_total_order_p (@var{x}, @var{x})} returns true,
 The sign bit of NaN also matters.
 @end deftypefun
 
-@node Transcendental Functions, Input and Output Functions, Comparison Functions, MPFR Interface
+@node Transcendental Functions
 @cindex Transcendental functions
 @section Transcendental Functions
 
@@ -2757,8 +2737,7 @@ calculations if a lower or equal precision is requested. To free these caches,
 use @code{mpfr_free_cache} or @code{mpfr_free_cache2}.
 @end deftypefun
 
-@node Input and Output Functions, Formatted Output Functions, Transcendental Functions, MPFR Interface
-@comment  node-name,  next,  previous,  up
+@node Input and Output Functions
 @cindex Input functions
 @cindex Output functions
 @cindex I/O functions
@@ -2892,8 +2871,7 @@ trailing bits; @samp{U} if this is an UBF number (internal use only);
 @samp{>} if the exponent is greater than the current maximum exponent.
 @end deftypefun
 
-@node Formatted Output Functions, Integer and Remainder Related Functions, Input and Output Functions, MPFR Interface
-@comment  node-name,  next,  previous,  up
+@node Formatted Output Functions
 @cindex Output functions
 @cindex I/O functions
 @section Formatted Output Functions
@@ -3186,8 +3164,7 @@ be set to a non-zero value (in case @samp{%c} was used with the value 0)
 before the call to @code{mpfr_free_str}.
 @end deftypefun
 
-@node Integer and Remainder Related Functions, Rounding-Related Functions, Formatted Output Functions, MPFR Interface
-@comment  node-name,  next,  previous,  up
+@node Integer and Remainder Related Functions
 @cindex Integer related functions
 @cindex Remainder related functions
 @section Integer and Remainder Related Functions
@@ -3332,7 +3309,7 @@ additive argument reduction.
 Return non-zero iff @var{op} is an integer.
 @end deftypefun
 
-@node Rounding-Related Functions, Miscellaneous Functions, Integer and Remainder Related Functions, MPFR Interface
+@node Rounding-Related Functions
 @cindex Rounding mode related functions
 @section Rounding-Related Functions
 
@@ -3512,8 +3489,7 @@ int i = mpfr_round_nearest_away (mpfr_add_ui, r, f, ul);
 @end example
 @end deftypefn
 
-@node Miscellaneous Functions, Exception Related Functions, Rounding-Related Functions, MPFR Interface
-@comment  node-name,  next,  previous,  up
+@node Miscellaneous Functions
 @cindex Miscellaneous float functions
 @section Miscellaneous Functions
 
@@ -3754,8 +3730,7 @@ Return a string saying which thresholds file has been used at compile time.
 This file is normally selected from the processor type.
 @end deftypefun
 
-@node Exception Related Functions, Memory Handling Functions, Miscellaneous Functions, MPFR Interface
-@comment  node-name,  next,  previous,  up
+@node Exception Related Functions
 @cindex Exception related functions
 @section Exception Related Functions
 
@@ -4016,8 +3991,7 @@ Restore the flags specified by @var{mask} to their state represented
 in @var{flags}.
 @end deftypefun
 
-@node Memory Handling Functions, Compatibility with MPF, Exception Related Functions, MPFR Interface
-@comment  node-name,  next,  previous,  up
+@node Memory Handling Functions
 @cindex Memory handling functions
 @section Memory Handling Functions
 
@@ -4062,7 +4036,7 @@ Errors are currently not possible, but checking the return value
 is recommended for future compatibility.
 @end deftypefun
 
-@node Compatibility with MPF, Custom Interface, Memory Handling Functions, MPFR Interface
+@node Compatibility with MPF
 @cindex Compatibility with MPF
 @section Compatibility With MPF
 
@@ -4132,7 +4106,7 @@ prefer @code{mpfr_mul_2ui} and @code{mpfr_div_2ui} otherwise.
 @end deftypefun
 
 
-@node Custom Interface, Internals, Compatibility with MPF, MPFR Interface
+@node Custom Interface
 @cindex Custom interface
 @section Custom Interface
 
@@ -4242,7 +4216,7 @@ The behavior of this function for any @code{mpfr_t} not initialized
 with @code{mpfr_custom_init_set} is undefined.
 @end deftypefun
 
-@node Internals,  , Custom Interface, MPFR Interface
+@node Internals
 @cindex Internals
 @section Internals
 
@@ -4283,7 +4257,7 @@ whole number of limbs, the excess bits at the low end of the data are zeros.
 
 @end itemize
 
-@node API Compatibility, MPFR and the IEEE 754 Standard, MPFR Interface, Top
+@node API Compatibility
 @chapter API Compatibility
 
 The goal of this section is to describe some API changes that occurred
@@ -4325,7 +4299,7 @@ classified like here), together with other changes.
 * Other Changes::
 @end menu
 
-@node Type and Macro Changes, Added Functions, API Compatibility, API Compatibility
+@node Type and Macro Changes
 @section Type and Macro Changes
 
 @comment r6789
@@ -4402,7 +4376,7 @@ were added in MPFR@tie{}4.0 (for the new functions @code{mpfr_flags_clear},
 @code{mpfr_flags_restore}, @code{mpfr_flags_set} and @code{mpfr_flags_test},
 in particular).
 
-@node Added Functions, Changed Functions, Type and Macro Changes, API Compatibility
+@node Added Functions
 @section Added Functions
 
 We give here in alphabetical order the functions (and function-like macros)
@@ -4617,7 +4591,7 @@ use @code{mpfr_get_z_exp}.
 
 @end itemize
 
-@node Changed Functions, Removed Functions, Added Functions, API Compatibility
+@node Changed Functions
 @section Changed Functions
 
 The following functions and function-like macros have changed after
@@ -4776,7 +4750,7 @@ multiple times or none.
 
 @end itemize
 
-@node Removed Functions, Other Changes, Changed Functions, API Compatibility
+@node Removed Functions
 @section Removed Functions
 
 Functions @code{mpfr_random} and @code{mpfr_random2} have been
@@ -4792,7 +4766,7 @@ MPFR@tie{}2.1.0 and were announced as deprecated since MPFR@tie{}3.1.0.
 Function @code{mpfr_grandom} is marked as deprecated in MPFR@tie{}4.0.
 It will be removed in a future release.
 
-@node Other Changes, , Removed Functions, API Compatibility
+@node Other Changes
 @section Other Changes
 
 @comment r6699
@@ -4831,7 +4805,7 @@ while still supporting optional functions (@pxref{Headers and Libraries}).
 The way memory is allocated by MPFR should be regarded as well-specified
 only as of MPFR@tie{}4.0.
 
-@node MPFR and the IEEE 754 Standard, Contributors, API Compatibility, Top
+@node MPFR and the IEEE 754 Standard
 @chapter MPFR and the IEEE 754 Standard
 
 This section describes differences between MPFR and the IEEE@tie{}754
@@ -4886,8 +4860,7 @@ of two numbers of the same sign may yield an overflow; idem for a call
 to @code{mpfr_set}, @code{mpfr_neg} or @code{mpfr_abs}, if the destination
 variable has a smaller precision.
 
-@node Contributors, References, MPFR and the IEEE 754 Standard, Top
-@comment  node-name,  next,  previous,  up
+@node Contributors
 @unnumbered Contributors
 
 The main developers of MPFR are Guillaume Hanrot, Vincent Lef@`evre,
@@ -4947,8 +4920,7 @@ Fredrik Johansson a faster version of @code{mpfr_const_euler},
 and Jianyang Pan a formally proven version of the @code{mpfr_add1sp1}
 internal routine.
 
-@node References, GNU Free Documentation License, Contributors, Top
-@comment  node-name,  next,  previous,  up
+@node References
 @unnumbered References
 
 @itemize @bullet
@@ -5010,19 +4982,17 @@ Birkh@"auser, Boston, 2009.
 @end itemize
 
 
-@node GNU Free Documentation License, Concept Index, References, Top
+@node GNU Free Documentation License
 @appendix GNU Free Documentation License
 @cindex GNU Free Documentation License
 @include fdl.texi
 
 
-@node Concept Index, Function and Type Index, GNU Free Documentation License, Top
-@comment  node-name,  next,  previous,  up
+@node Concept Index
 @unnumbered Concept Index
 @printindex cp
 
-@node Function and Type Index,  , Concept Index, Top
-@comment  node-name,  next,  previous,  up
+@node Function and Type Index
 @unnumbered Function and Type Index
 @printindex fn
 
