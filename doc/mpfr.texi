@@ -1669,7 +1669,7 @@ significand). Similarly, if @samp{0b}, @samp{0B}, @samp{0x} or @samp{0X}
 is not followed by a binary/hexadecimal digit, then the subject sequence
 stops at the character @samp{0}, thus 0 is read.
 
-Special data (for infinities and NaN) can be @samp{@@inf@@} or
+Special data (for infinities and NaN) can be @samp{@@inf@@}, @samp{@@nan@@} or
 @samp{@@nan@@(n-char-sequence-opt)}, and if @tm{@var{base} @le{} 16},
 it can also be @samp{infinity}, @samp{inf}, @samp{nan} or
 @samp{nan(n-char-sequence-opt)}, all case insensitive with the rules of
