@@ -50,7 +50,7 @@ floating-point arithmetic, version @value{VERSION}.
 @setchapternewpage on
 
 @ifnottex
-@node Top, Copying, (dir), (dir)
+@node Top
 @top GNU MPFR
 @end ifnottex
 
