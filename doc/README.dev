@@ -1056,9 +1056,15 @@ MPFR_LOG_STAT:     Log how many times Ziv failed.
 MPFR_LOG_ALLOCA:   Log the alloca() amounts.
 MPFR_LOG_ALL:      Log everything
 
-Define them. Run your program, and view `mpfr.log`.
+Define them. Run your program, and view `mpfr.log` (default).
 
 For example, just define MPFR_LOG_ALL, run you program, and view `mpfr.log`.
+
+Security note: The default file name is "mpfr.log", thus relative to the
+current directory. Be careful if you do not have exclusive write access.
+Currently, the file is opened with fopen(...,"w") and it is not possible
+to use a different mode. Future MPFR versions might use security features
+by default if they become widely available (like NetBSD's "f" and "l").
 
 Note: The running time may be much longer. If logging is used on the
 test suite with a default timeout, it may be necessary to increase the
