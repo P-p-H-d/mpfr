@@ -512,15 +512,17 @@ mem_check_bad (void)
   status = mpfr_fpif_export_mem (NULL, 0, x);
   if (status == 0)
     {
-      printf ("mpfr_fpif_export did not fail with a NULL file\n");
+      printf ("mpfr_fpif_export did not fail with a NULL buffer pointer\n");
       exit (1);
     }
   status = mpfr_fpif_import_mem (x, NULL, 0);
   if (status == 0)
     {
-      printf ("mpfr_fpif_import did not fail with a NULL file\n");
+      printf ("mpfr_fpif_import did not fail with a NULL buffer pointer\n");
       exit (1);
     }
+
+  mpfr_clear (x);
 }
 
 int
@@ -541,6 +543,7 @@ main (int argc, char *argv[])
 
   mem_doit (argc, argv, 130, 2048);
   mem_doit (argc, argv, 1, 53);
+  mem_check_bad ();
 
   tests_end_mpfr ();
 

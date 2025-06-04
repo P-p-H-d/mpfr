@@ -2853,6 +2853,9 @@ Export the number @var{x} to the byte array @var{buffer} of size @var{buffer_siz
 (expressed in bytes) in a floating-point interchange format.
 The precision of @var{x} and the sign bit of a NaN are stored too.
 Return 0 iff the export was successful.
+
+Note: this function is experimental and its interface might change in future
+versions.
 @end deftypefun
 
 @deftypefun int mpfr_fpif_import_mem (mpfr_t @var{x}, unsigned char *@var{buffer}, size_t @var{buffer_size})
@@ -2863,8 +2866,13 @@ Also note that the precision of @var{x} is set to the one read from the stream,
 and the sign bit is always retrieved (even for NaN)@.
 If the stored precision is zero or greater than @code{MPFR_PREC_MAX}, the
 function fails (it returns non-zero) and @var{x} is unchanged.
-If the function fails for another reason, @var{x} is set to NaN@.
+If the function fails for another reason, @var{x} is set to NaN@ and it is
+unspecified whether the precision of @var{op} has changed to the one
+read from the file.
 Return 0 iff the import was successful.
+
+Note: this function is experimental and its interface might change in future
+versions.
 @end deftypefun
 
 @deftypefun void mpfr_dump (const mpfr_t @var{op})
