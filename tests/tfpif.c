@@ -193,8 +193,8 @@ fh_doit (int argc, char *argv[], mpfr_prec_t p1, mpfr_prec_t p2)
         }
       if (! SAME_VAL (x[i], y))
         {
-          printf ("fh_doit failed on data number %d, neg=%d, at offset 0x%lx\n",
-                  i, neg, (unsigned long) pos);
+          printf ("fh_doit failed on data number %d, neg=%d, at"
+                  " offset 0x%lx\n", i, neg, (unsigned long) pos);
           printf ("expected "); mpfr_dump (x[i]);
           printf ("got      "); mpfr_dump (y);
           exit (1);
@@ -234,13 +234,13 @@ fh_check_bad (void)
   status = mpfr_fpif_export (NULL, x);
   if (status == 0)
     {
-      printf ("mpfr_fpif_export did not fail with a NULL file\n");
+      printf ("mpfr_fpif_export did not fail with a null FILE pointer\n");
       exit (1);
     }
   status = mpfr_fpif_import (x, NULL);
   if (status == 0)
     {
-      printf ("mpfr_fpif_import did not fail with a NULL file\n");
+      printf ("mpfr_fpif_import did not fail with a null FILE pointer\n");
       exit (1);
     }
 
@@ -441,6 +441,8 @@ mem_doit(int argc, char *argv[], mpfr_prec_t p1, mpfr_prec_t p2)
     {
       for (i = 0; i < 9; i++)
         {
+          mpfr_prec_t px, py;
+
           if (neg)
             MPFR_CHANGE_SIGN (x[i]);
 
@@ -454,16 +456,16 @@ mem_doit(int argc, char *argv[], mpfr_prec_t p1, mpfr_prec_t p2)
           if (neg)
             MPFR_CHANGE_SIGN (x[i]);
 
-          /* we then read back the buffer and check we get the same numbers x[i] */
-          mpfr_prec_t px, py;
+          /* we then read back the buffer and check we get the
+             same numbers x[i] */
 
           if (neg)
             MPFR_CHANGE_SIGN (x[i]);
 
           mpfr_init2 (y, 2);
           /* Set the sign bit of y to the opposite of the expected one.
-              Thus, if mpfr_fpif_import forgets to set the sign, this will
-              be detected. */
+             Thus, if mpfr_fpif_import forgets to set the sign, this will
+             be detected. */
           MPFR_SET_SIGN (y, - MPFR_SIGN (x[i]));
           mpfr_fpif_import_mem (y, buffer, 1024);
           px = mpfr_get_prec (x[i]);
@@ -486,7 +488,8 @@ mem_doit(int argc, char *argv[], mpfr_prec_t p1, mpfr_prec_t p2)
             }
           if (! SAME_VAL (x[i], y))
             {
-              printf ("mem_doit failed on written number %d, neg=%d\n", i, neg);
+              printf ("mem_doit failed on written number %d, neg=%d\n",
+                      i, neg);
               printf ("expected "); mpfr_dump (x[i]);
               printf ("got      "); mpfr_dump (y);
               exit (1);
