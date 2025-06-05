@@ -414,7 +414,7 @@ fh_extra (void)
 }
 
 static void
-mem_doit(int argc, char *argv[], mpfr_prec_t p1, mpfr_prec_t p2)
+mem_doit (int argc, char *argv[], mpfr_prec_t p1, mpfr_prec_t p2)
 {
   int status;
   mpfr_t x[9];
