@@ -21,7 +21,7 @@ If not, see <https://www.gnu.org/licenses/>.
 
 Changes from versions 4.2.* to version 4.3.0:
 - The "" release.
-- New functions mpfr_fpif_import_mem and mpfr_fpif_export_mem
+- New functions mpfr_fpif_import_mem and mpfr_fpif_export_mem.
 - New function mpfr_compound.
 - New function mpfr_trigamma.
 - New functions mpfr_set_float16 and mpfr_get_float16 (when the _Float16
