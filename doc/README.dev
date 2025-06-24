@@ -732,7 +732,12 @@ About undefined behavior:
   https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3128.pdf
 
 Type punning, strict aliasing, and optimization:
-  https://blog.regehr.org/archives/959
+  https://blog.regehr.org/archives/959 and the comments
+  (The union trick is actually valid.)
+
+Related to that, struct extension and inheritance:
+  https://stackoverflow.com/questions/63518693/struct-extension-in-c
+  https://www.codementor.io/@arpitbhayani/powering-inheritance-in-c-using-structure-composition-176sygr724
 
 To allow MPFR to be built on some buggy compiler, try to follow
 these rules:
