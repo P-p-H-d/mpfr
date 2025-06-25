@@ -1,5 +1,5 @@
-/* mpfr_get_float16 -- convert a multiple precision floating-point
-                       number to a _Float16 number
+/* mpfr_get_bfloat16 -- convert a multiple precision floating-point
+                       number to a bfloat16 number
 
 Copyright 2012-2025 Free Software Foundation, Inc.
 Contributed by the Pascaline and Caramba projects, INRIA.
@@ -22,14 +22,14 @@ If not, see <https://www.gnu.org/licenses/>. */
 
 #include "mpfr-impl.h"
 
-#ifdef MPFR_WANT_FLOAT16
+#ifdef MPFR_WANT_BFLOAT16
 
 #include <stdint.h>
 
-typedef union { _Float16 x; uint16_t n; } b16u16;
+typedef union { __bf16 x; uint16_t n; } b16u16;
 
-_Float16
-mpfr_get_float16 (mpfr_srcptr x, mpfr_rnd_t rnd_mode)
+__bf16
+mpfr_get_bfloat16 (mpfr_srcptr x, mpfr_rnd_t rnd_mode)
 {
 
   mpfr_t y;
@@ -39,13 +39,13 @@ mpfr_get_float16 (mpfr_srcptr x, mpfr_rnd_t rnd_mode)
   MPFR_SAVE_EXPO_DECL (expo);
 
   if (MPFR_UNLIKELY (MPFR_IS_SINGULAR (x)))
-    return (_Float16) mpfr_get_d (x, rnd_mode);
+    return (__bf16) mpfr_get_d (x, rnd_mode);
 
   e = mpfr_get_exp (x); /* 2^(e-1) <= |x| < 2^e */
 
-  if (e > 16) /* |x| >= 2^16 */
+  if (e > 128) /* |x| >= 2^128 */
     {
-      static const uint16_t s[2] = {0x7c00, 0xfc00};
+      static const uint16_t s[2] = {0x7f80, 0xff80}; // +Inf, -Inf
       int neg = mpfr_signbit (x);
       v.n = s[neg];
       if (MPFR_IS_LIKE_RNDZ(rnd_mode,neg))
@@ -53,38 +53,38 @@ mpfr_get_float16 (mpfr_srcptr x, mpfr_rnd_t rnd_mode)
       return v.x;
     }
 
-  /* now x is a normal non-zero number, with |x| < 2^16 */
+  /* now x is a normal non-zero number, with |x| < 2^128 */
   MPFR_SAVE_EXPO_MARK (expo);
 
   mpfr_init2 (y, MPFR_PREC(x));
 
-  /* we round x*2^(11-e) to an integer to get the significand of the result,
+  /* we round x*2^(8-e) to an integer to get the significand of the result,
      except when x is in the subnormal range */
-  if (e <= -14) /* subnormal range */
+  if (e <= -126) /* subnormal range */
     {
-      /* divide x by 2^-24 which is the smallest positive subnormal */
-      mpfr_mul_2si (y, x, 24, MPFR_RNDN); /* exact */
+      /* divide x by 2^-133 which is the smallest positive subnormal */
+      mpfr_mul_2si (y, x, 133, MPFR_RNDN); /* exact */
       m = mpfr_get_si (y, rnd_mode);
-      /* the result is m*2^-24 */
-      MPFR_ASSERTD(-0x400 <= m && m <= 0x400);
-      // the code below also works in the case where |m| = 0x400
+      /* the result is m*2^-133 */
+      MPFR_ASSERTD(-0x80 <= m && m <= 0x80);
+      // the code below also works in the case where |m| = 0x80
       v.n = (mpfr_signbit (y)) ? 0x8000 + (-m) : m;
     }
   else
     {
       /* x is in the normal range */
 
-      mpfr_mul_2si (y, x, 11 - e, MPFR_RNDN); /* exact */
-      /* 2^10 <= |y| < 2^11 */
+      mpfr_mul_2si (y, x, 8 - e, MPFR_RNDN); /* exact */
+      /* 2^7 <= |y| < 2^8 */
       m = mpfr_get_si (y, rnd_mode);
-      /* 2^10 <= |m| <= 2^11 with 1 <= 14 + e <= 30 */
-      v.n = ((14 + e) << 10) + ((m < 0) ? 0x7c00 - m : m - 0x400);
+      /* 2^7 <= |m| <= 2^8 with 1 <= 126 + e <= 126 */
+      v.n = ((126 + e) << 7) + ((m < 0) ? 0x7f80 - m : m - 0x80);
       /* Note: using + instead of | above allows the code to also work in case of
-         overflow: when e=16 and m=0x800 for example, the exponent part is
-         30 << 10 while the significand part is 0x400, which adds to 0x7c00,
-         which is the encoding of +Inf. When e=16 and m=-0x800, the significant
-         part is 0x7c00 + 0x800 = 0x8400, which added to 30 << 10 yields 0xfc00,
-         which is the encoding of -Inf. */
+         overflow: when e=128 and m=0x100 for example, the exponent part is
+         254 << 7 while the significand part is 0x80, which adds to 0x7f80,
+         which is the encoding of +Inf. When e=128 and m=-0x100, the
+         significant part is 0x7c80 + 0x100 = 0x7d80, which added to
+         254 << 7 yields 0xfc80, which is the encoding of -Inf. */
   }
 
   mpfr_clear (y);
@@ -92,4 +92,4 @@ mpfr_get_float16 (mpfr_srcptr x, mpfr_rnd_t rnd_mode)
   return v.x;
 }
 
-#endif /* MPFR_WANT_FLOAT16 */
+#endif /* MPFR_WANT_BFLOAT16 */
