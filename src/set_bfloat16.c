@@ -32,12 +32,12 @@ int
 mpfr_set_bfloat16 (mpfr_ptr r, __bf16 d, mpfr_rnd_t rnd_mode)
 {
   b16u16 v;
-  int e, signbit;
+  int e, sbit;
   int16_t m;
 
   v.x = d;
   e = (v.n >> 7) & 0xff; // the exponent has 8 bits
-  signbit = v.n >> 15;
+  sbit = v.n >> 15;
   m = v.n & 0x7f; // the significant has 7 bits
 
   /*
@@ -60,7 +60,7 @@ mpfr_set_bfloat16 (mpfr_ptr r, __bf16 d, mpfr_rnd_t rnd_mode)
         }
       /* INF case */
       MPFR_SET_INF (r);
-      if (signbit) /* sign bit is set */
+      if (sbit) /* sign bit is set */
         MPFR_SET_NEG (r);
       else
         MPFR_SET_POS (r);
@@ -75,7 +75,7 @@ mpfr_set_bfloat16 (mpfr_ptr r, __bf16 d, mpfr_rnd_t rnd_mode)
   else
     m += 0x80; /* add implicit bit */
 
-  if (signbit)
+  if (sbit)
     m = -m;
 
   /* d = m * 2^(e-134) where 134 is 127 (bias) + 7 (precision - 1) */
