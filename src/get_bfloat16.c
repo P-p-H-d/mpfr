@@ -79,11 +79,11 @@ mpfr_get_bfloat16 (mpfr_srcptr x, mpfr_rnd_t rnd_mode)
       m = mpfr_get_si (y, rnd_mode);
       /* 2^7 <= |m| <= 2^8 with 1 <= 126 + e <= 126 */
       v.n = ((126 + e) << 7) + ((m < 0) ? 0x7f80 - m : m - 0x80);
-      /* Note: using + instead of | above allows the code to also work in case of
-         overflow: when e=128 and m=0x100 for example, the exponent part is
+      /* Note: using + instead of | above allows the code to also work in case
+         of overflow: when e=128 and m=0x100 for example, the exponent part is
          254 << 7 while the significand part is 0x80, which adds to 0x7f80,
          which is the encoding of +Inf. When e=128 and m=-0x100, the
-         significant part is 0x7c80 + 0x100 = 0x7d80, which added to
+         significand part is 0x7c80 + 0x100 = 0x7d80, which added to
          254 << 7 yields 0xfc80, which is the encoding of -Inf. */
   }
 
