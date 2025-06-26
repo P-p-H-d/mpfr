@@ -36,9 +36,9 @@ mpfr_set_bfloat16 (mpfr_ptr r, __bf16 d, mpfr_rnd_t rnd_mode)
   int16_t m;
 
   v.x = d;
-  e = (v.n >> 7) & 0xff; // the exponent has 8 bits
+  e = (v.n >> 7) & 0xff; /* the exponent has 8 bits */
   sbit = v.n >> 15;
-  m = v.n & 0x7f; // the significant has 7 bits
+  m = v.n & 0x7f; /* the significant has 7 bits */
 
   /*
     NaN is encoded by e=127 and m!=0

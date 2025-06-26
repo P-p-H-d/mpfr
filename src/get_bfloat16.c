@@ -45,7 +45,7 @@ mpfr_get_bfloat16 (mpfr_srcptr x, mpfr_rnd_t rnd_mode)
 
   if (e > 128) /* |x| >= 2^128 */
     {
-      static const uint16_t s[2] = {0x7f80, 0xff80}; // +Inf, -Inf
+      static const uint16_t s[2] = {0x7f80, 0xff80}; /* +Inf, -Inf */
       int neg = mpfr_signbit (x);
       v.n = s[neg];
       if (MPFR_IS_LIKE_RNDZ(rnd_mode,neg))
@@ -67,7 +67,7 @@ mpfr_get_bfloat16 (mpfr_srcptr x, mpfr_rnd_t rnd_mode)
       m = mpfr_get_si (y, rnd_mode);
       /* the result is m*2^-133 */
       MPFR_ASSERTD(-0x80 <= m && m <= 0x80);
-      // the code below also works in the case where |m| = 0x80
+      /* the code below also works in the case where |m| = 0x80 */
       v.n = (mpfr_signbit (y)) ? 0x8000 + (-m) : m;
     }
   else
