@@ -852,7 +852,7 @@ volatile double d;
 v.x = 0x1.fp+5f16;
 d = (double) v.x;
 v.x = (_Float16) d;
-return v.n == 0;
+return v.n != 0x53c0 || d != 0x1.fp+5;
 ]])],
       [AC_MSG_RESULT(yes)
        AC_DEFINE([MPFR_WANT_FLOAT16],1,[Build _Float16 functions])],
@@ -872,7 +872,7 @@ volatile double d;
 v.x = 2.0;
 d = (double) v.x;
 v.x = (__bf16) d;
-return v.n == 0;
+return v.n != 0x4000 || d != 2.0;
 ]])],
       [AC_MSG_RESULT(yes)
        AC_DEFINE([MPFR_WANT_BFLOAT16],1,[Build __bf16 functions])],
