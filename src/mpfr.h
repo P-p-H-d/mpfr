@@ -407,6 +407,7 @@ __MPFR_DECLSPEC MPFR_RETURNS_NONNULL const char * mpfr_get_patches (void);
 
 __MPFR_DECLSPEC int mpfr_buildopt_tls_p          (void);
 __MPFR_DECLSPEC int mpfr_buildopt_float16_p      (void);
+__MPFR_DECLSPEC int mpfr_buildopt_bfloat16_p      (void);
 __MPFR_DECLSPEC int mpfr_buildopt_float128_p     (void);
 __MPFR_DECLSPEC int mpfr_buildopt_decimal_p      (void);
 __MPFR_DECLSPEC int mpfr_buildopt_gmpinternals_p (void);
@@ -510,6 +511,12 @@ MPFR_EXTENSION
 __MPFR_DECLSPEC int mpfr_set_float16 (mpfr_ptr, _Float16, mpfr_rnd_t);
 MPFR_EXTENSION
 __MPFR_DECLSPEC _Float16 mpfr_get_float16 (mpfr_srcptr, mpfr_rnd_t);
+#endif
+#ifdef MPFR_WANT_BFLOAT16
+MPFR_EXTENSION
+__MPFR_DECLSPEC int mpfr_set_bfloat16 (mpfr_ptr, __bf16, mpfr_rnd_t);
+MPFR_EXTENSION
+__MPFR_DECLSPEC __bf16 mpfr_get_bfloat16 (mpfr_srcptr, mpfr_rnd_t);
 #endif
 __MPFR_DECLSPEC int mpfr_set_z (mpfr_ptr, mpz_srcptr, mpfr_rnd_t);
 __MPFR_DECLSPEC int mpfr_set_z_2exp (mpfr_ptr, mpz_srcptr, mpfr_exp_t,

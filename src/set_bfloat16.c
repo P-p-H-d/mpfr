@@ -1,4 +1,4 @@
-/* mpfr_set_float16 -- convert a machine _Float116 number to
+/* mpfr_set_bfloat16 -- convert a machine bfloat16 number to
                        a multiple precision floating-point number
 
 Copyright 2012-2025 Free Software Foundation, Inc.
@@ -22,36 +22,36 @@ If not, see <https://www.gnu.org/licenses/>. */
 
 #include "mpfr-impl.h"
 
-#ifdef MPFR_WANT_FLOAT16
+#ifdef MPFR_WANT_BFLOAT16
 
 #include <stdint.h>
 
-typedef union { _Float16 x; uint16_t n; } b16u16;
+typedef union { __bf16 x; uint16_t n; } b16u16;
 
 int
-mpfr_set_float16 (mpfr_ptr r, _Float16 d, mpfr_rnd_t rnd_mode)
+mpfr_set_bfloat16 (mpfr_ptr r, __bf16 d, mpfr_rnd_t rnd_mode)
 {
   b16u16 v;
   int e, sbit;
   int16_t m;
 
   v.x = d;
-  e = (v.n >> 10) & 0x1f;
+  e = (v.n >> 7) & 0xff; // the exponent has 8 bits
   sbit = v.n >> 15;
-  m = v.n & 0x3ff;
+  m = v.n & 0x7f; // the significant has 7 bits
 
   /*
-    NaN is encoded by e=31 and m!=0
-    +Inf is encoded by e=31 and m=0
-    the largest number is 0x1.ffcp+15 (e=30, m=0x3ff)
-    1.0 is encoded by e=15 and m=0
-    the smallest positive normal number is 0x1p-14 (e=1, m=0)
-    the largest subnormal number is 0x1.ff8p-15 (e=0, m=0x3ff)
-    the smallest positive subnormal number is 0x1p-24 (e=0, m=1)
+    NaN is encoded by e=127 and m!=0
+    +Inf is encoded by e=127 and m=0
+    the largest number is 0x1.fep+127 (e=126, m=0x7f)
+    1.0 is encoded by e=127 and m=0
+    the smallest positive normal number is 0x1p-126 (e=1, m=0)
+    the largest subnormal number is 0x1.fcp-127 (e=0, m=0x7f)
+    the smallest positive subnormal number is 0x1p-133 (e=0, m=1)
    */
 
   /* Check for NaN or INF */
-  if (MPFR_UNLIKELY (e == 0x1f))
+  if (MPFR_UNLIKELY (e == 0xff))
     {
       if (m != 0) /* NaN */
         {
@@ -73,13 +73,13 @@ mpfr_set_float16 (mpfr_ptr r, _Float16 d, mpfr_rnd_t rnd_mode)
       e ++;
     }
   else
-    m += 0x400; /* add implicit bit */
+    m += 0x80; /* add implicit bit */
 
   if (sbit)
     m = -m;
 
-  /* d = m * 2^(e-25) */
-  return mpfr_set_si_2exp (r, m, e - 25, rnd_mode);
+  /* d = m * 2^(e-134) where 134 is 127 (bias) + 7 (precision - 1) */
+  return mpfr_set_si_2exp (r, m, e - 134, rnd_mode);
 }
 
-#endif /* MPFR_WANT_FLOAT16 */
+#endif /* MPFR_WANT_BFLOAT16 */
