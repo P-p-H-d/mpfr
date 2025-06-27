@@ -780,6 +780,13 @@ compilers:
 Note: This list is not exhaustive; these are just the simplest keywords,
 which are likely to be used by mistake.
 
+Do not use reserved identifiers that have an external definition, even
+if the associated headers is not included (see ISO C23 7.1.3p1). This
+comprises the functions from the C library (including the math library,
+if any). There does not seem to be an easy way to detect them; perhaps
+GCC will do that:
+  https://gcc.gnu.org/bugzilla/show_bug.cgi?id=51437
+
 Check C++ reserved keywords, e.g. from
 
   https://en.cppreference.com/w/cpp/keyword
