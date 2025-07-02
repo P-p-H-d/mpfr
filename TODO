@@ -829,3 +829,5 @@ Table of contents:
 
 - count_leading_zeros may be replaced by the corresponding function in
   <stdbit.h> (from ISO C23) in the future.
+
+- replace reserved and potentially reserved identifiers, such as exp.
