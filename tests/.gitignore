@@ -161,6 +161,7 @@
 /tsec
 /tsech
 /tset
+/tset_bfloat16
 /tset_d
 /tset_exp
 /tset_f
