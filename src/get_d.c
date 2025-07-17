@@ -67,7 +67,7 @@ mpfr_get_d (mpfr_srcptr src, mpfr_rnd_t rnd_mode)
     {
       /* Note: Avoid using a constant expression DBL_MIN * DBL_EPSILON
          as this gives 0 instead of the correct result with gcc on some
-         Alpha machines. */
+         Alpha machines and possibly with flush-to-zero (FTZ). */
       d = negative ?
         (rnd_mode == MPFR_RNDD ||
          (rnd_mode == MPFR_RNDN && mpfr_cmp_si_2exp(src, -1, -1075) < 0)

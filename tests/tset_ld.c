@@ -124,7 +124,7 @@ print_binary (long double d, int flag)
          f from d and reset f to 0
      This is guaranteed to work only when the rounding precision is at least
      half the precision of d, since otherwise d-f might not be exact.
-     This method does not work with flush-to-zero on underflow. */
+     This method does not work with flush-to-zero (FTZ) on underflow. */
   f = 0.0; /* will hold accumulated powers of 2 */
   while (1)
     {
