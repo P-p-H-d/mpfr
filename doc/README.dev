@@ -1750,6 +1750,12 @@ In case of failure of a test, freeing the memory explicitly before exiting
 is not necessary. We do this in case of success just to be able to detect
 memory leaks in MPFR.
 
+Error messages for incorrect results should be written to the standard output
+(stdout), except when it is redirected (e.g. in tprintf.c), in which case
+they must be written to the standard error (stderr). Error messages about
+errors unrelated to the MPFR library (e.g. failure to open a data file or
+detection of a compiler bug) must also be written to the standard error.
+
 Also, try to make sure that the tests run against previous MPFR versions,
 possibly by disabling some tests with code like
 
