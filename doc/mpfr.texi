@@ -1554,8 +1554,8 @@ to use those functions, one should define the macro
 @code{mpfr_set_q} might fail if the numerator (or the
 denominator) cannot be represented as a @code{mpfr_t}.
 
-For @code{mpfr_set}, the sign of a NaN is propagated in order to mimic the
-IEEE@tie{}754 @code{copy} operation. But contrary to IEEE@tie{}754, the
+For @code{mpfr_set}, the sign bit of a NaN is propagated in order to mimic
+the IEEE@tie{}754 @code{copy} operation. But contrary to IEEE@tie{}754, the
 NaN flag is set as usual.
 
 Note: If you want to store a floating-point constant to a @code{mpfr_t},
