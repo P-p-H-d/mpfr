@@ -1542,7 +1542,7 @@ compiler or system provides the @samp{__bf16} data type.
 To use the @code{mpfr_set_float128} function, see @ref{Nomenclature and Types}.
 The functions @code{mpfr_set_flt}, @code{mpfr_set_d}, @code{mpfr_set_ld},
 @code{mpfr_set_decimal64} and @code{mpfr_set_decimal128}
-do not preserve the sign bit of NaN;
+do not propagate the sign bit of NaN;
 if the system does not support the IEEE@tie{}754 standard,
 these functions might not preserve signed zeros either.
 The @code{mpfr_set_decimal64} and @code{mpfr_set_decimal128}
