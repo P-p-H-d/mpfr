@@ -102,6 +102,7 @@ mpfr_cmp_ui_2exp (mpfr_srcptr b, unsigned long int i, mpfr_exp_t f)
       MPFR_SAVE_EXPO_MARK (expo);
       mpfr_set_ui_2exp (uu, i, f, MPFR_RNDZ);
       MPFR_SAVE_EXPO_FREE (expo);
+      /* uu is now possibly out of range, but this is allowed by mpfr_cmp. */
       ret = mpfr_cmp (b, uu);
       mpfr_clear (uu);
       return ret;

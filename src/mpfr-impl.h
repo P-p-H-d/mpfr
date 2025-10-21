@@ -1110,19 +1110,26 @@ typedef uintmax_t mpfr_ueexp_t;
 
 #define MPFR_IS_FP(x)       (!MPFR_IS_NAN(x) && !MPFR_IS_INF(x))
 
-/* Note: contrary to the MPFR_IS_PURE_*(x) macros, the MPFR_IS_SINGULAR*(x)
-   macros may be used even when x is being constructed, i.e. its exponent
-   field is already set (possibly out-of-range), but its significand field
-   may still contain arbitrary data. Thus MPFR_IS_PURE_FP(x) is not always
-   equivalent to !MPFR_IS_SINGULAR(x); see the code below. */
+/* Note: Contrary to the MPFR_IS_PURE_*(x) macros, the MPFR_IS_SINGULAR*(x)
+   macros may be used even when x is being constructed, e.g. by a low-level
+   algorithm. The exponent field of x must already be set, but it may have
+   any value, even less than MPFR_EMIN_MIN or larger than MPFR_EMAX_MAX.
+   Any real exponent value must obviously be larger than MPFR_EXP_INF,
+   though. The significand field may still contain arbitrary data. Thus
+   MPFR_IS_PURE_FP(x) is not always equivalent to !MPFR_IS_SINGULAR(x);
+   see the code below. */
 #define MPFR_IS_SINGULAR(x) (MPFR_EXP(x) <= MPFR_EXP_INF)
 #define MPFR_IS_SINGULAR_OR_UBF(x) (MPFR_EXP(x) <= MPFR_EXP_UBF)
 
 /* The following two macros return true iff the value is a regular number,
    i.e. it is not a singular number. In debug mode, the format is also
-   checked: valid exponent, but potentially out of range; normalized value.
-   In contexts where UBFs are not accepted or not possible, MPFR_IS_PURE_FP
-   is preferable. If UBFs are accepted, MPFR_IS_PURE_UBF must be used. */
+   checked: the exponent must be valid, but potentially out of range,
+   since such numbers may be acceptable as inputs by some functions
+   (e.g. comparisons with constants); the significand must be normalized
+   (all functions return numbers with a normalized significand; otherwise
+   this indicates a bug). In contexts where UBFs are not accepted or
+   not possible, MPFR_IS_PURE_FP is preferable. If UBFs are accepted,
+   MPFR_IS_PURE_UBF must be used. */
 #define MPFR_IS_PURE_FP(x)                          \
   (!MPFR_IS_SINGULAR(x) &&                          \
    (MPFR_ASSERTD (MPFR_EXP (x) >= MPFR_EMIN_MIN &&  \

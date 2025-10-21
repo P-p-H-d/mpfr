@@ -25,6 +25,8 @@ If not, see <https://www.gnu.org/licenses/>. */
            a positive value iff b > sign(s) * c
            a negative value iff b < sign(s) * c
    returns 0 and sets erange flag if b and/or c is NaN.
+
+   b and c are allowed to be out of range.
 */
 
 MPFR_HOT_FUNCTION_ATTR int

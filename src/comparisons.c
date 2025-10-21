@@ -32,6 +32,8 @@ If not, see <https://www.gnu.org/licenses/>. */
  * mpfr_lessgreater_p       0     1     1     0
  * mpfr_equal_p             1     0     0     0
  * mpfr_unordered_p         0     0     0     1
+ *
+ * x and y are allowed to be out of range.
  */
 
 int

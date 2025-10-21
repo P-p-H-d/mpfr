@@ -1471,6 +1471,15 @@ More on exponent handling:
 
     printf ("%" MPFR_EXP_FSPEC "d", (mpfr_eexp_t) exponent);
 
+* In general, a regular MPFR number must have an exponent that is in the
+  current exponent range. But comparisons on MPFR numbers need to accept
+  inputs with out-of-range exponents, e.g. to be able to compare with
+  constants independently of the current exponent range. Some functions
+  or macros that are allowed to be used by low-level algorithms may accept
+  invalid exponent values: values less than MPFR_EMIN_MIN or larger than
+  MPFR_EMAX_MAX; but in contexts where singular values are possible, the
+  exponent value must obviously be larger than MPFR_EXP_INF.
+
 For implementation details, see the mpfr.h and mpfr-impl.h files.
 
 ===========================================================================
