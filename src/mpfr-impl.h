@@ -1121,8 +1121,8 @@ typedef uintmax_t mpfr_ueexp_t;
 /* The following two macros return true iff the value is a regular number,
    i.e. it is not a singular number. In debug mode, the format is also
    checked: valid exponent, but potentially out of range; normalized value.
-   In contexts where UBF's are not accepted or not possible, MPFR_IS_PURE_FP
-   is preferable. If UBF's are accepted, MPFR_IS_PURE_UBF must be used. */
+   In contexts where UBFs are not accepted or not possible, MPFR_IS_PURE_FP
+   is preferable. If UBFs are accepted, MPFR_IS_PURE_UBF must be used. */
 #define MPFR_IS_PURE_FP(x)                          \
   (!MPFR_IS_SINGULAR(x) &&                          \
    (MPFR_ASSERTD (MPFR_EXP (x) >= MPFR_EMIN_MIN &&  \
@@ -2824,7 +2824,7 @@ __MPFR_DECLSPEC mpfr_exp_t mpfr_ubf_diff_exp (mpfr_srcptr, mpfr_srcptr);
 /* Get the _mpfr_zexp field (pointer to a mpz_t) of an UBF object.
    For practical reasons, the type of the argument x can be either
    mpfr_ubf_ptr or mpfr_ptr, since the latter is used in functions
-   that accept both MPFR numbers and UBF's; this is checked by the
+   that accept both MPFR numbers and UBFs; this is checked by the
    code "(x)->_mpfr_exp" (the "sizeof" prevents an access, which
    could be invalid when MPFR_ZEXP(x) is used for an assignment,
    and also avoids breaking the aliasing rules if they are dealt
