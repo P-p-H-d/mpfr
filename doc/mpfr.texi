@@ -2551,8 +2551,8 @@ For example, if @var{u} equals 360, @code{mpfr_atan2u} returns the
 arc-tangent in degrees, with values from @minus{}180 to 180.
 
 @code{atan2(@var{y}, 0)} does not raise any floating-point exception.
-Special values are handled as described in the ISO C99 and IEEE@tie{}754
-standards for the @code{atan2} function:
+Special values are handled as described in the ISO C99 (Annex@tie{}F)
+and IEEE@tie{}754 standards for the @code{atan2} function:
 @itemize @bullet
 @item @code{atan2(+0, -0)} returns @m{+\pi,+Pi}.
 @item @code{atan2(-0, -0)} returns @m{-\pi,@minus{}Pi}.
@@ -2576,6 +2576,20 @@ standards for the @code{atan2} function:
 @item @code{atan2(@var{y}, +Inf)} returns @minus{}0 for finite @tm{@var{y} < 0}.
 @end itemize
 @end deftypefun
+@c Note: The choice done by ISO C99 (which IEEE 754-2008 has copied) for
+@c the indeterminate forms atan2(±0,±0) and atan2(±inf,±inf) is explained
+@c in the C rationale
+@c   * page 180 (Section F.9 Mathematics <math.h>): "Generally, C99 eschews
+@c     a NaN result where a numerical value is useful. [...] The result of
+@c     atan2(+0,+0), which is equivalent to carg(+0 + i 0), is defined to
+@c     be +0. A significant benefit is supporting a clog that is equivalent
+@c     to log on the nonnegative real axis."
+@c   * page 181 (Section F.9.1.4 The atan2 functions): "The more contentious
+@c     cases are y and x both infinite or both zero. These deliver numeric
+@c     results instead of NaNs in order to preserve more identities and for
+@c     better utility. [...] The specification of atan2(∞,∞) as π/4 indicates
+@c     the reasonable quadrant, preserving some information in preference to
+@c     none."
 
 @deftypefun int mpfr_cosh (mpfr_t @var{rop}, const mpfr_t @var{op}, mpfr_rnd_t @var{rnd})
 @deftypefunx int mpfr_sinh (mpfr_t @var{rop}, const mpfr_t @var{op}, mpfr_rnd_t @var{rnd})
