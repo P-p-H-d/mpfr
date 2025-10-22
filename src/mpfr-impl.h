@@ -328,10 +328,9 @@ __MPFR_DECLSPEC mpfr_cache_ptr * __gmpfr_cache_const_log2_f (void);
 #define BASE_MAX 62
 __MPFR_DECLSPEC extern const __mpfr_struct __gmpfr_l2b[BASE_MAX-1][2];
 
-/* Note: do not use the following values when they can be outside the
-   current exponent range, e.g. when the exponent range has not been
-   extended yet; under such a condition, they can be used only in
-   mpfr_cmpabs. */
+/* Warning! These constants may be out of range if the exponent range is
+   very reduced. Do not use them in such a case, except when explicitly
+   allowed (e.g., see comments in cmp.c, cmpabs.c and comparisons.c). */
 __MPFR_DECLSPEC extern const mpfr_t __gmpfr_one;
 __MPFR_DECLSPEC extern const mpfr_t __gmpfr_two;
 __MPFR_DECLSPEC extern const mpfr_t __gmpfr_four;
@@ -1051,15 +1050,15 @@ typedef uintmax_t mpfr_ueexp_t;
 #define MPFR_EMAX_MIN (1-MPFR_EXP_INVALID)
 #define MPFR_EMAX_MAX (MPFR_EXP_INVALID-1)
 
-/* Use MPFR_GET_EXP and MPFR_SET_EXP instead of MPFR_EXP directly,
-   unless when the exponent may be out-of-range, for instance when
-   setting the exponent before calling mpfr_check_range.
+/* Use MPFR_GET_EXP and MPFR_SET_EXP instead of MPFR_EXP directly, unless
+   the exponent may be invalid (or out of range in case of MPFR_SET_EXP),
+   for instance when setting the exponent before calling mpfr_check_range.
    MPFR_EXP_CHECK is defined when MPFR_WANT_ASSERT is defined, but if you
    don't use MPFR_WANT_ASSERT (for speed reasons), you can still define
    MPFR_EXP_CHECK by setting -DMPFR_EXP_CHECK in $CFLAGS.
    Note about MPFR_EXP_IN_RANGE and MPFR_SET_EXP:
      The exp expression is required to have a signed type. To avoid spurious
-     failures, we could cast (exp) to mpfr_exp_t, but this wouldn't allow us
+     failures, we could cast (e) to mpfr_exp_t, but this would not allow us
      to detect some bugs that can occur on particular platforms. Anyway, an
      unsigned type for exp is suspicious and should be regarded as a bug.
 */

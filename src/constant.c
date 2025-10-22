@@ -22,8 +22,8 @@ If not, see <https://www.gnu.org/licenses/>. */
 #include "mpfr-impl.h"
 
 /* Warning! These constants may be out of range if the exponent range is
-   very reduced. But they may still be used for comparisons (see comments
-   in cmp.c and comparisons.c, in particular). */
+   very reduced. Do not use them in such a case, except when explicitly
+   allowed (e.g., see comments in cmp.c, cmpabs.c and comparisons.c). */
 
 static const mp_limb_t __gmpfr_limb1[1] = {MPFR_LIMB_HIGHBIT};
 const mpfr_t __gmpfr_one = {{2, MPFR_SIGN_POS, 1, (mp_limb_t*)__gmpfr_limb1}};

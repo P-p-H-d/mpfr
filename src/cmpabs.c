@@ -22,7 +22,10 @@ If not, see <https://www.gnu.org/licenses/>. */
 #include "mpfr-impl.h"
 
 /* Return a positive value if abs(b) > abs(c), 0 if abs(b) = abs(c), and
-   a negative value if abs(b) < abs(c). */
+   a negative value if abs(b) < abs(c).
+
+   b and c are allowed to be out of range.
+*/
 
 int
 mpfr_cmpabs (mpfr_srcptr b, mpfr_srcptr c)
@@ -48,18 +51,8 @@ mpfr_cmpabs (mpfr_srcptr b, mpfr_srcptr c)
         return -1;
     }
 
-  MPFR_ASSERTD (MPFR_IS_PURE_FP (b));
-  MPFR_ASSERTD (MPFR_IS_PURE_FP (c));
-
-  /* Now that we know that b and c are pure FP numbers (i.e. they have
-     a meaningful exponent), we use MPFR_EXP instead of MPFR_GET_EXP to
-     allow exponents outside the current exponent range. For instance,
-     this is useful for mpfr_pow, which compares values to __gmpfr_one.
-     This is for internal use only! For compatibility with other MPFR
-     versions, the user must still provide values that are representable
-     in the current exponent range. */
-  be = MPFR_EXP (b);
-  ce = MPFR_EXP (c);
+  be = MPFR_GET_EXP (b);
+  ce = MPFR_GET_EXP (c);
   if (be > ce)
     return 1;
   if (be < ce)
