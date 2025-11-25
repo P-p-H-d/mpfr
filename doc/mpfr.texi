@@ -5050,9 +5050,16 @@ Birkh@"auser, Boston, 3rd edition, 2016.
 @item
 Jean-Michel Muller, Nicolas Brisebarre, Florent de Dinechin,
 Claude-Pierre Jeannerod, Vincent Lef@`evre, Guillaume Melquiond,
-Nathalie Revol, Damien Stehl@'e and Serge Torr@`es,
+Nathalie Revol, Damien Stehl@'e and Serge Torres,
 "Handbook of Floating-Point Arithmetic",
-Birkh@"auser, Boston, 2009.
+Birkh@"auser, Boston, 1st edition, 2009.
+
+@item
+Jean-Michel Muller, Nicolas Brunie, Florent de Dinechin,
+Claude-Pierre Jeannerod, Mioara Joldes, Vincent Lef@`evre,
+Guillaume Melquiond, Nathalie Revol and Serge Torres,
+"Handbook of Floating-Point Arithmetic",
+Birkh@"auser, Cham, 2nd edition, 2018.
 
 @end itemize
 
