@@ -1297,13 +1297,18 @@ MPFR manual (mpfr.texi):
     This is just the name of this character (as originally defined
     for base 10) and does not imply a number written in decimal.
     Note: POSIX uses the term "radix character".
-  * Use "@minus{}" for the minus character, not "-".
+  * Use "@minus{}" for the minus character, not the ASCII "-".
   * Warning! Texinfo is not like TeX. Whitespace is preserved in the
     info file. So, do not use additional space for .texi indentation.
     This also means that you need to care about the typography. Please
     read Section "Inserting Space" in the Texinfo manual.
   * Follow the English typography (no space before punctuation marks,
     double space after a period, etc.), not the French one.
+  * Do not use non-ASCII characters in the mpfr.texi source if they
+    appear in text eligible for HTML generation. Otherwise, for HTML,
+    makeinfo (texi2any) generates characters encoded in UTF-8 instead
+    of entities; this is incorrect if the file is served with another
+    encoding (such as ISO-8859-1 currently with mpfr.org).
 
 The MPFR manual in DVI/PS/PDF formats should have an a4 papersize, as
 declared in mpfr.texi (@afourpaper command). The DVI file format (.dvi)
