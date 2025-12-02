@@ -534,6 +534,15 @@ grep -E '[^a-z_](m|re)alloc *\(' tests/*.c | \
 err-if-output --msg='Use "..." instead of "@dots{}" in function prototypes.' \
   -t "@dots{} in prototypes" grep '@deftypefun.*@dots' doc/mpfr.texi
 
+# Check that except for comment lines, mpfr.texi does not contain non-ASCII
+# characters. Otherwise, for HTML, makeinfo (texi2any) generates characters
+# encoded in UTF-8 instead of entities; this is incorrect if the file is
+# served with another encoding (such as ISO-8859-1 with mpfr.org).
+# Note: protection with @ifnothtml is not checked yet, but as long as
+# this does not occur, such a check is useless.
+err-if-output -t "Non-ASCII character in mpfr.texi" \
+  grep -Ev '^(@c |[ -~]*$)' doc/mpfr.texi
+
 err-if-output --dir=doc "check-typography" ./check-typography
 
 rndmodes1=(${(o)$(perl -ne '/return\s*"(MPFR_\S+)"/ and print "$1\n"' src/print_rnd_mode.c)})
