@@ -1334,6 +1334,7 @@ purpose.
 Initialize @var{x}, set its precision to be @strong{exactly}
 @var{prec} bits and its value to NaN@. (Warning: the corresponding
 MPF function initializes to zero instead.)
+The sign bit of this NaN value is unspecified.
 
 Normally, a variable should be initialized once only or at
 least be cleared, using @code{mpfr_clear}, between initializations.
@@ -1490,6 +1491,7 @@ a call to @code{mpfr_clear(@var{x})} followed by a call to
 @code{mpfr_init2(@var{x}, @var{prec})}, but more efficient as no allocation
 is done in case the current allocated space for the significand of @var{x}
 is enough.
+Similar to @code{mpfr_init2}, the sign bit of this NaN value is unspecified.
 The precision @var{prec} can be any integer between @code{MPFR_PREC_MIN} and
 @code{MPFR_PREC_MAX}.
 In case you want to keep the previous value stored in @var{x},
