@@ -1290,7 +1290,6 @@ ofuf_thresholds (int (*fct)(FLIST), int (*inv)(FLIST), const char *name,
   set_emax (MPFR_EMAX_MAX);
 
   mpfr_init2 (t, MPFR_PREC_MIN);
-  MPFR_SIGN (t) = neg ? MPFR_SIGN_NEG : MPFR_SIGN_POS;
 
   if (ufl)
     {
@@ -1314,6 +1313,8 @@ ofuf_thresholds (int (*fct)(FLIST), int (*inv)(FLIST), const char *name,
               mpfr_set_prec (t, py);
               mpfr_setmax (t, mpfr_get_emax ());
             }
+
+          MPFR_SIGN (t) = neg ? MPFR_SIGN_NEG : MPFR_SIGN_POS;
 
           if (dbg)
             {
