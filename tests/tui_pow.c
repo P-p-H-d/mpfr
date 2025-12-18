@@ -268,7 +268,7 @@ main (int argc, char *argv[])
 
   do n = randlimb (); while (n <= 1);
 
-  MPFR_SET_INF (x);
+  mpfr_set_inf (x, 1);
   mpfr_ui_pow (y, n, x, MPFR_RNDN);
   if (! MPFR_IS_INF (y))
     {
