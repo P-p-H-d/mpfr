@@ -88,6 +88,7 @@ main (void)
       exit (1);
     }
   mpfr_init2 (x, 53);
+  MPFR_SET_POS (x);  /* This test uses the sign bit of NaN. */
   mpfr_set_nan (x);
   mpfr_dump (x);
   MPFR_CHANGE_SIGN (x);

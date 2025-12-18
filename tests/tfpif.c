@@ -54,6 +54,7 @@ fh_doit (int argc, char *argv[], mpfr_prec_t p1, mpfr_prec_t p2)
   mpfr_set_exp (x[2], -48000);
   mpfr_set_inf (x[3], 1);
   mpfr_set_zero (x[4], 1);
+  MPFR_SET_POS (x[5]);  /* This test uses the sign bit of NaN. */
   mpfr_set_nan (x[5]);
   mpfr_set_ui (x[6], 104348, MPFR_RNDN);
   mpfr_set_ui (x[7], 33215, MPFR_RNDN);
