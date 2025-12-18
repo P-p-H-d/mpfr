@@ -73,6 +73,7 @@ bug20210206 (void)
   for (precx = MPFR_PREC_MIN; precx < 150; precx++)
     {
       mpfr_init2 (x, precx);
+      MPFR_SET_POS (x);
       mpfr_setmax (x, __gmpfr_emax);
       for (i = 0; i < NPREC; i++)
         mpfr_digamma (y[i], x, MPFR_RNDA);

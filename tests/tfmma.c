@@ -123,6 +123,7 @@ zero_tests (void)
   mpfr_inits2 (GMP_NUMB_BITS, a, b, c, d, (mpfr_ptr) 0);
   for (i = 0; i <= 4; i++)
     {
+      MPFR_SET_POS (a);  /* for mpfr_setmax and mpfr_setmin below */
       switch (i)
         {
         case 0: case 1:
@@ -198,6 +199,7 @@ max_tests (void)
   set_emax (MPFR_EMAX_MAX);
 
   mpfr_init2 (x, GMP_NUMB_BITS);
+  MPFR_SET_POS (x);
   mpfr_setmax (x, MPFR_EMAX_MAX);
   flags1 = MPFR_FLAGS_OVERFLOW | MPFR_FLAGS_INEXACT;
   RND_LOOP (r)
@@ -373,7 +375,7 @@ half_plus_half (void)
   mpfr_init2 (x2, GMP_NUMB_BITS);
   mpfr_set_ui_2exp (h, 1, -1, MPFR_RNDN);
 
-  for (mpfr_setmin (x1, __gmpfr_emin);
+  for (MPFR_SET_POS (x1), mpfr_setmin (x1, __gmpfr_emin);
        MPFR_GET_EXP (x1) < __gmpfr_emin + 2;
        mpfr_nextabove (x1))
     {

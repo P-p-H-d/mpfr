@@ -1281,11 +1281,13 @@ test_extreme (void)
   for (xi = 0; xi < 4; xi++)
     {
       mpfr_init2 (x, p[xi]);
+      MPFR_SET_POS (x);
       mpfr_setmax (x, MPFR_EMAX_MAX);
       MPFR_ASSERTN (mpfr_check (x));
       for (yi = 0; yi < 4; yi++)
         {
           mpfr_init2 (y, p[yi]);
+          MPFR_SET_POS (y);
           mpfr_setmin (y, MPFR_EMIN_MIN);
           for (j = 0; j < 2; j++)
             {

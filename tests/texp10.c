@@ -234,6 +234,7 @@ bug20230213 (void)
       mpfr_inits2 (px[i], x1, x2, (mpfr_ptr) 0);
       mpfr_inits2 (py[i], y1, y2, (mpfr_ptr) 0);
 
+      MPFR_SET_POS (y1);
       mpfr_setmax (y1, emax);
       mpfr_log10 (x1, y1, MPFR_RNDD);
       mpfr_set_str (x2, s[i], 0, MPFR_RNDN);
@@ -351,6 +352,7 @@ bug20230427 (void)
       flags = __gmpfr_flags;
       ex_flags = MPFR_FLAGS_UNDERFLOW | MPFR_FLAGS_INEXACT;
 
+      MPFR_SET_POS (z);
       mpfr_setmin (z, mpfr_get_emin ());  /* z = 0.1@emin */
       if (! (mpfr_equal_p (y, z) && flags == ex_flags))
         {

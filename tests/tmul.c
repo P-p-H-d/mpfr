@@ -715,6 +715,7 @@ test_underflow (mpfr_prec_t pmax)
 
   mpfr_init2 (a0, MPFR_PREC_MIN);
   emin = mpfr_get_emin ();
+  MPFR_SET_POS (a0);
   mpfr_setmin (a0, emin);  /* 0.5 * 2^emin */
 
   /* for RNDN, we want b*c < 0.5 * 2^emin but RNDN(b*c, p) = 0.5 * 2^emin,

@@ -1376,6 +1376,7 @@ check_emin_aux (mpfr_exp_t e)
   mpfr_init2 (x, 16);
   mpz_init (ee);
 
+  MPFR_SET_POS (x);
   mpfr_setmin (x, e);
   mpz_set_si (ee, e);
   mpz_sub_ui (ee, ee, 1);

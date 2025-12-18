@@ -646,6 +646,7 @@ check_overflow (void)
             mpfr_set_prec (b, prec_b);
             mpfr_set_prec (c, prec_c);
 
+            MPFR_SET_POS (b);
             mpfr_setmax (b, mpfr_get_emax ());
 
             up = r == MPFR_RNDA || r == MPFR_RNDU || r == MPFR_RNDN;
@@ -687,6 +688,7 @@ check_overflow (void)
           }
 
   mpfr_set_prec (b, 256);
+  MPFR_SET_POS (b);
   mpfr_setmax (b, mpfr_get_emax ());
   mpfr_set_prec (c, 256);
   mpfr_set_ui (c, 1, MPFR_RNDN);
@@ -1160,8 +1162,11 @@ check_extreme (void)
   int i, inex, r;
 
   mpfr_inits2 (32, u, v, w, x, y, (mpfr_ptr) 0);
+  MPFR_SET_POS (u);
   mpfr_setmin (u, mpfr_get_emax ());
+  MPFR_SET_POS (v);
   mpfr_setmax (v, mpfr_get_emin ());
+  MPFR_SET_POS (w);
   mpfr_setmin (w, mpfr_get_emax () - 40);
   RND_LOOP (r)
     for (i = 0; i < 2; i++)

@@ -120,6 +120,7 @@ check_diverse (void)
   mpfr_set_prec (x, 2);
   mpfr_set_prec (y, 4);
   mpfr_set_prec (z, 2);
+  MPFR_SET_POS (y);
   mpfr_setmax (y, __gmpfr_emax);
   mpfr_set_str_binary (z, "0.1E-10"); /* tiny */
   test_sub (x, y, z, MPFR_RNDN); /* should round to 2^emax, i.e. overflow */
@@ -747,6 +748,7 @@ check_max_almosteven (void)
       mpfr_init2 (b, p+1);
       mpfr_init2 (c, MPFR_PREC_MIN);
 
+      MPFR_SET_POS (b);
       mpfr_setmax (b, 0);
       mpfr_set_ui (c, 1, MPFR_RNDN);
 
