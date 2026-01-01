@@ -1,7 +1,7 @@
 /* Test file for mpfr_rint, mpfr_trunc, mpfr_floor, mpfr_ceil, mpfr_round,
    mpfr_rint_trunc, mpfr_rint_floor, mpfr_rint_ceil, mpfr_rint_round.
 
-Copyright 2002-2025 Free Software Foundation, Inc.
+Copyright 2002-2026 Free Software Foundation, Inc.
 Contributed by the Pascaline and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.

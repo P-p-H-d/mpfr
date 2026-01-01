@@ -1,6 +1,6 @@
 /* Test file for mpz_set_fr / mpfr_get_z / mpfr_get_z_2exp.
 
-Copyright 2004, 2006-2025 Free Software Foundation, Inc.
+Copyright 2004, 2006-2026 Free Software Foundation, Inc.
 Contributed by the Pascaline and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.

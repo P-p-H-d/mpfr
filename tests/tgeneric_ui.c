@@ -1,6 +1,6 @@
 /* Generic test file for functions with one mpfr_t argument and an integer.
 
-Copyright 2005-2025 Free Software Foundation, Inc.
+Copyright 2005-2026 Free Software Foundation, Inc.
 Contributed by the Pascaline and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.

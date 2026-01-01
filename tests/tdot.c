@@ -1,6 +1,6 @@
 /* tdot -- test file for mpfr_dot
 
-Copyright 2018-2025 Free Software Foundation, Inc.
+Copyright 2018-2026 Free Software Foundation, Inc.
 Contributed by the Pascaline and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.

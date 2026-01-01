@@ -1,6 +1,6 @@
 /* mpfr_fits_*_p -- test whether an mpfr fits a C signed type.
 
-Copyright 2003-2025 Free Software Foundation, Inc.
+Copyright 2003-2026 Free Software Foundation, Inc.
 Contributed by the Pascaline and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.

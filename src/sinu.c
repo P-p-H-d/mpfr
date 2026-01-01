@@ -1,7 +1,7 @@
 /* mpfr_sinu  -- sinu(x) = sin(2*pi*x/u)
    mpfr_sinpi -- sinpi(x) = sin(pi*x)
 
-Copyright 2020-2025 Free Software Foundation, Inc.
+Copyright 2020-2026 Free Software Foundation, Inc.
 Contributed by the Pascaline and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.

@@ -1,6 +1,6 @@
 /* mpfr_gamma_inc -- incomplete gamma function
 
-Copyright 2016-2025 Free Software Foundation, Inc.
+Copyright 2016-2026 Free Software Foundation, Inc.
 Contributed by the Pascaline and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.

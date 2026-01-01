@@ -1,6 +1,6 @@
 /* auxiliary data to generate special IEEE floats (NaN, +Inf, -Inf)
 
-Copyright 1999-2025 Free Software Foundation, Inc.
+Copyright 1999-2026 Free Software Foundation, Inc.
 Contributed by the Pascaline and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.

@@ -1,6 +1,6 @@
 /* mpfr_sub_ui -- subtract a floating-point number and a machine integer
 
-Copyright 2000-2025 Free Software Foundation, Inc.
+Copyright 2000-2026 Free Software Foundation, Inc.
 Contributed by the Pascaline and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.

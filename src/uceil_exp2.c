@@ -1,6 +1,6 @@
 /* __gmpfr_ceil_exp2 - returns y >= 2^d
 
-Copyright 1999-2004, 2006-2025 Free Software Foundation, Inc.
+Copyright 1999-2004, 2006-2026 Free Software Foundation, Inc.
 Contributed by the Pascaline and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.

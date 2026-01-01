@@ -1,6 +1,6 @@
 /* Test file for mpfr_compound_si.
 
-Copyright 2021-2025 Free Software Foundation, Inc.
+Copyright 2021-2026 Free Software Foundation, Inc.
 Contributed by the Pascaline and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.

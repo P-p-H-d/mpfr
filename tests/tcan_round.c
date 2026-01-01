@@ -1,6 +1,6 @@
 /* Test file for mpfr_can_round and mpfr_round_p.
 
-Copyright 1999, 2001-2025 Free Software Foundation, Inc.
+Copyright 1999, 2001-2026 Free Software Foundation, Inc.
 Contributed by the Pascaline and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.

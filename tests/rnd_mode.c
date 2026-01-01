@@ -1,6 +1,6 @@
 /* mpfr_set_machine_rnd_mode -- set the rounding mode for machine floats
 
-Copyright 1999, 2001-2002, 2006-2025 Free Software Foundation, Inc.
+Copyright 1999, 2001-2002, 2006-2026 Free Software Foundation, Inc.
 Contributed by the Pascaline and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.

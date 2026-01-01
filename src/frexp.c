@@ -1,6 +1,6 @@
 /* mpfr_frexp -- convert to integral and fractional parts
 
-Copyright 2011-2025 Free Software Foundation, Inc.
+Copyright 2011-2026 Free Software Foundation, Inc.
 Contributed by the Pascaline and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.

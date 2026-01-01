@@ -1,6 +1,6 @@
 /* Test file for mpfr_fpif.
 
-Copyright 2012-2025 Free Software Foundation, Inc.
+Copyright 2012-2026 Free Software Foundation, Inc.
 Contributed by Olivier Demengeon.
 Contributed by Matteo Nicoli.
 

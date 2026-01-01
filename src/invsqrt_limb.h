@@ -1,6 +1,6 @@
 /* __gmpfr_invsqrt_limb_approx -- reciprocal approximate square root of a limb
 
-Copyright 2017-2025 Free Software Foundation, Inc.
+Copyright 2017-2026 Free Software Foundation, Inc.
 Contributed by the Pascaline and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.

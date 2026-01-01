@@ -9,7 +9,7 @@ Define:
 Example:
   gcc threads.c -lmpfr -lgmp -lpthread -DF=mpfr_sin -DPREC=200 -DV=100
 
-Copyright 2018-2025 Free Software Foundation, Inc.
+Copyright 2018-2026 Free Software Foundation, Inc.
 Contributed by the Pascaline and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.

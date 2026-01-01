@@ -1,7 +1,7 @@
 /* mpfr_get_float128 -- convert a multiple precision floating-point
                         number to a binary128 (a.k.a. float128) number
 
-Copyright 2012-2025 Free Software Foundation, Inc.
+Copyright 2012-2026 Free Software Foundation, Inc.
 Contributed by the Pascaline and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.

@@ -1,7 +1,7 @@
 /* mpfr_set_bfloat16 -- convert a machine bfloat16 number to
                        a multiple precision floating-point number
 
-Copyright 2012-2025 Free Software Foundation, Inc.
+Copyright 2012-2026 Free Software Foundation, Inc.
 Contributed by the Pascaline and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.

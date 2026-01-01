@@ -1,6 +1,6 @@
 /* Test file for mpfr_fmma and mpfr_fmms.
 
-Copyright 2016-2025 Free Software Foundation, Inc.
+Copyright 2016-2026 Free Software Foundation, Inc.
 Contributed by the Pascaline and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.

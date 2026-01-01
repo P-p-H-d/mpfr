@@ -1,6 +1,6 @@
 /* mpfr_powr -- powr(x,y) = exp(y*log(x))
 
-Copyright 2021-2025 Free Software Foundation, Inc.
+Copyright 2021-2026 Free Software Foundation, Inc.
 Contributed by the Pascaline and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.

@@ -1,7 +1,7 @@
 /* mpfr_nbits_ulong -- number of significant bits in an unsigned long
    mpfr_nbits_uj    -- number of significant bits in an uintmax_t
 
-Copyright 2018-2025 Free Software Foundation, Inc.
+Copyright 2018-2026 Free Software Foundation, Inc.
 Contributed by the Pascaline and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.

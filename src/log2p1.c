@@ -1,6 +1,6 @@
 /* mpfr_log2p1 -- Compute log2(1+x)
 
-Copyright 2001-2025 Free Software Foundation, Inc.
+Copyright 2001-2026 Free Software Foundation, Inc.
 Contributed by the Pascaline and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
