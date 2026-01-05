@@ -7,13 +7,14 @@
 \usepackage{amsmath}
 \usepackage{url}
 \usepackage{comment}
-\usepackage{hyperref}
+\usepackage[english, lined, linesnumbered]{algorithm2e}
 \usepackage{graphicx}
+\usepackage{hyperref}
 
 \pagestyle{plain}
-\title{The MPFR\footnote{\lowercase{\url{https://www.mpfr.org/}}} Library:
-Algorithms and Proofs}
+\title{The MPFR Library: Algorithms and Proofs}
 \author{The MPFR team}
+\thanks{\url{https://www.mpfr.org/}}
 
 % This fixes some regressions compared to old LaTeX versions (in 2009).
 % For instance, one had in some CMap's (apparently not ToUnicode ones)
@@ -47,7 +48,6 @@ Algorithms and Proofs}
 \pdfgentounicode=1
 
 %%%%%%%%%%%%%% macros for the package algorithm2e %%%%%%%%%%%%%%%
-\usepackage[english, lined, linesnumbered]{algorithm2e}
 \SetKwData{tempv}{temp}
 \SetKwData{tzero}{t0}
 \SetKwData{tone}{t1}
@@ -65,7 +65,7 @@ Algorithms and Proofs}
 
 \DeclareMathOperator{\Ai}{Ai}
 \DeclareMathOperator{\acosh}{acosh}
-\DeclareMathOperator{\Li2}{Li_2}
+\DeclareMathOperator{\LiTwo}{Li_2}
 \DeclareMathOperator{\erf}{erf}
 \DeclareMathOperator{\erfc}{erfc}
 
@@ -108,7 +108,7 @@ Algorithms and Proofs}
 
 \begin{document}
 \maketitle
-\sloppy
+%\sloppy
 
 \tableofcontents
 
@@ -3865,16 +3865,16 @@ where we used $2^{-w} U \leq \ulp(U)$.
 The \texttt{mpfr\_li2} function computes the real part of the dilogarithm
 function defined by:
 \[
-\Li2(x) = - \int_0^x \frac{\log(1-t)}{t} dt.
+\LiTwo(x) = - \int_0^x \frac{\log(1-t)}{t} dt.
 \]
 The above relation defines a multivalued function in the complex plane, we
-choose a branch so that $\Li2(x)$ is real for $x$ real, $x < 1$ and we compute
+choose a branch so that $\LiTwo(x)$ is real for $x$ real, $x < 1$ and we compute
 only the real part for $x$ real, $x \geq 1$.
 
 When $x \in ]0, \frac{1}{2}]$, we use the series 
 (see \cite[Eq. (5)]{VoWe05}):
 \[
-\Li2(x) = \sum_{n=0}^{\infty} \frac{B_n}{(n+1)!} (-\log(1-x))^{n+1}
+\LiTwo(x) = \sum_{n=0}^{\infty} \frac{B_n}{(n+1)!} (-\log(1-x))^{n+1}
 \]
 where $B_n$ is the $n$-th Bernoulli number.
 
@@ -3882,26 +3882,26 @@ Otherwise, we perform an argument reduction using the following identities
 (see \cite{GiZa75}):
 
 \begin{tabular}{l r c l}
-$x \in [2, +\infty[ $&$ \Re(\Li2(x)) $&$=$&$ \frac{\pi^2}{3}
-- \frac{1}{2}\log^2(x) - \Li2\left(\frac{1}{x}\right) $\\
-$x \in ]1, 2[ $&$ \Re(\Li2(x)) $&$=$&$ \frac{\pi^2}{6}-\log(x)\left[\log(x-1)
-- \frac{1}{2} \log(x)\right] + \Li2\left(1 - \frac{1}{x}\right)  $\\
- &$ \Li2(1) $&$=$&$ \frac{\pi^2}{6} $\\
-$x \in \left]\frac{1}{2}, 1\right[ $&$ \Li2(x) $&$=$&$ \frac{\pi^2}{6}
-- \log(x) \log(1 - x) - \Li2(1 - x) $\\
- &$ \Li2(0) $&$=$&$ 0 $\\
+$x \in [2, +\infty[ $&$ \Re(\LiTwo(x)) $&$=$&$ \frac{\pi^2}{3}
+- \frac{1}{2}\log^2(x) - \LiTwo\left(\frac{1}{x}\right) $\\
+$x \in ]1, 2[ $&$ \Re(\LiTwo(x)) $&$=$&$ \frac{\pi^2}{6}-\log(x)\left[\log(x-1)
+- \frac{1}{2} \log(x)\right] + \LiTwo\left(1 - \frac{1}{x}\right)  $\\
+ &$ \LiTwo(1) $&$=$&$ \frac{\pi^2}{6} $\\
+$x \in \left]\frac{1}{2}, 1\right[ $&$ \LiTwo(x) $&$=$&$ \frac{\pi^2}{6}
+- \log(x) \log(1 - x) - \LiTwo(1 - x) $\\
+ &$ \LiTwo(0) $&$=$&$ 0 $\\
 $x \in [-1, 0[ $&$
-\Li2(x) $&$=$&$ -\frac{1}{2} \log^2(1-x) - \Li2\left(\frac{x}{x - 1}\right)$\\
-$x \in ]-\infty, -1[ $&$ \Li2(x) $&$=$&$ -\frac{\pi^2}{6} 
+\LiTwo(x) $&$=$&$ -\frac{1}{2} \log^2(1-x) - \LiTwo\left(\frac{x}{x - 1}\right)$\\
+$x \in ]-\infty, -1[ $&$ \LiTwo(x) $&$=$&$ -\frac{\pi^2}{6} 
 - \frac{1}{2} \log(1 -x) [2 \log(-x) - \log(1 - x)]
-+ \Li2\left(\frac{1}{1 - x}\right).$
++ \LiTwo\left(\frac{1}{1 - x}\right).$
 \end{tabular}
 
 
 Assume first $0 < x \leq \frac{1}{2}$, the odd Bernoulli numbers being zero
-(except $B_1 = -\frac{1}{2}$), we can rewrite $\Li2(x)$ in the form:
+(except $B_1 = -\frac{1}{2}$), we can rewrite $\LiTwo(x)$ in the form:
 \[
-\Li2(x) = - \frac{\log^2(1-x)}{4} + S(-\log(1-x))
+\LiTwo(x) = - \frac{\log^2(1-x)}{4} + S(-\log(1-x))
 \]
 where  
 \[
@@ -3956,12 +3956,12 @@ $w = B_{2k}z^{2k+1}/(2k+1)! (1+\theta)^{6k+1}$.
 
 
 
-When $x \in ]0, \frac{1}{2}]$, $\Li2(x)$ calculation is implemented as follows
+When $x \in ]0, \frac{1}{2}]$, $\LiTwo(x)$ calculation is implemented as follows
 \begin{quote}
 Algorithm {\tt li2\_0..+$\frac{1}{2}$}\\
 Input: $x$ with $x \in \left]0, \frac{1}{2}\right]$, the output precision
 $n$, and a rounding mode $\circ_n$ \\
-Output: $\circ_n(\Li2(x))$ \\
+Output: $\circ_n(\LiTwo(x))$ \\
 \begin{tabular}{l c r c l}
 $u \leftarrow \N(1-x)$ & &
 $\n{error}(u) $ & $ \leq $ & $ \frac{1}{2} \ulp(u)$\\
@@ -3984,17 +3984,17 @@ where $\kappa_s ={\rm max}(-1, \lceil\log_2(k+1)\rceil + 1 - \Exp(s),
 
 When $x$ is large and positive, we can use an asymptotic expansion near
 $+\infty$ using the fact that 
-$\Li2\left(\frac{1}{x}\right) = \frac{1}{x} + O\left(\frac{1}{x^2}\right)$
+$\LiTwo\left(\frac{1}{x}\right) = \frac{1}{x} + O\left(\frac{1}{x^2}\right)$
 (see below):
 \[
-\left|\Li2(x) + \frac{\log^2x}{2} - \frac{\pi^2}{3}\right| \leq \frac{2}{x}
+\left|\LiTwo(x) + \frac{\log^2x}{2} - \frac{\pi^2}{3}\right| \leq \frac{2}{x}
 \]
 which gives the following algorithm:
 \begin{quote}
 Algorithm {\tt li2\_asympt\_pos}\\
 Input: $x$ with $x \geq 38$, the output precision $n$, and a rounding mode
 $\circ_n$ \\
-Output: $\circ_n(\Re(\Li2(x)))$ if it can round exactly, a failure indicator
+Output: $\circ_n(\Re(\LiTwo(x)))$ if it can round exactly, a failure indicator
 if not\\
 $u \leftarrow \N(\log x)$\\
 $v \leftarrow \N(u^2)$\\
@@ -4012,7 +4012,7 @@ $s \leftarrow \N(g-h)$\\
 Else, if $x \in [2, 38[$ or if $x \geq 38$ but the above calculation cannot 
 give exact rounding, we use the relation
 \[
-\Li2(x) = -S\left(-\log(1-\frac{1}{x})\right)
+\LiTwo(x) = -S\left(-\log(1-\frac{1}{x})\right)
 + \frac{\log^2\left(1-\frac{1}{x}\right)}{4}
 - \frac{\log^2x}{2} + \frac{\pi^2}{3},
 \]
@@ -4021,7 +4021,7 @@ which is computed as follows:
 Algorithm {\tt li2\_2..+$\infty$}\\
 Input: $x$ with $x \in \left[2, +\infty\right[$, the output precision $n$,
 and a rounding mode $\circ_n$ \\
-Output: $\circ_n(\Re(\Li2(x)))$ \\
+Output: $\circ_n(\Re(\LiTwo(x)))$ \\
 \begin{tabular}{l c r c l}
 $y \leftarrow \N(-1/x)$ & &
 $\n{error}(y) $ & $ \leq $ & $\frac{1}{2} \ulp(y)$\\
@@ -4066,14 +4066,14 @@ with
 
 When $x \in ]1, 2[$, we use the relation
 \[
-\Li2(x) = S(\log x) + \frac{\log^2 x}{4} - \log x \log(x - 1) + \frac{\pi^2}{6}
+\LiTwo(x) = S(\log x) + \frac{\log^2 x}{4} - \log x \log(x - 1) + \frac{\pi^2}{6}
 \]
 which is implemented as follows
 \begin{quote}
 Algorithm {\tt li2\_1..2}\\
 Input: $x$ with $x \in ]1, 2[$, the output precision $n$, and a rounding mode
     $\circ_n$ \\
-Output: $\circ_n(\Re(\Li2(x)))$ \\
+Output: $\circ_n(\Re(\LiTwo(x)))$ \\
 \begin{tabular}{l c r c l}
 $l \leftarrow \pinf(\log x)$ & & $\n{error}(l) $ & $ \leq $ & $ \ulp(l)$\\
 $q \leftarrow \N(S(l))$ & &
@@ -4113,7 +4113,7 @@ that $r \geq 0$ and $-\log x \log(x-1) \geq 0$ for error($s$),
 and that $s \geq 0$ for error($t$).
 
 
-When $x=1$, we have a simpler value $\Li2(1) = \frac{\pi^2}{6}$ whose
+When $x=1$, we have a simpler value $\LiTwo(1) = \frac{\pi^2}{6}$ whose
 computation is implemented as follows
 
 \begin{quote}
@@ -4134,7 +4134,7 @@ $\n{error}(u) $ & $ \leq $ & $ \frac{19}{2}\ulp(u)$\\
 
 When $x \in \left]\frac{1}{2}, 1\right[$, we use the relation
 \[
-\Li2(x) = - S(-\log x) - \log x \log(1 - x) + \frac{\log^2 x}{4}
+\LiTwo(x) = - S(-\log x) - \log x \log(1 - x) + \frac{\log^2 x}{4}
 + \frac{\pi^2}{6}
 \]
 which is implemented as follows
@@ -4142,7 +4142,7 @@ which is implemented as follows
 Algorithm {\tt li2\_0.5..1}\\
 Input: $x$ with $x \in \left]\frac{1}{2}, 1\right[$, the output precision $n$,
     and a rounding mode $\circ_n$ \\
-Output: $\circ_n(Li2(x))$ \\
+Output: $\circ_n(LiTwo(x))$ \\
 \begin{tabular}{l c r c l}
 $l \leftarrow \pinf(-\log x)$ & & $\n{error}(l) $ & $ \leq $ & $ \ulp(l)$\\
 $q \leftarrow \N(-S(l))$ & &
@@ -4187,25 +4187,25 @@ where
 
 Near 0, we can use the relation
 \[
-\Li2(x) = \sum_{n=0}^{\infty}\frac{x^k}{k^2}
+\LiTwo(x) = \sum_{n=0}^{\infty}\frac{x^k}{k^2}
 \]
 which is true for $|x| \leq 1$ [FIXME: ref].
-If $x \leq 0$, we have $0 \leq \Li2(x) - x \leq \frac{x^2}{4}$ 
+If $x \leq 0$, we have $0 \leq \LiTwo(x) - x \leq \frac{x^2}{4}$ 
 and if $x$ is positive, 
-$0 \leq \Li2(x) - x \leq (\frac{\pi^2}{6}-1)x^2 \leq x^2 
+$0 \leq \LiTwo(x) - x \leq (\frac{\pi^2}{6}-1)x^2 \leq x^2 
 \leq 2^{2\Exp(x)+1}\ulp(x)$.
 
  
 When $x \in [-1, 0[$, we use the relation
 \[
-\Li2(x) = - S(-\log(1-x)) - \frac{\log^2(1-x)}{4}
+\LiTwo(x) = - S(-\log(1-x)) - \frac{\log^2(1-x)}{4}
 \]
 which is implemented as follows
 \begin{quote}
 Algorithm {\tt li2\_-1..0}\\
 Input: $x$ with $x \in ]-1, 0[$, the output precision $n$, and a rounding mode
     $\circ_n$ \\
-Output: $\circ_n(Li2(x))$ \\
+Output: $\circ_n(LiTwo(x))$ \\
 \begin{tabular}{l c r c l}
 $y \leftarrow \N(1 - x)$ & &
 $\n{error}(y) $ & $ \leq $ & $ \frac{1}{2}\ulp(y)$ \\
@@ -4232,7 +4232,7 @@ with
 When $x$ is large and negative, we can use an asymptotic expansion near 
 $-\infty$:
 \[
-\left|\Li2(x) + \frac{\log^2(-x)}{2} + \frac{\pi^2}{3}\right| \leq 
+\left|\LiTwo(x) + \frac{\log^2(-x)}{2} + \frac{\pi^2}{3}\right| \leq 
 \frac{1}{|x|}
 \]
 which gives the following algorithm:
@@ -4240,7 +4240,7 @@ which gives the following algorithm:
   Algorithm {\tt li2\_asympt\_neg}\\
   Input: $x$ with $x \leq -7$, the output precision $n$, and a rounding mode
   $\circ_n$ \\
-  Output: $\circ_n(\Li2(x))$ if it can round exactly, a failure indicator
+  Output: $\circ_n(\LiTwo(x))$ if it can round exactly, a failure indicator
   if not\\
   $l \leftarrow \N(\log(-x))$ \\
   $f \leftarrow \N(l^2)$\\
@@ -4258,7 +4258,7 @@ which gives the following algorithm:
 When $x \in ]-7, -1[$ or if the above computation cannot give exact rounding,
 we use the relation
 \[
-\Li2(x) = S\left(\log\left(1-\frac{1}{x}\right)\right) - \frac{\log^2(-x)}{4}
+\LiTwo(x) = S\left(\log\left(1-\frac{1}{x}\right)\right) - \frac{\log^2(-x)}{4}
 - \frac{\log(-x) \log(1 - x)}{2} + \frac{\log^2(1-x)}{4} + \frac{\pi^2}{6}
 \]
 which is implemented as follows
@@ -4266,7 +4266,7 @@ which is implemented as follows
 Algorithm {\tt li2\_-$\infty$..-1}\\
 Input: $x$ with $x \in ]-\infty, -1[$, the output precision $n$,
     and a rounding mode $\circ_n$ \\
-Output: $\circ_n(\Li2(x))$ \\
+Output: $\circ_n(\LiTwo(x))$ \\
 \begin{tabular}{l c r c l}
 $y \leftarrow \N(-1/x)$\\
 $z \leftarrow \N(1+y)$\\
