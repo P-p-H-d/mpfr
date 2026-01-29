@@ -463,31 +463,31 @@ coverage_03032011 (void)
 }
 
 #define TEST_FUNCTION mpfr_rint_trunc
-#define TEST_RANDOM_EMIN -20
+#define TEST_RANDOM_EMIN (-20)
 #define TEST_RANDOM_ALWAYS_SCALE 1
 #define test_generic test_generic_trunc
 #include "tgeneric.c"
 
 #define TEST_FUNCTION mpfr_rint_floor
-#define TEST_RANDOM_EMIN -20
+#define TEST_RANDOM_EMIN (-20)
 #define TEST_RANDOM_ALWAYS_SCALE 1
 #define test_generic test_generic_floor
 #include "tgeneric.c"
 
 #define TEST_FUNCTION mpfr_rint_ceil
-#define TEST_RANDOM_EMIN -20
+#define TEST_RANDOM_EMIN (-20)
 #define TEST_RANDOM_ALWAYS_SCALE 1
 #define test_generic test_generic_ceil
 #include "tgeneric.c"
 
 #define TEST_FUNCTION mpfr_rint_round
-#define TEST_RANDOM_EMIN -20
+#define TEST_RANDOM_EMIN (-20)
 #define TEST_RANDOM_ALWAYS_SCALE 1
 #define test_generic test_generic_round
 #include "tgeneric.c"
 
 #define TEST_FUNCTION mpfr_rint_roundeven
-#define TEST_RANDOM_EMIN -20
+#define TEST_RANDOM_EMIN (-20)
 #define TEST_RANDOM_ALWAYS_SCALE 1
 #define test_generic test_generic_roundeven
 #include "tgeneric.c"

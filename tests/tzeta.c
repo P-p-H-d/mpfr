@@ -240,7 +240,7 @@ intermediate_overflow (void)
 }
 
 #define TEST_FUNCTION mpfr_zeta
-#define TEST_RANDOM_EMIN -48
+#define TEST_RANDOM_EMIN (-48)
 #define TEST_RANDOM_EMAX 31
 #include "tgeneric.c"
 

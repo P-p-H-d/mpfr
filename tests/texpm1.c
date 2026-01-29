@@ -45,7 +45,7 @@ test_expm1 (mpfr_ptr a, mpfr_srcptr b, mpfr_rnd_t rnd_mode)
 #endif
 
 #define TEST_FUNCTION test_expm1
-#define TEST_RANDOM_EMIN -36
+#define TEST_RANDOM_EMIN (-36)
 #define TEST_RANDOM_EMAX 36
 #include "tgeneric.c"
 

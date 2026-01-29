@@ -22,7 +22,7 @@ If not, see <https://www.gnu.org/licenses/>. */
 #include "mpfr-test.h"
 
 #define TEST_FUNCTION mpfr_ai
-#define TEST_RANDOM_EMIN -5
+#define TEST_RANDOM_EMIN (-5)
 #define TEST_RANDOM_EMAX 5
 #define REDUCE_EMAX 7 /* this is to avoid that test_generic() calls mpfr_ai
                          with too large inputs. FIXME: remove this once

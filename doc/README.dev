@@ -1677,7 +1677,7 @@ If not, see <https://www.gnu.org/licenses/>. */
 #include "mpfr-test.h"
 
 #define TEST_FUNCTION mpfr_func
-#define TEST_RANDOM_EMIN -5
+#define TEST_RANDOM_EMIN (-5)
 #define TEST_RANDOM_EMAX 5
 #include "tgeneric.c"
 

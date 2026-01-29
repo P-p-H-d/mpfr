@@ -27,7 +27,7 @@ If not, see <https://www.gnu.org/licenses/>. */
    need to be done in these tests. */
 
 #define TEST_FUNCTION mpfr_exp10
-#define TEST_RANDOM_EMIN -36
+#define TEST_RANDOM_EMIN (-36)
 #define TEST_RANDOM_EMAX 36
 #include "tgeneric.c"
 

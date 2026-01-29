@@ -66,7 +66,7 @@ If not, see <https://www.gnu.org/licenses/>. */
 #endif
 
 #ifndef TEST_RANDOM_EMIN
-#define TEST_RANDOM_EMIN -256
+#define TEST_RANDOM_EMIN (-256)
 #endif
 
 #ifndef TEST_RANDOM_EMAX
