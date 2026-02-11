@@ -1,6 +1,7 @@
 \input texinfo    @c -*-texinfo-*-
 @c %**start of header
 @setfilename mpfr.info
+@documentlanguage en_US
 @documentencoding UTF-8
 @c Note that the 5 occurrences of the version string in this file
 @c should be updated by the tools/update-version script.
