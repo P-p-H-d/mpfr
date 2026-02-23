@@ -724,13 +724,22 @@ gcc myprogram.c -lmpfr -lgmp
 @cindex Libtool
 MPFR is built using Libtool and an application can use that to link if
 desired, @MPFRpxreftop{libtool, GNU Libtool}
-@c Note: the .info extension has been added to avoid the following bug:
+@c Note: the .info extension had been added on 2009-01-19 to avoid a
+@c failure to open the expected libtool.info file:
 @c   https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=484740
-@c which occurs when reading the info file from the build directory:
+@c which occurred when reading the info file from the build directory:
 @c   info ./mpfr    or    info -f ./mpfr.info
-@c Due to a poor design, the "info" utility will not find the correct
-@c libtool info file if the .info extension is not provided, because of
-@c the "libtool" script in MPFR's directory!
+@c because of the "libtool" script that was present in the same directory
+@c (see commit 8cb5e35ef43d0a565511a1e6c0b261dcdc737ae1).
+@c This is no longer an issue thanks to the source reorganization done on
+@c 2010-08-17 (see commit a6c9580d75b967e0d121d606edf03515ada45a7a).
+@c This .info extension was removed on 2016-02-24 to avoid a warning with
+@c "make info" (see commit 6e28887462986b783c896ae3ef26dea922d91eba).
+@c Anyway, the above bug seems to be fixed: If I add a libtool script in
+@c the doc directory to mimic the old file hierarchy, "strace info ./mpfr"
+@c shows that this script is read, but the "info" utility resumes the
+@c search for the info file instead of failing, probably because the
+@c libtool script is not in the info format.
 
 If MPFR has been installed to a non-standard location, then it may be
 necessary to set up environment variables such as @samp{C_INCLUDE_PATH}
