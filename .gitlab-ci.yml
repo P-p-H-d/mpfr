@@ -1,4 +1,4 @@
-linux_gmp:
+linux:
   stage: build
   script:
     - echo "en_US.UTF-8 UTF-8" > /etc/locale.gen
@@ -6,12 +6,12 @@ linux_gmp:
     - env DEBIAN_FRONTEND=noninteractive apt-get -y install texinfo
     - autoreconf -i
     - ./configure
-    - make
-    - make check
+    - make -j8
+    - make check -j8
   tags:
     - linux
 
-linux_gmp_cxx:
+linux_cxx:
   stage: build
   script:
     - echo "en_US.UTF-8 UTF-8" > /etc/locale.gen
@@ -19,12 +19,12 @@ linux_gmp_cxx:
     - env DEBIAN_FRONTEND=noninteractive apt-get -y install texinfo
     - autoreconf -i
     - ./configure CC=g++
-    - make
-    - make check
+    - make -j8
+    - make check -j8
   tags:
     - linux
 
-linux_gmp_clang:
+linux_clang:
   stage: build
   script:
     - echo "en_US.UTF-8 UTF-8" > /etc/locale.gen
@@ -32,21 +32,23 @@ linux_gmp_clang:
     - env DEBIAN_FRONTEND=noninteractive apt-get -y install texinfo clang
     - autoreconf -i
     - ./configure CC=clang
-    - make
-    - make check
+    - make -j8
+    - make check -j8
   tags:
     - linux
 
-linux_gmp_Werror:
+linux_Werror_analyzer:
   stage: build
   script:
     - echo "en_US.UTF-8 UTF-8" > /etc/locale.gen
     - env DEBIAN_FRONTEND=noninteractive apt-get -y update
     - env DEBIAN_FRONTEND=noninteractive apt-get -y install texinfo
     - autoreconf -i
-    - ./configure CFLAGS=-Werror
-    - make
-    - make check
+    # we use -O2 with -fanalyzer otherwise without optimization it reports
+    # warnings in sub1sp.c with INITIALIZED(sh)
+    - ./configure CFLAGS="-O2 -Werror -fanalyzer"
+    - make -j8
+    - make check -j8
   tags:
     - linux
 
@@ -58,7 +60,7 @@ c90compatibility:
     - env DEBIAN_FRONTEND=noninteractive apt-get -y install texinfo
     - autoreconf -i
     - ./configure CFLAGS="-std=c90 -pedantic-errors -Wno-error=overlength-strings"
-    - make
-    - make check
+    - make -j8
+    - make check -j8
   tags:
     - linux
