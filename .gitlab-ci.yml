@@ -6,8 +6,8 @@ linux:
     - env DEBIAN_FRONTEND=noninteractive apt-get -y install texinfo
     - autoreconf -i
     - ./configure
-    - make -j8
-    - make check -j8
+    - make
+    - make check
   tags:
     - linux
 
@@ -19,8 +19,8 @@ linux_cxx:
     - env DEBIAN_FRONTEND=noninteractive apt-get -y install texinfo
     - autoreconf -i
     - ./configure CC=g++
-    - make -j8
-    - make check -j8
+    - make
+    - make check
   tags:
     - linux
 
@@ -32,8 +32,8 @@ linux_clang:
     - env DEBIAN_FRONTEND=noninteractive apt-get -y install texinfo clang
     - autoreconf -i
     - ./configure CC=clang
-    - make -j8
-    - make check -j8
+    - make
+    - make check
   tags:
     - linux
 
@@ -47,8 +47,8 @@ linux_Werror_analyzer:
     # we use -O2 with -fanalyzer otherwise without optimization it reports
     # warnings in sub1sp.c with INITIALIZED(sh)
     - ./configure CFLAGS="-O2 -Werror -fanalyzer"
-    - make -j8
-    - make check -j8
+    - make
+    - make check
   tags:
     - linux
 
@@ -60,7 +60,7 @@ c90compatibility:
     - env DEBIAN_FRONTEND=noninteractive apt-get -y install texinfo
     - autoreconf -i
     - ./configure CFLAGS="-std=c90 -pedantic-errors -Wno-error=overlength-strings"
-    - make -j8
-    - make check -j8
+    - make
+    - make check
   tags:
     - linux
