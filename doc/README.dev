@@ -1112,13 +1112,14 @@ after the format string.
 Add this macro at the beginning of a function. It logs the first message
 at the entry of the function and the second message just before the
 function returns.
-Example:
+Example for an evaluation y = f(x):
   MPFR_LOG_FUNC
-    (("op[%Pd]=%.*Rg rnd=%d", op, mpfr_get_prec (op), mpfr_log_prec, op),
-     ("x[%Pd]=%.*Rg inexact=%d", mpfr_get_prec (x), mpfr_log_prec, x, i));
+    (("x[%Pd]=%.*Rg rnd=%d", mpfr_get_prec(x), mpfr_log_prec, x, rnd_mode),
+     ("y[%Pd]=%.*Rg", mpfr_get_prec(y), mpfr_log_prec, y));
 
-The double brackets "((" and "))" are needed since MPFR must compile with
-old compiler, so macros with variable number of arguments are not allowed.
+The double brackets "((" and "))" for MPFR_LOG_MSG are needed since MPFR
+must compile with old compiler, so macros with variable number of arguments
+are not allowed.
 
 It uses the extension of the mpfr_printf function: %Rf to display a mpfr_t.
 %Ru is used to display the precision of a mpfr_t.
