@@ -53,10 +53,10 @@ mpfr_cbrt (mpfr_ptr y, mpfr_srcptr x, mpfr_rnd_t rnd_mode)
   int inexact, inexact2, negative, r;
   MPFR_SAVE_EXPO_DECL (expo);
 
-  MPFR_LOG_FUNC (
-    ("x[%Pd]=%.*Rg rnd=%d", mpfr_get_prec (x), mpfr_log_prec, x, rnd_mode),
-    ("y[%Pd]=%.*Rg inexact=%d", mpfr_get_prec (y), mpfr_log_prec, y,
-     inexact));
+  MPFR_LOG_FUNC
+    (("x[%Pd]=%.*Rg rnd=%d", mpfr_get_prec (x), mpfr_log_prec, x, rnd_mode),
+     ("y[%Pd]=%.*Rg inexact=%d", mpfr_get_prec (y), mpfr_log_prec, y,
+      inexact));
 
   /* special values */
   if (MPFR_UNLIKELY (MPFR_IS_SINGULAR (x)))
