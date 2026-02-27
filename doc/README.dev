@@ -480,6 +480,37 @@ $ autoreconf
 
 ===========================================================================
 
+Particular configure values used by MPFR:
+
++ CC and CFLAGS:        As usual, but if they are both empty, the configure
+                        script will try to get the values suggested by gmp.h
+                        (this is useful because GMP may be installed with a
+                        non-default ABI). See the INSTALL file for details.
+
++ MPFR_EXTRA_CFLAGS:    Extra options added to $CFLAGS at the end of the
+                        configure script, i.e. used only for the MPFR
+                        build and tests. They will not affect configure
+                        tests, except when CFLAGS is temporarily modified
+                        with the addition of $MPFR_EXTRA_CFLAGS.
+
+Compiler options should normally put in CFLAGS, as the goal of configure
+is to test under conditions similar to the actual build. This is the case
+of -Werror, if used, because it may have an influence on which features
+are supported: the implementation of some features may cause warnings,
+which are turned into errors.
+
+Options related to code analysis, such as GCC's -fanalyzer, should be put
+in MPFR_EXTRA_CFLAGS if -Werror is used, because various configure tests
+do not care about the execution: for instance, an infinite loop should not
+yield compile-time errors in configure (such a loop is used by the tests
+from Autoconf to check the support of _Noreturn).
+
+The -Wall option may enable options related to code analysis, but it should
+normally be put in CFLAGS. The configure tests from Autoconf have improved
+to avoid failures.
+
+===========================================================================
+
 Here is a non-exhaustive list of macros used for building and checking MPFR.
 Most of them are automatically set up by the configure script and its options.
 

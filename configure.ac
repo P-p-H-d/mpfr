@@ -888,6 +888,14 @@ if test -n "$dev_version"; then
     $srcdir/tests/*.c\``
 fi
 
+dnl Extra CFLAGS, such as compiler options that should not be used
+dnl in configure tests (in particular those we do not control).
+dnl Such compiler options should not have an effect on the support
+dnl of compiler features. For instance, -Werror should not be used
+dnl here, because it may disable features if the implementation of
+dnl such features introduces warnings.
+CFLAGS="$CFLAGS $MPFR_EXTRA_CFLAGS"
+
 dnl Output
 AC_CONFIG_FILES([Makefile mpfr.pc doc/Makefile src/Makefile tests/Makefile tune/Makefile src/mparam.h:src/mparam_h.in tools/bench/Makefile])
 AC_OUTPUT
