@@ -894,7 +894,9 @@ dnl Such compiler options should not have an effect on the support
 dnl of compiler features. For instance, -Werror should not be used
 dnl here, because it may disable features if the implementation of
 dnl such features introduces warnings.
-CFLAGS="$CFLAGS $MPFR_EXTRA_CFLAGS"
+if test -n "$MPFR_EXTRA_CFLAGS"; then
+  CFLAGS="$CFLAGS $MPFR_EXTRA_CFLAGS"
+fi
 
 dnl Output
 AC_CONFIG_FILES([Makefile mpfr.pc doc/Makefile src/Makefile tests/Makefile tune/Makefile src/mparam.h:src/mparam_h.in tools/bench/Makefile])
