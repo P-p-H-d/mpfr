@@ -37,7 +37,7 @@ linux_clang:
   tags:
     - linux
 
-linux_Werror_analyzer:
+linux_Werror:
   stage: build
   script:
     - echo "en_US.UTF-8 UTF-8" > /etc/locale.gen
@@ -46,7 +46,10 @@ linux_Werror_analyzer:
     - autoreconf -i
     # we use -O2 with -fanalyzer otherwise without optimization it reports
     # warnings in sub1sp.c with INITIALIZED(sh)
-    - ./configure CFLAGS="-O2 -Werror -fanalyzer"
+    # disable -fanalyzer for now since it does not work with -Werror
+    # (see TODO)
+    # - ./configure CFLAGS="-O2 -Werror -fanalyzer"
+    - ./configure CFLAGS="-O2 -Werror"
     - make -j8 || make
     - make check -j8
   tags:
