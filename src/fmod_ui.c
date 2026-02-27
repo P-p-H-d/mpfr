@@ -30,8 +30,7 @@ mpfr_fmod_ui (mpfr_ptr r, mpfr_srcptr x, unsigned long u, mpfr_rnd_t rnd_mode)
   MPFR_LOG_FUNC
     (("x[%Pd]=%.*Rg u=%lu rnd=%d",
       mpfr_get_prec(x), mpfr_log_prec, x, u, rnd_mode),
-     ("y[%Pd]=%.*Rg inexact=%d",
-      mpfr_get_prec(r), mpfr_log_prec, r, inex));
+     ("y[%Pd]=%.*Rg", mpfr_get_prec(r), mpfr_log_prec, r));
 
   if (MPFR_UNLIKELY (u != 0))
     {

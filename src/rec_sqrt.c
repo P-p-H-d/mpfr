@@ -470,7 +470,7 @@ mpfr_rec_sqrt (mpfr_ptr r, mpfr_srcptr u, mpfr_rnd_t rnd_mode)
 
   MPFR_LOG_FUNC
     (("x[%Pd]=%.*Rg rnd=%d", mpfr_get_prec (u), mpfr_log_prec, u, rnd_mode),
-     ("y[%Pd]=%.*Rg inexact=%d", mpfr_get_prec (r), mpfr_log_prec, r, inex));
+     ("y[%Pd]=%.*Rg", mpfr_get_prec (r), mpfr_log_prec, r));
 
   /* special values */
   if (MPFR_UNLIKELY(MPFR_IS_SINGULAR(u)))

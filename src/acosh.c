@@ -34,8 +34,7 @@ mpfr_acosh (mpfr_ptr y, mpfr_srcptr x, mpfr_rnd_t rnd_mode)
 
   MPFR_LOG_FUNC
     (("x[%Pd]=%.*Rg rnd=%d", mpfr_get_prec (x), mpfr_log_prec, x, rnd_mode),
-     ("y[%Pd]=%.*Rg inexact=%d", mpfr_get_prec (y), mpfr_log_prec, y,
-      inexact));
+     ("y[%Pd]=%.*Rg", mpfr_get_prec (y), mpfr_log_prec, y));
 
   /* Deal with special cases */
   if (MPFR_UNLIKELY (MPFR_IS_SINGULAR (x)))

@@ -447,7 +447,7 @@ mpfr_zeta (mpfr_ptr z, mpfr_srcptr s, mpfr_rnd_t rnd_mode)
 
   MPFR_LOG_FUNC
     (("s[%Pd]=%.*Rg rnd=%d", mpfr_get_prec (s), mpfr_log_prec, s, rnd_mode),
-     ("z[%Pd]=%.*Rg inexact=%d", mpfr_get_prec (z), mpfr_log_prec, z, inex));
+     ("z[%Pd]=%.*Rg", mpfr_get_prec (z), mpfr_log_prec, z));
 
   /* Zero, Nan or Inf ? */
   if (MPFR_UNLIKELY (MPFR_IS_SINGULAR (s)))

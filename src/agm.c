@@ -41,8 +41,7 @@ mpfr_agm (mpfr_ptr r, mpfr_srcptr op2, mpfr_srcptr op1, mpfr_rnd_t rnd_mode)
     (("op2[%Pd]=%.*Rg op1[%Pd]=%.*Rg rnd=%d",
       mpfr_get_prec (op2), mpfr_log_prec, op2,
       mpfr_get_prec (op1), mpfr_log_prec, op1, rnd_mode),
-     ("r[%Pd]=%.*Rg inexact=%d",
-      mpfr_get_prec (r), mpfr_log_prec, r, inexact));
+     ("r[%Pd]=%.*Rg", mpfr_get_prec (r), mpfr_log_prec, r));
 
   /* Deal with special values */
   if (MPFR_ARE_SINGULAR (op1, op2))

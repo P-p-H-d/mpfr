@@ -47,8 +47,7 @@ mpfr_div_ui (mpfr_ptr y, mpfr_srcptr x, unsigned long int u,
   MPFR_LOG_FUNC
     (("x[%Pd]=%.*Rg u=%lu rnd=%d",
       mpfr_get_prec(x), mpfr_log_prec, x, u, rnd_mode),
-     ("y[%Pd]=%.*Rg inexact=%d",
-      mpfr_get_prec(y), mpfr_log_prec, y, inexact));
+     ("y[%Pd]=%.*Rg", mpfr_get_prec(y), mpfr_log_prec, y));
 
   if (MPFR_UNLIKELY (MPFR_IS_SINGULAR (x)))
     {

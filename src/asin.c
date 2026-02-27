@@ -33,8 +33,7 @@ mpfr_asin (mpfr_ptr asin, mpfr_srcptr x, mpfr_rnd_t rnd_mode)
 
   MPFR_LOG_FUNC
     (("x[%Pd]=%.*Rg rnd=%d", mpfr_get_prec (x), mpfr_log_prec, x, rnd_mode),
-     ("asin[%Pd]=%.*Rg inexact=%d", mpfr_get_prec (asin), mpfr_log_prec, asin,
-      inexact));
+     ("asin[%Pd]=%.*Rg", mpfr_get_prec (asin), mpfr_log_prec, asin));
 
   /* Special cases */
   if (MPFR_UNLIKELY (MPFR_IS_SINGULAR (x)))

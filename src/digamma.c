@@ -140,7 +140,7 @@ mpfr_digamma_positive (mpfr_ptr y, mpfr_srcptr x, mpfr_rnd_t rnd_mode)
 
   MPFR_LOG_FUNC
     (("x[%Pd]=%.*Rg rnd=%d", mpfr_get_prec(x), mpfr_log_prec, x, rnd_mode),
-     ("y[%Pd]=%.*Rg inexact=%d", mpfr_get_prec(y), mpfr_log_prec, y, inex));
+     ("y[%Pd]=%.*Rg", mpfr_get_prec(y), mpfr_log_prec, y));
 
   /* For very large x, use |digamma(x) - log(x)| < 1/x < 2^(1-EXP(x)).
      However, for a fixed value of GUARD, MPFR_CAN_ROUND() might fail
@@ -278,7 +278,7 @@ mpfr_digamma_reflection (mpfr_ptr y, mpfr_srcptr x, mpfr_rnd_t rnd_mode)
 
   MPFR_LOG_FUNC
     (("x[%Pd]=%.*Rg rnd=%d", mpfr_get_prec(x), mpfr_log_prec, x, rnd_mode),
-     ("y[%Pd]=%.*Rg inexact=%d", mpfr_get_prec(y), mpfr_log_prec, y, inex));
+     ("y[%Pd]=%.*Rg", mpfr_get_prec(y), mpfr_log_prec, y));
 
   /* we want that 1-x is exact with precision q: if 0 < x < 1/2, then
      q = PREC(x)-EXP(x) is ok, otherwise if -1 <= x < 0, q = PREC(x)-EXP(x)+1
@@ -368,7 +368,7 @@ mpfr_digamma (mpfr_ptr y, mpfr_srcptr x, mpfr_rnd_t rnd_mode)
 
   MPFR_LOG_FUNC
     (("x[%Pd]=%.*Rg rnd=%d", mpfr_get_prec(x), mpfr_log_prec, x, rnd_mode),
-     ("y[%Pd]=%.*Rg inexact=%d", mpfr_get_prec(y), mpfr_log_prec, y, inex));
+     ("y[%Pd]=%.*Rg", mpfr_get_prec(y), mpfr_log_prec, y));
 
   if (MPFR_UNLIKELY(MPFR_IS_SINGULAR(x)))
     {

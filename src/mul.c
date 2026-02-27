@@ -46,8 +46,7 @@ mpfr_mul3 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mpfr_rnd_t rnd_mode)
     (("b[%Pd]=%.*Rg c[%Pd]=%.*Rg rnd=%d",
       mpfr_get_prec (b), mpfr_log_prec, b,
       mpfr_get_prec (c), mpfr_log_prec, c, rnd_mode),
-     ("a[%Pd]=%.*Rg inexact=%d",
-      mpfr_get_prec (a), mpfr_log_prec, a, inexact));
+     ("a[%Pd]=%.*Rg", mpfr_get_prec (a), mpfr_log_prec, a));
 
   /* deal with special cases */
   if (MPFR_ARE_SINGULAR(b,c))
@@ -749,8 +748,7 @@ mpfr_mul (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mpfr_rnd_t rnd_mode)
     (("b[%Pd]=%.*Rg c[%Pd]=%.*Rg rnd=%d",
       mpfr_get_prec (b), mpfr_log_prec, b,
       mpfr_get_prec (c), mpfr_log_prec, c, rnd_mode),
-     ("a[%Pd]=%.*Rg inexact=%d",
-      mpfr_get_prec (a), mpfr_log_prec, a, inexact));
+     ("a[%Pd]=%.*Rg", mpfr_get_prec (a), mpfr_log_prec, a));
 
   /* deal with special cases */
   if (MPFR_ARE_SINGULAR (b, c))

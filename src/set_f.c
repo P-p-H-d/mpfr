@@ -35,8 +35,7 @@ mpfr_set_f (mpfr_ptr y, mpf_srcptr x, mpfr_rnd_t rnd_mode)
 
   MPFR_LOG_FUNC
     (("rnd=%d", rnd_mode),
-     ("y[%Pd]=%.*Rg inexact=%d", mpfr_get_prec (y), mpfr_log_prec, y,
-      inexact));
+     ("y[%Pd]=%.*Rg", mpfr_get_prec (y), mpfr_log_prec, y));
 
   sx = ABSIZ(x); /* number of limbs of the mantissa of x */
 

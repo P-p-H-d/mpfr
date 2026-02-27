@@ -35,8 +35,7 @@ mpfr_log10 (mpfr_ptr r, mpfr_srcptr a, mpfr_rnd_t rnd_mode)
 
   MPFR_LOG_FUNC
     (("a[%Pd]=%.*Rg rnd=%d", mpfr_get_prec (a), mpfr_log_prec, a, rnd_mode),
-     ("r[%Pd]=%.*Rg inexact=%d",
-      mpfr_get_prec (r), mpfr_log_prec, r, inexact));
+     ("r[%Pd]=%.*Rg", mpfr_get_prec (r), mpfr_log_prec, r));
 
   /* If a is NaN, the result is NaN */
   if (MPFR_UNLIKELY (MPFR_IS_SINGULAR (a)))

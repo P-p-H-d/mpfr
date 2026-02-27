@@ -179,8 +179,7 @@ GAMMA_FUNC (mpfr_ptr y, mpfr_srcptr z0, mpfr_rnd_t rnd)
 
   MPFR_LOG_FUNC
     (("x[%Pd]=%.*Rg rnd=%d", mpfr_get_prec (z0), mpfr_log_prec, z0, rnd),
-     ("y[%Pd]=%.*Rg inexact=%d",
-      mpfr_get_prec (y), mpfr_log_prec, y, inexact));
+     ("y[%Pd]=%.*Rg", mpfr_get_prec (y), mpfr_log_prec, y));
 
   compared = mpfr_cmp_ui (z0, 1);
 
@@ -723,8 +722,7 @@ mpfr_lngamma (mpfr_ptr y, mpfr_srcptr x, mpfr_rnd_t rnd)
 
   MPFR_LOG_FUNC
     (("x[%Pd]=%.*Rg rnd=%d", mpfr_get_prec (x), mpfr_log_prec, x, rnd),
-     ("y[%Pd]=%.*Rg inexact=%d",
-      mpfr_get_prec (y), mpfr_log_prec, y, inex));
+     ("y[%Pd]=%.*Rg", mpfr_get_prec (y), mpfr_log_prec, y));
 
   /* special cases */
   if (MPFR_UNLIKELY (MPFR_IS_SINGULAR (x) ||
@@ -765,9 +763,8 @@ mpfr_lgamma (mpfr_ptr y, int *signp, mpfr_srcptr x, mpfr_rnd_t rnd)
   /* when signp=NULL, we print 0 in MPFR_LOG_FUNC */
   MPFR_LOG_FUNC
     (("x[%Pd]=%.*Rg rnd=%d", mpfr_get_prec (x), mpfr_log_prec, x, rnd),
-     ("y[%Pd]=%.*Rg signp=%d inexact=%d",
-      mpfr_get_prec (y), mpfr_log_prec, y,
-      (signp == NULL) ? 0 : *signp, inex));
+     ("y[%Pd]=%.*Rg signp=%d", mpfr_get_prec (y), mpfr_log_prec, y,
+      (signp == NULL) ? 0 : *signp));
 
   if (MPFR_UNLIKELY (MPFR_IS_SINGULAR (x)))
     {

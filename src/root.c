@@ -55,8 +55,7 @@ mpfr_rootn_ui (mpfr_ptr y, mpfr_srcptr x, unsigned long k, mpfr_rnd_t rnd_mode)
   MPFR_LOG_FUNC
     (("x[%Pd]=%.*Rg k=%lu rnd=%d",
       mpfr_get_prec (x), mpfr_log_prec, x, k, rnd_mode),
-     ("y[%Pd]=%.*Rg inexact=%d",
-      mpfr_get_prec (y), mpfr_log_prec, y, inexact));
+     ("y[%Pd]=%.*Rg", mpfr_get_prec (y), mpfr_log_prec, y));
 
   if (MPFR_UNLIKELY (k <= 1))
     {
@@ -307,8 +306,7 @@ mpfr_rootn_si (mpfr_ptr y, mpfr_srcptr x, long k, mpfr_rnd_t rnd_mode)
   MPFR_LOG_FUNC
     (("x[%Pd]=%.*Rg k=%lu rnd=%d",
       mpfr_get_prec (x), mpfr_log_prec, x, k, rnd_mode),
-     ("y[%Pd]=%.*Rg inexact=%d",
-      mpfr_get_prec (y), mpfr_log_prec, y, inexact));
+     ("y[%Pd]=%.*Rg", mpfr_get_prec (y), mpfr_log_prec, y));
 
   if (k >= 0)
     return mpfr_rootn_ui (y, x, k, rnd_mode);

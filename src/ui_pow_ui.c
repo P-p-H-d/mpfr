@@ -36,8 +36,7 @@ mpfr_ui_pow_ui (mpfr_ptr x, unsigned long int k, unsigned long int n,
 
   MPFR_LOG_FUNC
     (("k=%lu n=%lu rnd=%d", k, n, rnd),
-     ("y[%Pd]=%.*Rg inexact=%d",
-      mpfr_get_prec (x), mpfr_log_prec, x, inexact));
+     ("y[%Pd]=%.*Rg", mpfr_get_prec (x), mpfr_log_prec, x));
 
   if (MPFR_UNLIKELY (n <= 1))
     {
