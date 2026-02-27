@@ -4976,7 +4976,6 @@ functions, and helped to the Microsoft Windows porting.
 Damien Stehl@'e contributed the @code{mpfr_get_ld_2exp} function.
 Charles Karney contributed the @code{mpfr_nrandom} and @code{mpfr_erandom}
 functions.
-Matteo Nicoli contributed the memory export/import functions.
 
 We would like to thank Jean-Michel Muller and Joris van der Hoeven for very
 fruitful discussions at the beginning of that project, Torbj@"orn Granlund
