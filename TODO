@@ -794,6 +794,13 @@ Table of contents:
   Since the precondition is normally the same for all functions,
   this could be just a macro, e.g. "ALLOWED_RND (rnd_mode);".
 
+- Support "-Werror -fanalyzer" for the MPFR code, while these options
+  cannot be used together on some configure tests with recent GCC:
+  -fanalyzer demands too much at this level.
+  Since -Werror must be kept for the configure tests so that features
+  that do not work with it are disabled at configure time, we need to
+  disable -fanalyzer for the configure tests.
+
 
 ##############################################################################
 7. Portability
