@@ -1539,6 +1539,26 @@ To work with ternary values, mpfr-impl.h provides the following macros:
 
 ===========================================================================
 
+To return from a function that computes a MPFR number (thus returning
+a ternary value):
+
+* If the result is NaN, use MPFR_RET_NAN.
+
+* If the result is exact, use MPFR_RET (0) preferably.
+
+* Any non-zero real value may be out of range, thus inexact.
+  So, for instance, do not use
+    mpfr_set_ui (res, 1, rnd_mode);
+    MPFR_RET (0);
+  but
+    return mpfr_set_ui (res, 1, rnd_mode);
+
+* In the generic case, usually return with code like
+    return mpfr_check_range (rop, inexact, rnd);
+  (see example above).
+
+===========================================================================
+
 Because of a bug in the Mac OS X 10.5 linker, avoid tentative definitions
 (C99, 6.9.2). Depending on the context, use either a simple declaration
 (with the "extern" storage-class specifier) or an external definition.
