@@ -1331,6 +1331,8 @@ MPFR manual (mpfr.texi):
     This is just the name of this character (as originally defined
     for base 10) and does not imply a number written in decimal.
     Note: POSIX uses the term "radix character".
+  * Keep the style/wording consistent. For instance, for the types,
+    use "long int", not "long".
   * Use "@minus{}" for the minus character, not the ASCII "-".
   * Warning! Texinfo is not like TeX. Whitespace is preserved in the
     info file. So, do not use additional space for .texi indentation.

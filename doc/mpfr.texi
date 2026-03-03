@@ -2983,7 +2983,7 @@ length modifiers defined in the C standard:
 @item @samp{h}  @tab @code{short}
 @item @samp{hh} @tab @code{char}
 @item @samp{j}  @tab @code{intmax_t} or @code{uintmax_t}
-@item @samp{l}  @tab @code{long} or @code{wchar_t}
+@item @samp{l}  @tab @code{long int} or @code{wchar_t}
 @item @samp{ll} @tab @code{long long}
 @item @samp{L}  @tab @code{long double}
 @item @samp{t}  @tab @code{ptrdiff_t}
@@ -3555,7 +3555,7 @@ Otherwise, for C90 compilers, only one such argument is supported.
 Note: this macro is experimental and its interface might change in future
 versions.
 @example
-unsigned long ul;
+unsigned long int ul;
 mpfr_t f, r;
 /* Code that inits and sets r, f, and ul, and if needed sets emin */
 int i = mpfr_round_nearest_away (mpfr_add_ui, r, f, ul);
@@ -4925,7 +4925,7 @@ It is deprecated and @code{mpfr_rootn_ui} should be used instead.
 
 Operations with an unsigned zero: For functions taking an argument of
 integer or rational type, a zero of such a type is unsigned unlike the
-floating-point zero (this includes the zero of type @code{unsigned long},
+floating-point zero (this includes the zero of type @code{unsigned long int},
 which is a mathematical, exact zero, as opposed to a floating-point zero,
 which may come from an underflow and whose sign would correspond to the
 sign of the real non-zero value). Unless documented otherwise, this zero
