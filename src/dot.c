@@ -21,7 +21,8 @@ If not, see <https://www.gnu.org/licenses/>. */
 
 #include "mpfr-impl.h"
 
-/* FIXME: handle intermediate overflows and underflows. */
+/* FIXME: Handle intermediate overflows and underflows. */
+/* FIXME: Extend the exponent range as usual. */
 
 /* res <- a[0]*b[0] + ... + a[n-1]*b[n-1] */
 int
