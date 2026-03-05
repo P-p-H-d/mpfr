@@ -20,19 +20,25 @@ along with the GNU MPFR Library; see the file COPYING.LESSER.
 If not, see <https://www.gnu.org/licenses/>. */
 
 #include "mpfr-test.h"
+#include <math.h>
+
+/* The number of variants of nrandom */
+#define NRANDOM_VERSIONS 2
 
 static void
-test_special (mpfr_prec_t p)
+test_special (int version, mpfr_prec_t p)
 {
   mpfr_t x;
   int inexact;
 
   mpfr_init2 (x, p);
 
-  inexact = mpfr_nrandom (x, RANDS, MPFR_RNDN);
+  inexact = (version == 1 ? mpfr_nrandom_v1 : mpfr_nrandom_v2)
+    (x, RANDS, MPFR_RNDN);
   if (inexact == 0)
     {
-      printf ("Error: mpfr_nrandom() returns a zero ternary value.\n");
+      printf ("Error: mpfr_nrandom_v%d() returns a zero ternary value.\n",
+              version);
       exit (1);
     }
 
@@ -41,7 +47,8 @@ test_special (mpfr_prec_t p)
 
 #define NRES 10
 
-static const char *res[NRES] = {
+/* First NRES entries for v1, second NRES entries for v2 */
+static const char *res[2*NRES] = {
   "-2.07609e2d96da78b2d6bea3ab30d4359222a82f8a35e4e4464303ad4808f57458@0",
   "1.a4650a963ab9f266ed009ee96c8788f6b88212f5f2a4d4aef65db2a9e57c44bc@-1",
   "c.0b3cda7f370a36febed972dbb47f2503f7e08a651edbf12d0303d968257841b0@-1",
@@ -51,12 +58,23 @@ static const char *res[NRES] = {
   "-1.104e769aadb5fce5a7ad1c546e91b889829a76920c7cc7ac4cbd12009451ce90@0",
   "3.0a08181e342b02187463c0025f895b41ddb7076c5bf157e3b898e9248baf4ad4@-1",
   "-d.44fda7a51276b722ebc88dd016b7d9d7ea5ba682282a42cdef6948312e5dcf70@-1",
-  "1.5bf69aff31bb3e6430cc263fdd45ef2c70a779984e764524bc35a9cb4a430dd0@0" };
+  "1.5bf69aff31bb3e6430cc263fdd45ef2c70a779984e764524bc35a9cb4a430dd0@0",
+
+  "8.90acc8b8a980ab5564006cb05bf8573b7bc3ed6a06431d4ce094858d11fa8dd0@-1",
+  "-1.d025e3f430d4359222a82f8a35e4e4464303ad4808f5745781361c0dd614fc2e@0",
+  "-e.a66fb696b88212f5f2a4d4aef65db2a9e57c44bc58e39520eda7e001a4650aa0@-1",
+  "1.80f0a9628257841b744575cc65865e54f4cf43f4f1527ebd09f395470195253e@0",
+  "5.b7fdabe55c5dd92d768983f5fe84a7c8be40c10868c4bc2ec5b6c8311e0f1910@-1",
+  "a.1173efbbb17b798626f226dde71006d0de654a2523935c07da17dfd40f6204d0@-1",
+  "-8.ed5bb0dab7e39130db211bc4bbce42f0fd4f40db3bc6be9e87c779358e4afc40@-1",
+  "3.09fd2a1bfa048dbf1e7850ac6cbea2514a0f3ce011e964d9f331cbcab2efdf10@-1",
+  "1.21209642062a049a1ad0e1792dc8a971020cab00adb5fce5a7ad1c546e91b88a@0",
+  "3.0a0818187463c0025f895b41ddb7076c5bf157e3b898e9248baf4ad266fc2f70@-1" };
 
 /* If checkval is true, check the obtained results by using a fixed seed
    for reproducibility. */
 static void
-test_nrandom (long nbtests, mpfr_prec_t prec, mpfr_rnd_t rnd,
+test_nrandom (int version, long nbtests, mpfr_prec_t prec, mpfr_rnd_t rnd,
               int verbose, int checkval)
 {
   gmp_randstate_t s;
@@ -77,13 +95,15 @@ test_nrandom (long nbtests, mpfr_prec_t prec, mpfr_rnd_t rnd,
 
   for (i = 0; i < nbtests; i++)
     {
-      inexact = mpfr_nrandom (t[i], checkval ? s : RANDS, MPFR_RNDN);
+      inexact = (version == 1 ? mpfr_nrandom_v1 : mpfr_nrandom_v2)
+        (t[i], checkval ? s : RANDS, MPFR_RNDN);
 
-      if (checkval && mpfr_cmp_str (t[i], res[i], 16, MPFR_RNDN) != 0)
+      if (checkval &&
+          mpfr_cmp_str (t[i], res[NRES*(version-1) + i], 16, MPFR_RNDN) != 0)
         {
-          printf ("Unexpected value in test_nrandom().\n"
+          printf ("Unexpected value in test_nrandom_v%d().\n"
                   "Expected %s\n"
-                  "Got      ", res[i]);
+                  "Got      ", version, res[NRES*(version-1) + i]);
           mpfr_out_str (stdout, 16, 0, t[i], MPFR_RNDN);
           printf ("\n");
           exit (1);
@@ -92,7 +112,8 @@ test_nrandom (long nbtests, mpfr_prec_t prec, mpfr_rnd_t rnd,
       if (inexact == 0)
         {
           /* one call in the loop pretended to return an exact number! */
-          printf ("Error: mpfr_nrandom() returns a zero ternary value.\n");
+          printf ("Error: mpfr_nrandom_v%d() returns a zero ternary value.\n",
+                  version);
           exit (1);
         }
     }
@@ -119,7 +140,8 @@ test_nrandom (long nbtests, mpfr_prec_t prec, mpfr_rnd_t rnd,
       mpfr_sqr (tmp, av, MPFR_RNDN);
       mpfr_sub (va, va, av, MPFR_RNDN);
 
-      mpfr_printf ("Average = %.5Rf\nVariance = %.5Rf\n", av, va);
+      mpfr_printf ("Average v%d = %.5Rf\nVariance v%d = %.5Rf\n",
+                   version, av, version, va);
       mpfr_clear (av);
       mpfr_clear (va);
       mpfr_clear (tmp);
@@ -133,7 +155,6 @@ test_nrandom (long nbtests, mpfr_prec_t prec, mpfr_rnd_t rnd,
     gmp_randclear (s);
   return;
 }
-
 
 int
 main (int argc, char *argv[])
@@ -157,15 +178,18 @@ main (int argc, char *argv[])
         nbtests = a;
     }
 
-  test_nrandom (nbtests, 420, MPFR_RNDN, verbose, 0);
+  for (int v = 1; v <= NRANDOM_VERSIONS; ++v)
+    {
+      test_nrandom (v, nbtests, 420, MPFR_RNDN, verbose, 0);
 
 #ifndef MPFR_USE_MINI_GMP
-  /* The random generator in mini-gmp is not deterministic. */
-  test_nrandom (0, 256, MPFR_RNDN, 0, 1);
+      /* The random generator in mini-gmp is not deterministic. */
+      test_nrandom (v, 0, 256, MPFR_RNDN, 0, 1);
 #endif /* MPFR_USE_MINI_GMP */
 
-  test_special (2);
-  test_special (42000);
+      test_special (v, 2);
+      test_special (v, 42000);
+    }
 
   tests_end_mpfr ();
   return 0;
