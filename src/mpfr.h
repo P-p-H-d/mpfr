@@ -591,6 +591,8 @@ MPFR_DEPRECATED
 #endif
 __MPFR_DECLSPEC int mpfr_grandom (mpfr_ptr, mpfr_ptr, gmp_randstate_t,
                                   mpfr_rnd_t);
+__MPFR_DECLSPEC int mpfr_nrandom_v1 (mpfr_ptr, gmp_randstate_t, mpfr_rnd_t);
+__MPFR_DECLSPEC int mpfr_nrandom_v2 (mpfr_ptr, gmp_randstate_t, mpfr_rnd_t);
 __MPFR_DECLSPEC int mpfr_nrandom (mpfr_ptr, gmp_randstate_t, mpfr_rnd_t);
 __MPFR_DECLSPEC int mpfr_erandom (mpfr_ptr, gmp_randstate_t, mpfr_rnd_t);
 __MPFR_DECLSPEC int mpfr_urandomb (mpfr_ptr, gmp_randstate_t);

@@ -320,7 +320,7 @@ extern char             mpfr_rands_initialized;
 extern gmp_randstate_t  mpfr_rands;
 
 #undef RANDS
-#define RANDS                                   \
+#define RANDS                                  \
   ((mpfr_rands_initialized ? 0                 \
     : (mpfr_rands_initialized = 1,             \
        gmp_randinit_default (mpfr_rands), 0)), \
@@ -329,10 +329,10 @@ extern gmp_randstate_t  mpfr_rands;
 #undef RANDS_CLEAR
 #define RANDS_CLEAR()                   \
   do {                                  \
-    if (mpfr_rands_initialized)        \
+    if (mpfr_rands_initialized)         \
       {                                 \
-        mpfr_rands_initialized = 0;    \
-        gmp_randclear (mpfr_rands);    \
+        mpfr_rands_initialized = 0;     \
+        gmp_randclear (mpfr_rands);     \
       }                                 \
   } while (0)
 
