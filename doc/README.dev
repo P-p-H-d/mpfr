@@ -1748,6 +1748,24 @@ main (int argc, char *argv[])
   return 0;
 }
 
+About the generic tests, when there is an additional integer argument,
+the test_generic_ui test could be used. For instance, trootn_si.c has:
+
+#define TEST_FUNCTION mpfr_rootn_si
+#define INTEGER_TYPE long
+#define INT_RAND_FUNCTION() \
+  (randlimb () % 16 == 0 ? randlong () : (long) (randlimb () % 31) - 15)
+#include "tgeneric_ui.c"
+
+and in main():
+
+  test_generic_ui (MPFR_PREC_MIN, 200, 30);
+
+Since the test_generic_ui test is rather basic compared to test_generic
+(this might be improved in the future), it is recommended to also add
+test_generic tests on several fixed values of the integer argument.
+See tcompound_si.c as an example.
+
    ---------------------------------------------------------------------
 
 Here is how the test suite works since the full Automake 1.13 support
