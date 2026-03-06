@@ -3,7 +3,7 @@
    rounding mode.
 
 Copyright 2013-2026 Free Software Foundation, Inc.
-Contributed by Charles Karney <karney@alum.mit.edu>, SRI International.
+Contributed by Charles Karney <charles@karney.com>, SRI International.
 
 This file is part of the GNU MPFR Library.
 
@@ -30,12 +30,7 @@ If not, see <https://www.gnu.org/licenses/>. */
  *   https://dx.doi.org/10.1145/2710016
  *   https://arxiv.org/abs/1303.6257
  *
- * mpfr_nrandom_v1 closely follows the C++ one given in the paper
- * above.  However, here, C is simplified by using gmp_urandomm_ui; the initial
- * rejection step in H just tests the leading bit of p; and the assignment of
- * the sign to the deviate using gmp_urandomb_ui.
- *
- * Improvements to this algorithm are given in:
+ * and the improvements to this algorithm given in:
  *   Yusong Du, Baoying Fan, and Baodian Wei,
  *   "An improved exact sampling algorithm for the standard normal
  *   distribution",
@@ -43,11 +38,9 @@ If not, see <https://www.gnu.org/licenses/>. */
  *   https://doi.org/10.1007/s00180-021-01136-w
  *   https://arxiv.org/abs/2008.03855
  *
- * These improvements shave 13% off the running time for low precision results
- * (prec <= 64).  (For higher precision, the least significant bits are just
- * copied from the random number stream for both versions.)  But, as important,
- * the resulting code is simpler and easier to understand.  mpfr_nrandom_v2
- * includes these improvements as detailed in
+ * The implementation here closely follows the C++ one given in the ACM paper
+ * with the algorithmic improvements given by Du et al. as detailed in
+ *
  *   https://exrandom.sourceforge.net/3.0/algorithm.html
  *
  * There are a few "weasel words" regarding the accuracy of this
@@ -68,7 +61,7 @@ If not, see <https://www.gnu.org/licenses/>. */
 
 #include "random_deviate.h"
 
-/* Algorithm H: true with probability exp(-1/2).  Used by v1 and v2. */
+/* Algorithm H: true with probability exp(-1/2). */
 static int
 half_exp_bern (gmp_randstate_t r,
                mpfr_random_deviate_t p, mpfr_random_deviate_t q)
@@ -88,8 +81,7 @@ half_exp_bern (gmp_randstate_t r,
     }
 }
 
-/* Step N1: return n >= 0 with prob. exp(-n/2) * (1 - exp(-1/2)).
-   Used by v1 and v2. */
+/* Step N1: return n >= 0 with prob. exp(-n/2) * (1 - exp(-1/2)). */
 static unsigned long
 half_exp_geom (gmp_randstate_t r,
                mpfr_random_deviate_t p, mpfr_random_deviate_t q)
@@ -107,75 +99,14 @@ half_exp_geom (gmp_randstate_t r,
   return n;
 }
 
-/* Step N2_v1: true with probability exp(-m*n/2).  Used by v1 only. */
-static int
-P (unsigned long m, unsigned long n, gmp_randstate_t r,
-   mpfr_random_deviate_t p, mpfr_random_deviate_t q)
-{
-  /* p and q are temporaries.  m*n is passed as two separate parameters to deal
-   * with the case where m*n overflows an unsigned long.  This may be called
-   * with m = 0 and n = (unsigned long)(-1) and, because m in handled in to the
-   * outer loop, this routine will correctly return 1. */
-  while (m--)
-    {
-      unsigned long k = n;
-      while (k--)
-        {
-          if (!half_exp_bern (r, p, q))
-            return 0;
-        }
-    }
-  return 1;
-}
-
-/* Algorithm C: return (-1, 0, 1) with prob (1/m, 1/m, 1-2/m).
-   Used by v1 only. */
-static int
-C (unsigned long m, gmp_randstate_t r)
-{
-  unsigned long n =  gmp_urandomm_ui (r, m);
-  return n == 0 ? -1 : (n == 1 ? 0 : 1);
-}
-
-/* Algorithm B: true with prob exp(-x * (2*k + x) / (2*k + 2)).
-   Used by v1 only. */
-static int
-B (unsigned long k, mpfr_random_deviate_t x, gmp_randstate_t r,
-   mpfr_random_deviate_t p, mpfr_random_deviate_t q)
-{
-  /* p and q are temporaries */
-
-  unsigned long m = 2 * k + 2;
-  /* n tracks the parity of the loop; s == 1 on first trip through loop. */
-  unsigned n = 0, s = 1;
-  int f;
-
-  /* Check if 2 * k + 2 would overflow; for a 32-bit unsigned long, the
-   * probability of this is exp(-2^61)).  */
-  MPFR_ASSERTN (k < ((unsigned long)(-1) >> 1));
-
-  for (;; ++n, s = 0)           /* overflow of n is innocuous */
-    {
-      if ( ((f = k ? 0 : C (m, r)) < 0) ||
-           (mpfr_random_deviate_reset (q),
-            !mpfr_random_deviate_less (q, s ? x : p, r)) ||
-           ((f = k ? C (m, r) : f) < 0) ||
-           (f == 0 &&
-            (mpfr_random_deviate_reset (p),
-             !mpfr_random_deviate_less (p, x, r))) )
-        break;
-      mpfr_random_deviate_swap (p, q); /* an efficient way of doing p = q */
-    }
-  return (n & 1U) == 0;
-}
-
-/* Step N2_v2: return square root of n if it's a perfect square else -1.
-   Used by v2 only.
+/* Step N2: return square root of n if it's a perfect square else -1.
    The probability distribution of n is exp(-n/2), so that realistically
    the maximum value of n is 100 or so, thus a naive search is enough.
    Moreover, step N1 is in Theta(n) while this step is in Theta(sqrt(n)).
-   This could easily be merged into step N1 (half_exp_geom), but half_exp_geom
-   is also used by v1 -- so skip this for now. */
+   TODO(?): merge this step into step N1 (half_exp_geom); the square root
+   could then be computed in a straightforward way by comparing n with
+   the successive perfect squares, since n is incremented by 1 at each
+   iteration. */
 static long
 int_sqrt (unsigned long n)
 {
@@ -197,8 +128,8 @@ int_sqrt (unsigned long n)
   return -1;
 }
 
-/* Algorithm E: true with probability exp(-x) for x in (0, 1).
-   This same routine appears in erandom.c, where it's called E. */
+/* Algorithm E: true with probability exp(-x) for x in (0, 1). */
+/* This same routine appears in erandom.c */
 static int
 trunc_exp_bern (mpfr_random_deviate_t x, gmp_randstate_t r,
                 mpfr_random_deviate_t p, mpfr_random_deviate_t q)
@@ -218,23 +149,7 @@ trunc_exp_bern (mpfr_random_deviate_t x, gmp_randstate_t r,
     }
 }
 
-/* Algorithm B_v2: true with prob exp(-x^2/2) for x in (0,1).  This is a
-   specialization of v1's Algirithm B with k = 0.  Used by v2 only.  Here
-   are the steps:
-
-   U is a decreasing sequence x > U1 > U2 > ...
-   V is a sequence V1, V2, ... with Vi < x.
-
-   B1 [Initialize loop.] Set y = x, n = 0.
-   B2 [Generate and test next samples.]
-      (a) [The coin toss] With probability 1/2, go to step B4.
-      (b) [The U sequence] Sample z = U; go to step B4, unless z < y.
-      (c) [The V sequence] Sample r = U; go to step B4, unless r < x.
-   B3 [Increment loop counter and repeat.] Set y = z, n = n+1; go to step B2.
-   B4 [Test length of runs.] Set B = (n is even).
-
-   Step B2 is entered with probability 1/2^n * x^n/n! * x^n.
-*/
+/* Algorithm B: true with prob exp(-x^2/2) for x in (0,1). */
 static int
 trunc_norm_bern (mpfr_random_deviate_t x, gmp_randstate_t r,
                  mpfr_random_deviate_t p, mpfr_random_deviate_t q)
@@ -257,54 +172,9 @@ trunc_norm_bern (mpfr_random_deviate_t x, gmp_randstate_t r,
   return (n & 1U) == 0;
 }
 
-/* return a normal random deviate with mean 0 and variance 1 as a MPFR.
-   Version 1  */
+/* return a normal random deviate with mean 0 and variance 1 as a MPFR  */
 int
-mpfr_nrandom_v1 (mpfr_ptr z, gmp_randstate_t r, mpfr_rnd_t rnd)
-{
-  mpfr_random_deviate_t x, p, q;
-  int inex;
-  unsigned long k, j;
-
-  mpfr_random_deviate_init (x);
-  mpfr_random_deviate_init (p);
-  mpfr_random_deviate_init (q);
-  for (;;)
-    {
-      k = half_exp_geom (r, p, q);                   /* step 1 */
-      if (!P (k, k - 1, r, p, q))
-        continue;                                    /* step 2 */
-      mpfr_random_deviate_reset (x);                 /* step 3 */
-      for (j = 0; j <= k && B (k, x, r, p, q); ++j); /* step 4 */
-      if (j > k)
-        break;
-    }
-  mpfr_random_deviate_clear (q);
-  mpfr_random_deviate_clear (p);
-  /* steps 5, 6, 7 */
-  inex = mpfr_random_deviate_value (gmp_urandomb_ui (r, 1), k, x, z, r, rnd);
-  mpfr_random_deviate_clear (x);
-  return inex;
-}
-
-/* return a normal random deviate with mean 0 and variance 1 as a MPFR.
-   Version 2.  Here are the steps:
-
-   N1 [Sample square of integer part of deviate n = k^2.]  Select integer
-      n >= 0 with probability exp(−n/2) * (1 − 1/sqrt(e)).
-   N2 [Testing whether n is a perfect square.] If n is a perfect square set
-      k = sqrt(n); otherwise go to step N1.
-   N3 [Sample fractional part of deviate x.] Set x = U.
-   N4 [First adjustment of the relative probability of x.] Accept x with
-      probability exp(−k*x); otherwise go to step N1.
-   N5 [Second adjustment of the relative probability of x.] Accept x with
-      probability exp(−x^2/2); otherwise go to step N1.
-   N6 [Combine integer and fraction and assign a sign.] Set y = k + x;
-      then with probability 1/2, set y = −y.
-   N7 [Return result.] Set N = y.
-*/
-int
-mpfr_nrandom_v2 (mpfr_ptr z, gmp_randstate_t r, mpfr_rnd_t rnd)
+mpfr_nrandom (mpfr_ptr z, gmp_randstate_t r, mpfr_rnd_t rnd)
 {
   mpfr_random_deviate_t x, p, q;
   int inex;
@@ -331,12 +201,4 @@ mpfr_nrandom_v2 (mpfr_ptr z, gmp_randstate_t r, mpfr_rnd_t rnd)
   inex = mpfr_random_deviate_value (gmp_urandomb_ui (r, 1), k, x, z, r, rnd);
   mpfr_random_deviate_clear (x);
   return inex;
-}
-
-/* return a normal random deviate with mean 0 and variance 1 as a MPFR.
-   Select the default version (currently Version 1). */
-int
-mpfr_nrandom (mpfr_ptr z, gmp_randstate_t r, mpfr_rnd_t rnd)
-{
-  return mpfr_nrandom_v1 (z, r, rnd);
 }

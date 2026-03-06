@@ -90,5 +90,5 @@ I've left the t[ne]random tests as is, even though t[ne]random_chisq are
 performing the same tests in a more comprehensive fashion.  There's some
 utility in having a set of really simple tests.
 
-  --Charles Karney <karney@alum.mit.edu>
+  --Charles Karney <charles.karney@sri.com>
 

@@ -1,7 +1,7 @@
 /* Chi-squared test for mpfr_nrandom
 
 Copyright 2011-2026 Free Software Foundation, Inc.
-Contributed by Charles Karney <karney@alum.mit.edu>, SRI International.
+Contributed by Charles Karney <charles@karney.com>, SRI International.
 
 This file is part of the GNU MPFR Library.
 
@@ -20,9 +20,6 @@ along with the GNU MPFR Library; see the file COPYING.LESSER.
 If not, see <https://www.gnu.org/licenses/>. */
 
 #include "mpfr-test.h"
-
-/* The number of variants of nrandom */
-#define NRANDOM_VERSIONS 2
 
 /* Return Phi(x) = erf(x / sqrt(2)) / 2, the cumulative probability function
  * for the normal distribution.  We only take differences of this function so
@@ -84,8 +81,7 @@ chisq_prob (mpfr_ptr q, long nu, mpfr_ptr chisqp)
  * The testing of low precision normal deviates is done by
  * test_nrandom_chisq_disc. */
 static double
-test_nrandom_chisq_cont (int version, gmp_randstate_t s,
-                         long num, mpfr_prec_t prec, int nu,
+test_nrandom_chisq_cont (long num, mpfr_prec_t prec, int nu,
                          double xmin, double xmax, int verbose)
 {
   mpfr_t x, a, b, dx, z, pa, pb, ps, t;
@@ -112,13 +108,11 @@ test_nrandom_chisq_cont (int version, gmp_randstate_t s,
 
   for (k = 0; k < num; ++k)
     {
-      inexact = (version == 1 ? mpfr_nrandom_v1 : mpfr_nrandom_v2)
-        (x, s, rndd);
+      inexact = mpfr_nrandom (x, RANDS, rndd);
       if (inexact == 0)
         {
           /* one call in the loop pretended to return an exact number! */
-          printf ("Error: mpfr_nrandom_v%d() returns a zero ternary value.\n",
-                  version);
+          printf ("Error: mpfr_nrandom() returns a zero ternary value.\n");
           exit (1);
         }
       mpfr_sub (x, x, a, rndd);
@@ -156,9 +150,8 @@ test_nrandom_chisq_cont (int version, gmp_randstate_t s,
   Q = mpfr_get_d (t, rnd);
   if (verbose)
     {
-      printf ("v%d, num = %ld, equal bins in [%.2f, %.2f], "
-              "nu = %d: chisq = %.2f\n",
-              version, num, xmin, xmax, nu, chisq);
+      printf ("num = %ld, equal bins in [%.2f, %.2f], nu = %d: chisq = %.2f\n",
+              num, xmin, xmax, nu, chisq);
       if (Q < 0.05)
         printf ("    WARNING: probability (less than 5%%) = %.2e\n", Q);
     }
@@ -207,8 +200,7 @@ sequential (mpfr_ptr x)
  * trandom_deviate includes checks on the consistency of the results extracted
  * from a random_deviate with other rounding modes.  */
 static double
-test_nrandom_chisq_disc (int version, gmp_randstate_t s,
-                         long num, mpfr_prec_t wprec, int prec,
+test_nrandom_chisq_disc (long num, mpfr_prec_t wprec, int prec,
                          double xmin, double xmax, int verbose)
 {
   mpfr_t x, v, pa, pb, z, t;
@@ -240,8 +232,7 @@ test_nrandom_chisq_disc (int version, gmp_randstate_t s,
 
   for (k = 0; k < num; ++k)
     {
-      inexact = (version == 1 ? mpfr_nrandom_v1 : mpfr_nrandom_v2)
-        (x, s, rnd);
+      inexact = mpfr_nrandom (x, RANDS, rnd);
       if (mpfr_signbit (x))
         {
           inexact = -inexact;
@@ -289,9 +280,8 @@ test_nrandom_chisq_disc (int version, gmp_randstate_t s,
   Q = mpfr_get_d (t, rnd);
   if (verbose)
     {
-      printf ("v%d, num = %ld, discrete (prec = %d) bins in [%.6f, %.2f], "
-              "nu = %d: chisq = %.2f\n",
-              version, num, prec, xmin, xmax, nu, chisq);
+      printf ("num = %ld, discrete (prec = %d) bins in [%.6f, %.2f], "
+              "nu = %d: chisq = %.2f\n", num, prec, xmin, xmax, nu, chisq);
       if (Q < 0.05)
         printf ("    WARNING: probability (less than 5%%) = %.2e\n", Q);
     }
@@ -302,9 +292,7 @@ test_nrandom_chisq_disc (int version, gmp_randstate_t s,
 }
 
 static void
-run_chisq (int version, gmp_randstate_t s,
-           double (*f)(int, gmp_randstate_t,
-                       long, mpfr_prec_t, int, double, double, int),
+run_chisq (double (*f)(long, mpfr_prec_t, int, double, double, int),
            long num, mpfr_prec_t prec, int bin,
            double xmin, double xmax, int verbose)
 {
@@ -316,14 +304,14 @@ run_chisq (int version, gmp_randstate_t s,
   Qthresh = 0.01;
   for (i = 0; i < 3; ++i)
     {
-      Q = (*f)(version, s, num, prec, bin, xmin, xmax, verbose);
+      Q = (*f)(num, prec, bin, xmin, xmax, verbose);
       Qcum *= Q;
       if (Q > Qthresh)
         return;
       else if (Q < Qbad)
         {
-          printf ("Error: mpfr_nrandom_v%d chi-squared failure "
-                  "(prob = %.2e)\n", version, Q);
+          printf ("Error: mpfr_nrandom chi-squared failure "
+                  "(prob = %.2e)\n", Q);
           exit (1);
         }
       num *= 10;
@@ -331,8 +319,8 @@ run_chisq (int version, gmp_randstate_t s,
     }
   if (Qcum < Qbad)              /* Presumably this is true */
     {
-      printf ("Error: mpfr_nrandom_v%d combined chi-squared failure "
-              "(prob = %.2e)\n", version, Qcum);
+      printf ("Error: mpfr_nrandom combined chi-squared failure "
+              "(prob = %.2e)\n", Qcum);
       exit (1);
     }
 }
@@ -341,7 +329,6 @@ int
 main (int argc, char *argv[])
 {
   long nbtests;
-  unsigned long seed = 314159;
   int verbose;
 
   tests_start_mpfr ();
@@ -354,31 +341,13 @@ main (int argc, char *argv[])
       verbose = 1;
       if (a != 0)
         nbtests = a;
-      if (argc > 2)
-        {
-          long b = atol (argv[2]);
-          if (b >= 0)
-            seed = (unsigned long) b;
-        }
     }
 
-  for (int v = 1; v <= NRANDOM_VERSIONS; ++v)
-    {
-      gmp_randstate_t s;
-      gmp_randinit_default (s);
-      gmp_randseed_ui (s, seed);
+  run_chisq (test_nrandom_chisq_cont, nbtests, 64, 60, -4, 4, verbose);
+  run_chisq (test_nrandom_chisq_disc, nbtests, 64, 2, 0.0005, 3, verbose);
+  run_chisq (test_nrandom_chisq_disc, nbtests, 64, 3, 0.002, 4, verbose);
+  run_chisq (test_nrandom_chisq_disc, nbtests, 64, 4, 0.004, 4, verbose);
 
-      run_chisq (v, s, test_nrandom_chisq_cont, nbtests,
-                 64, 60, -4, 4, verbose);
-      run_chisq (v, s, test_nrandom_chisq_disc, nbtests,
-                 64, 2, 0.0005, 3, verbose);
-      run_chisq (v, s, test_nrandom_chisq_disc, nbtests,
-                 64, 3, 0.002, 4, verbose);
-      run_chisq (v, s, test_nrandom_chisq_disc, nbtests,
-                 64, 4, 0.004, 4, verbose);
-
-      gmp_randclear (s);
-    }
   tests_end_mpfr ();
   return 0;
 }
