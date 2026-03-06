@@ -342,7 +342,7 @@ main (int argc, char *argv[])
 {
   long nbtests;
   unsigned long seed = 314159;
-  int verbose;
+  int verbose, v;
 
   tests_start_mpfr ();
 
@@ -362,7 +362,7 @@ main (int argc, char *argv[])
         }
     }
 
-  for (int v = 1; v <= NRANDOM_VERSIONS; ++v)
+  for (v = 1; v <= NRANDOM_VERSIONS; ++v)
     {
       gmp_randstate_t s;
       gmp_randinit_default (s);
