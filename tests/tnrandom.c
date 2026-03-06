@@ -160,7 +160,7 @@ int
 main (int argc, char *argv[])
 {
   long nbtests;
-  int verbose;
+  int verbose, v;
 
   tests_start_mpfr ();
 
@@ -178,7 +178,7 @@ main (int argc, char *argv[])
         nbtests = a;
     }
 
-  for (int v = 1; v <= NRANDOM_VERSIONS; ++v)
+  for (v = 1; v <= NRANDOM_VERSIONS; ++v)
     {
       test_nrandom (v, nbtests, 420, MPFR_RNDN, verbose, 0);
 
