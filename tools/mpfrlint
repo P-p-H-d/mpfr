@@ -2,6 +2,8 @@
 
 # Check possible problems in the MPFR source.
 
+# This script needs GNU grep with PCRE support (option -P).
+
 set -e
 setopt EXTENDED_GLOB
 
@@ -533,6 +535,9 @@ grep -E '[^a-z_](m|re)alloc *\(' tests/*.c | \
 # this is what is expected).
 err-if-output --msg='Use "..." instead of "@dots{}" in function prototypes.' \
   -t "@dots{} in prototypes" grep '@deftypefun.*@dots' doc/mpfr.texi
+
+err-if-output --msg='Use "long int" instead of "long".' -t "long vs long int" \
+  grep -P '(@code\{|unsigned )long(?! (double|int|long))' doc/mpfr.texi
 
 # Check that except for comment lines, mpfr.texi does not contain non-ASCII
 # characters. Otherwise, for HTML, makeinfo (texi2any) generates characters

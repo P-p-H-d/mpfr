@@ -373,6 +373,8 @@ To make a release (for the MPFR team):
      the MPFR code; in particular, the -Wno-error=unused-function option
      should no longer be necessary, thanks to conditional compilation or
      MPFR_MAYBE_UNUSED).
+     New warnings may be useful. Check the GCC warning history at
+     <https://gcc.gnu.org/wiki/WarningHistory>.
 
      Check whether some functions could be declared as pure, const, etc.
      with GCC, using -Wsuggest-attribute=... options.
@@ -475,6 +477,48 @@ $ autoreconf
 And for libtool 2.4.3 to 2.4.6, the following is needed:
 $ patch m4/libtool.m4 libtool-tcc-rpath.patch
 $ autoreconf
+
+===========================================================================
+
+Particular configure values used by MPFR:
+
++ CC and CFLAGS:        As usual, but if they are both empty, the configure
+                        script will try to get the values suggested by gmp.h
+                        (this is useful because GMP may be installed with a
+                        non-default ABI). See the INSTALL file for details.
+
++ MPFR_EXTRA_CFLAGS:    Extra options added to $CFLAGS at the end of the
+                        configure script, i.e. used only for the MPFR
+                        build and tests. They will not affect configure
+                        tests, except when CFLAGS is temporarily modified
+                        with the addition of $MPFR_EXTRA_CFLAGS.
+
+Compiler options should normally put in CFLAGS, as the goal of configure
+is to test under conditions similar to the actual build, in particular
+for the test of supported features. This is the case of -Werror, if
+used, because it may have an influence on which features are supported:
+the implementation of some features may cause warnings, which are turned
+into errors. All options about optional features should be put in CFLAGS.
+
+However, some particular options, which are just intended to detect bugs
+or poorly written code in MPFR, may need to be put in MPFR_EXTRA_CFLAGS
+when they are used together with -Werror, because they may yield failures
+on completely valid C code (for this reason, various configure tests may
+use such code, even though the compiler could complain). Such options fall
+into two classes:
+  * Code analysis, e.g. GCC's -fanalyzer. Even though running the code
+    could yield undefined behavior, various configure tests do not care
+    about the execution; for instance, an infinite loop should not yield
+    compile-time errors in configure (such a loop is used by the tests
+    from Autoconf to check the support of _Noreturn).
+  * Coding style (which could be regarded as bugs when using a recent
+    C standard), e.g. GCC's -Wold-style-declaration, which may yield a
+    clash between some standard Autoconf tests and GCC:
+      https://gcc.gnu.org/bugzilla/show_bug.cgi?id=108700
+
+The -Wall option may enable options related to code analysis and coding
+style, but it should normally be put in CFLAGS. The configure tests from
+Autoconf have improved to avoid failures with options enabled by -Wall.
 
 ===========================================================================
 
@@ -1110,13 +1154,14 @@ after the format string.
 Add this macro at the beginning of a function. It logs the first message
 at the entry of the function and the second message just before the
 function returns.
-Example:
-  MPFR_LOG_FUNC (
-    ("op[%Pd]=%.*Rg rnd=%d", op, mpfr_get_prec (op), mpfr_log_prec, op),
-    ("x[%Pd]=%.*Rg inexact=%d", mpfr_get_prec (x), mpfr_log_prec, x, i));
+Example for an evaluation y = f(x):
+  MPFR_LOG_FUNC
+    (("x[%Pd]=%.*Rg rnd=%d", mpfr_get_prec(x), mpfr_log_prec, x, rnd_mode),
+     ("y[%Pd]=%.*Rg", mpfr_get_prec(y), mpfr_log_prec, y));
 
-The double brackets "((" and "))" are needed since MPFR must compile with
-old compiler, so macros with variable number of arguments are not allowed.
+The double brackets "((" and "))" for MPFR_LOG_MSG are needed since MPFR
+must compile with old compiler, so macros with variable number of arguments
+are not allowed.
 
 It uses the extension of the mpfr_printf function: %Rf to display a mpfr_t.
 %Ru is used to display the precision of a mpfr_t.
@@ -1297,6 +1342,8 @@ MPFR manual (mpfr.texi):
     This is just the name of this character (as originally defined
     for base 10) and does not imply a number written in decimal.
     Note: POSIX uses the term "radix character".
+  * Keep the style/wording consistent. For instance, for the types,
+    use "long int", not "long".
   * Use "@minus{}" for the minus character, not the ASCII "-".
   * Warning! Texinfo is not like TeX. Whitespace is preserved in the
     info file. So, do not use additional space for .texi indentation.
@@ -1503,6 +1550,26 @@ To work with ternary values, mpfr-impl.h provides the following macros:
 
 ===========================================================================
 
+To return from a function that computes a MPFR number (thus returning
+a ternary value):
+
+* If the result is NaN, use MPFR_RET_NAN.
+
+* If the result is exact, use MPFR_RET (0) preferably.
+
+* Any non-zero real value may be out of range, thus inexact.
+  So, for instance, do not use
+    mpfr_set_ui (res, 1, rnd_mode);
+    MPFR_RET (0);
+  but
+    return mpfr_set_ui (res, 1, rnd_mode);
+
+* In the generic case, usually return with code like
+    return mpfr_check_range (rop, inexact, rnd);
+  (see example above).
+
+===========================================================================
+
 Because of a bug in the Mac OS X 10.5 linker, avoid tentative definitions
 (C99, 6.9.2). Depending on the context, use either a simple declaration
 (with the "extern" storage-class specifier) or an external definition.
@@ -1677,7 +1744,7 @@ If not, see <https://www.gnu.org/licenses/>. */
 #include "mpfr-test.h"
 
 #define TEST_FUNCTION mpfr_func
-#define TEST_RANDOM_EMIN -5
+#define TEST_RANDOM_EMIN (-5)
 #define TEST_RANDOM_EMAX 5
 #include "tgeneric.c"
 
@@ -1691,6 +1758,24 @@ main (int argc, char *argv[])
   tests_end_mpfr ();
   return 0;
 }
+
+About the generic tests, when there is an additional integer argument,
+the test_generic_ui test could be used. For instance, trootn_si.c has:
+
+#define TEST_FUNCTION mpfr_rootn_si
+#define INTEGER_TYPE long
+#define INT_RAND_FUNCTION() \
+  (randlimb () % 16 == 0 ? randlong () : (long) (randlimb () % 31) - 15)
+#include "tgeneric_ui.c"
+
+and in main():
+
+  test_generic_ui (MPFR_PREC_MIN, 200, 30);
+
+Since the test_generic_ui test is rather basic compared to test_generic
+(this might be improved in the future), it is recommended to also add
+test_generic tests on several fixed values of the integer argument.
+See tcompound_si.c as an example.
 
    ---------------------------------------------------------------------
 

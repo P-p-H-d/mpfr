@@ -33,8 +33,7 @@ mpfr_mul_d (mpfr_ptr a, mpfr_srcptr b, double c, mpfr_rnd_t rnd_mode)
   MPFR_LOG_FUNC
     (("b[%Pd]=%.*Rg c=%.20g rnd=%d",
       mpfr_get_prec(b), mpfr_log_prec, b, c, rnd_mode),
-     ("a[%Pd]=%.*Rg inexact=%d",
-      mpfr_get_prec (a), mpfr_log_prec, a, inexact));
+     ("a[%Pd]=%.*Rg", mpfr_get_prec (a), mpfr_log_prec, a));
 
   MPFR_SAVE_EXPO_MARK (expo);
 

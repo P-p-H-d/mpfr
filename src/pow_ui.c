@@ -45,8 +45,7 @@ POW_U (mpfr_ptr y, mpfr_srcptr x, UTYPE n, mpfr_rnd_t rnd)
   MPFR_LOG_FUNC
     (("x[%Pd]=%.*Rg n=%" FSPEC "u rnd=%d",
       mpfr_get_prec (x), mpfr_log_prec, x, n, rnd),
-     ("y[%Pd]=%.*Rg inexact=%d",
-      mpfr_get_prec (y), mpfr_log_prec, y, inexact));
+     ("y[%Pd]=%.*Rg", mpfr_get_prec (y), mpfr_log_prec, y));
 
   /* x^0 = 1 for any x, even a NaN */
   if (MPFR_UNLIKELY (n == 0))

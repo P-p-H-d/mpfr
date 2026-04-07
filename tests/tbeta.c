@@ -324,7 +324,7 @@ test_beta_refl (mpfr_prec_t prec, mpfr_rnd_t rnd_mode)
 
 #define TEST_FUNCTION mpfr_beta
 #define TWO_ARGS
-#define TEST_RANDOM_EMIN -16
+#define TEST_RANDOM_EMIN (-16)
 #define TEST_RANDOM_EMAX 16
 #include "tgeneric.c"
 

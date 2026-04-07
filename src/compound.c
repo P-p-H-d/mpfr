@@ -66,7 +66,7 @@ mpfr_compound_si (mpfr_ptr y, mpfr_srcptr x, long n, mpfr_rnd_t rnd_mode)
   MPFR_LOG_FUNC
     (("x[%Pd]=%.*Rg n=%ld rnd=%d",
       mpfr_get_prec(x), mpfr_log_prec, x, n, rnd_mode),
-     ("y[%Pd]=%.*Rg inexact=%d", mpfr_get_prec (y), mpfr_log_prec, y, inexact));
+     ("y[%Pd]=%.*Rg", mpfr_get_prec (y), mpfr_log_prec, y));
 
   /* Special cases */
   if (MPFR_IS_SINGULAR (x))
@@ -384,7 +384,7 @@ mpfr_compound (mpfr_ptr z, mpfr_srcptr x, mpfr_srcptr y, mpfr_rnd_t rnd_mode)
     (("x[%Pd]=%.*Rg y[%Pd]=%.*Rg rnd=%d",
       mpfr_get_prec(x), mpfr_log_prec, x,
       mpfr_get_prec (y), mpfr_log_prec, y, rnd_mode),
-     ("z[%Pd]=%.*Rg inexact=%d", mpfr_get_prec (z), mpfr_log_prec, z, inexact));
+     ("z[%Pd]=%.*Rg", mpfr_get_prec (z), mpfr_log_prec, z));
 
   /* Special cases (copied from mpfr_compound_si) */
   if (MPFR_IS_SINGULAR (x))

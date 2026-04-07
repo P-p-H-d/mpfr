@@ -298,8 +298,7 @@ mpfr_atan (mpfr_ptr atan, mpfr_srcptr x, mpfr_rnd_t rnd_mode)
 
   MPFR_LOG_FUNC
     (("x[%Pd]=%.*Rg rnd=%d", mpfr_get_prec (x), mpfr_log_prec, x, rnd_mode),
-     ("atan[%Pd]=%.*Rg inexact=%d",
-      mpfr_get_prec (atan), mpfr_log_prec, atan, inexact));
+     ("atan[%Pd]=%.*Rg", mpfr_get_prec (atan), mpfr_log_prec, atan));
 
   /* Singular cases */
   if (MPFR_UNLIKELY (MPFR_IS_SINGULAR (x)))

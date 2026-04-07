@@ -67,7 +67,7 @@ check_nan (void)
   mpfr_set_nan (x);
   /* We need constants to completely test the macros. */
 #undef TCMP_UI_CHECK_NAN
-#define TCMP_UI_CHECK_NAN -17
+#define TCMP_UI_CHECK_NAN (-17)
 #include "tcmp_ui.c"
 #undef TCMP_UI_CHECK_NAN
 #define TCMP_UI_CHECK_NAN 0

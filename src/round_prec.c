@@ -58,7 +58,7 @@ mpfr_prec_round (mpfr_ptr x, mpfr_prec_t prec, mpfr_rnd_t rnd_mode)
 
   MPFR_LOG_FUNC
     (("prec=%Pd rnd=%d", prec, rnd_mode),
-     ("inexact=%d", inexact));
+     ("", 0));
 
   MPFR_ASSERTN (MPFR_PREC_COND (prec));
 
@@ -195,7 +195,7 @@ mpfr_can_round_raw (const mp_limb_t *bp, mp_size_t bn, int neg,
     (("bn=%Pd neg=%d correct_bits=%" MPFR_EXP_FSPEC "d"
       " rnd1=%d rnd2=%d prec=%Pd",
       (mpfr_prec_t) bn, neg, (mpfr_eexp_t) correct_bits, rnd1, rnd2, prec),
-     ("res=%d", res));
+     ("", 0));
 
   /* Since mpfr_can_round is a function in the API, use MPFR_ASSERTN.
      The specification makes sense only for prec >= 1. */

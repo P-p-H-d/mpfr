@@ -21,6 +21,10 @@ If not, see <https://www.gnu.org/licenses/>. */
 
 #include "mpfr-test.h"
 
+/* TODO: Define unary functions f(x) that would be based on mpfr_dot,
+   and test them with the usual generic tests. There should be at least
+   one with cancellations and one without cancellations. */
+
 static void
 check_simple (void)
 {

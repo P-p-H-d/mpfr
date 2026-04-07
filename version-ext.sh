@@ -43,6 +43,14 @@ rm excluded-branches
 # this situation in case it occurs. In practice, branch A will probably
 # be the master branch, so let us handle only this case by assuming that
 # the expected branch is master: if "master" appears in $gitb, select it.
+#
+# This is not ideal, though. For instance, in one checks out a branch B
+# that was merged into master, one would rather want to see the version
+# information as being from branch B rather than master, because at that
+# time, this branch hadn't been merged into master yet. A workaround
+# could be to replace the branch by a tag whose name as a some specific
+# format, and handle that in this script; an advantage would be that the
+# merged branch would be deleted as generally recommended.
 
 [ "x`echo "$gitb" | $GREP '^master$'`" = x ] || gitb=master
 

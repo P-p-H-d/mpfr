@@ -29,8 +29,7 @@ mpfr_mul_2ui (mpfr_ptr y, mpfr_srcptr x, unsigned long int n, mpfr_rnd_t rnd_mod
   MPFR_LOG_FUNC
     (("x[%Pd]=%.*Rg n=%lu rnd=%d",
       mpfr_get_prec (x), mpfr_log_prec, x, n, rnd_mode),
-     ("y[%Pd]=%.*Rg inexact=%d",
-      mpfr_get_prec (y), mpfr_log_prec, y, inexact));
+     ("y[%Pd]=%.*Rg", mpfr_get_prec (y), mpfr_log_prec, y));
 
   inexact = (y != x) ? mpfr_set (y, x, rnd_mode) : 0;
 

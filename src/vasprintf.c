@@ -2205,7 +2205,7 @@ mpfr_vasnprintf_aux (char **ptr, char *Buf, size_t size, const char *fmt,
 
   MPFR_LOG_FUNC
     (("size=%zu", size),
-     ("nbchar=%d", nbchar));
+     ("", 0));
 
   MPFR_SAVE_EXPO_MARK (expo);
 
@@ -2565,6 +2565,7 @@ mpfr_vasnprintf_aux (char **ptr, char *Buf, size_t size, const char *fmt,
     }
 
   MPFR_SAVE_EXPO_FREE (expo);
+  MPFR_LOG_MSG (("nbchar=%d\n", nbchar));
   return nbchar; /* return the number of characters that would have
                     been written had 'size' been sufficiently large,
                     not counting the terminating null character */
