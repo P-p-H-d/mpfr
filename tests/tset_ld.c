@@ -527,7 +527,7 @@ bug20260409 (void)
     char *s = "-0.10001011100111111110000110110101100111001011100001101101001000001011001101011110110000000100110001110001110000010110011001111110e-16382";
     mpfr_t op;
     long double x;
-    _Float128 y;
+    mpfr_float128 y;
     mpfr_init2 (op, 128);
     mpfr_strtofr(op, s, NULL, 2, MPFR_RNDN);
     /* mpfr_get_ld and mpfr_get_float128 should give the same result */
