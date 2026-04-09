@@ -517,6 +517,34 @@ bug_20160907 (void)
 #endif
 }
 
+/* if long double is quadruple precision, check that mpfr_get_ld and
+   mpfr_get_float128 give the same result.
+   cf https://sympa.inria.fr/sympa/arc/mpfr/2026-04/msg00006.html */
+static void
+bug20260409 (void)
+{
+  if (LDBL_MANT_DIG == 113) {
+    char *s = "-0.10001011100111111110000110110101100111001011100001101101001000001011001101011110110000000100110001110001110000010110011001111110e-16382";
+    mpfr_t op;
+    long double x;
+    _Float128 y;
+    mpfr_init2 (op, 128);
+    mpfr_strtofr(op, s, NULL, 2, MPFR_RNDN);
+    /* mpfr_get_ld and mpfr_get_float128 should give the same result */
+    x = mpfr_get_ld (op, MPFR_RNDN);
+    y = mpfr_get_float128 (op, MPFR_RNDN);
+    if ((_Float128) x != y) {
+      printf ("Error in bug20260409: mpfr_get_ld and mpfr_get_float128 differ\n");
+      mpfr_set_ld (op, x, MPFR_RNDN);
+      mpfr_printf ("mpfr_set_ld       yields %Ra\n", op);
+      mpfr_set_float128 (op, y, MPFR_RNDN);
+      mpfr_printf ("mpfr_get_float128 yields %Ra\n", op);
+      exit (1);
+    }
+    mpfr_clear (op);
+  }
+}
+
 int
 main (int argc, char *argv[])
 {
@@ -658,6 +686,7 @@ main (int argc, char *argv[])
 
   test_20140212 ();
   bug_20160907 ();
+  bug20260409 ();
 
   tests_end_mpfr ();
 
