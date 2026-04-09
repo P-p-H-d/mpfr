@@ -534,7 +534,6 @@ bug20260409 (void)
   mpfr_init2 (expected, 128);
   mpfr_strtofr (op, s, NULL, 2, MPFR_RNDN);
   x = mpfr_get_ld (op, MPFR_RNDN);
-  y = mpfr_get_float128 (op, MPFR_RNDN);
   mpfr_strtofr (expected, "-0x2.2e7f86d672e1b482cd7b0131c704p-16384", NULL,
                 16, MPFR_RNDN);
   mpfr_set_ld (op, x, MPFR_RNDN);
@@ -548,8 +547,7 @@ bug20260409 (void)
       exit (1);
     }
   mpfr_clear (op);
-    mpfr_clear (expected);
-  }
+  mpfr_clear (expected);
 #endif
 }
 
