@@ -238,8 +238,7 @@ mpfr_get_ld (mpfr_srcptr x, mpfr_rnd_t rnd_mode)
              and get rid of "goto do_shift;" too (one can return
              6.47517511943802511092443895822764655e-4966L directly,
              which is __LDBL_DENORM_MIN__ with GCC).
-             But first, add tests to check every case for e <= 0
-             (this should give a failure). */
+             Add tests to check every case for e <= 0. */
           /* e is the exponent of the value of x divided by the
              smallest subnormal 2^(-16494). Thus it should be the
              rounding precision for subnormal results. */

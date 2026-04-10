@@ -530,6 +530,7 @@ bug20260409 (void)
 
   mpfr_init2 (op, 128);
   mpfr_init2 (expected, 128);
+
   mpfr_strtofr (op, s, NULL, 2, MPFR_RNDN);
   x = mpfr_get_ld (op, MPFR_RNDN);
   mpfr_strtofr (expected, "-0x2.2e7f86d672e1b482cd7b0131c704p-16384", NULL,
@@ -544,6 +545,10 @@ bug20260409 (void)
       mpfr_dump (expected);
       exit (1);
     }
+
+  mpfr_set_si_2exp (op, 1, -16495, MPFR_RNDN);
+  x = mpfr_get_ld (op, MPFR_RNDN);
+
   mpfr_clear (op);
   mpfr_clear (expected);
 #endif
