@@ -234,22 +234,24 @@ mpfr_get_ld (mpfr_srcptr x, mpfr_rnd_t rnd_mode)
           mpfr_prec_t prec = MPFR_LDBL_MANT_DIG; /* rounding precision */
 
 #if defined(HAVE_LDOUBLE_IEEE_QUAD_BIG) || defined(HAVE_LDOUBLE_IEEE_QUAD_LITTLE)
-          /* if ulp(x) < 2^-16494, which is the smallest subnormal, we reduce
-             the rounding precision */
-          mpfr_prec_t u = MPFR_GET_EXP (x) - MPFR_PREC(x); /* ulp(x) = 2^u */
-          if (MPFR_GET_EXP (x) <= -16494)
+          /* e is the exponent of the value of x divided by the
+             smallest subnormal 2^(-16494). Thus it should be the
+             rounding precision for subnormal results. */
+          mpfr_exp_t e = MPFR_GET_EXP (x) - (-16494);
+          if (e <= 0)
             {
+              /* x is smaller than the smallest subnormal. */
               if (MPFR_IS_LIKE_RNDZ (rnd_mode, sign < 0) ||
                   (rnd_mode == MPFR_RNDN &&
-                   (MPFR_GET_EXP (x) < -16494 || mpfr_powerof2_raw (x))))
+                   (e < 0 || mpfr_powerof2_raw (x))))
                 return sign < 0 ? -0.0 : 0.0;
               r = 1.0;
               sh = -16494;
               goto do_shift;
             }
-          /* now MPFR_GET_EXP (x) > -16494 thus prec >= 1 below */
-          if (u < -16494)
-            prec = MPFR_GET_EXP (x) - (-16494);
+          /* prec = e >= 1 below */
+          if (e < prec)
+            prec = e;
 #endif
 
           /* First round x to the target long double precision, so that
