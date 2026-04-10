@@ -535,7 +535,7 @@ bug20260409 (void)
   mpfr_strtofr (expected, "-0x2.2e7f86d672e1b482cd7b0131c704p-16384", NULL,
                 16, MPFR_RNDN);
   mpfr_set_ld (op, x, MPFR_RNDN);
-  if (mpfr_cmp (op, expected))
+  if (! mpfr_equal_p (op, expected))
     {
       printf ("Error in bug20260409:\n");
       printf ("mpfr_set_ld yields ");
