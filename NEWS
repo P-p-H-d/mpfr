@@ -45,6 +45,9 @@ Changes from versions 4.2.* to version 4.3.0:
   (except that the end user of MPFR would need to define mpfr_float128 as
   the actual type for the binary128 format if this is not the standard
   _Float128 type).
+- The binary128 format (a.k.a. IEEE quadruple precision) is now recognized
+  for mpfr_get_ld, so that correct rounding with this format is now
+  guaranteed (before that, subnormals were affected by double rounding).
 - Other bug fixes. In particular, the formatted output functions behaved
   incorrectly with %c on the value 0; such a use is uncommon, but this bug
   may have security implications.
