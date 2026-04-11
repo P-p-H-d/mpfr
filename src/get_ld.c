@@ -191,6 +191,25 @@ mpfr_get_ld (mpfr_srcptr x, mpfr_rnd_t rnd_mode)
       double s; /* part of result */
       MPFR_SAVE_EXPO_DECL (expo);
 
+#if defined(HAVE_LDOUBLE_IEEE_QUAD_BIG) || defined(HAVE_LDOUBLE_IEEE_QUAD_LITTLE)
+      /* e is the exponent of the value of x divided by the
+         smallest subnormal 2^(-16494). Thus it should be the
+         rounding precision for subnormal results. */
+      mpfr_exp_t e = MPFR_GET_EXP (x) - (-16494);
+      if (e <= 0)
+        {
+          /* x is smaller than the smallest subnormal. The result is
+             the sign multiplied by either 0 or the smallest subnormal
+             (the value below is GCC's __LDBL_DENORM_MIN__). */
+          int neg = MPFR_IS_NEG (x);
+          r = (MPFR_IS_LIKE_RNDZ (rnd_mode, neg) ||
+               (rnd_mode == MPFR_RNDN &&
+                (e < 0 || mpfr_powerof2_raw (x)))) ?
+            0.0L : 6.47517511943802511092443895822764655e-4966L;
+          return neg ? -r : r;
+        }
+#endif
+
       MPFR_SAVE_EXPO_MARK (expo);
 
 #if defined(HAVE_LDOUBLE_MAYBE_DOUBLE_DOUBLE)
@@ -234,27 +253,7 @@ mpfr_get_ld (mpfr_srcptr x, mpfr_rnd_t rnd_mode)
           mpfr_prec_t prec = MPFR_LDBL_MANT_DIG; /* rounding precision */
 
 #if defined(HAVE_LDOUBLE_IEEE_QUAD_BIG) || defined(HAVE_LDOUBLE_IEEE_QUAD_LITTLE)
-          /* FIXME: Fix the special cases by avoiding MPFR_SAVE_EXPO_MARK
-             and get rid of "goto do_shift;" too (one can return
-             6.47517511943802511092443895822764655e-4966L directly,
-             which is __LDBL_DENORM_MIN__ with GCC).
-             Add tests to check every case for e <= 0. */
-          /* e is the exponent of the value of x divided by the
-             smallest subnormal 2^(-16494). Thus it should be the
-             rounding precision for subnormal results. */
-          mpfr_exp_t e = MPFR_GET_EXP (x) - (-16494);
-          if (e <= 0)
-            {
-              /* x is smaller than the smallest subnormal. */
-              if (MPFR_IS_LIKE_RNDZ (rnd_mode, sign < 0) ||
-                  (rnd_mode == MPFR_RNDN &&
-                   (e < 0 || mpfr_powerof2_raw (x))))
-                return sign < 0 ? -0.0 : 0.0;
-              r = 1.0;
-              sh = -16494;
-              goto do_shift;
-            }
-          /* prec = e >= 1 below */
+          MPFR_ASSERTD (e >= 1);
           if (e < prec)
             prec = e;
 #endif
@@ -291,7 +290,6 @@ mpfr_get_ld (mpfr_srcptr x, mpfr_rnd_t rnd_mode)
           mpfr_clear (z);
           mpfr_clear (y);
 
-        do_shift:
           /* we now have to multiply back by 2^sh */
           MPFR_ASSERTD (r > 0);
           if (sh != 0)

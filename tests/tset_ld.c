@@ -546,6 +546,9 @@ bug20260409 (void)
       exit (1);
     }
 
+  /* TODO: Complete the test below and add other tests for particular
+     values. */
+
   mpfr_set_si_2exp (op, 1, -16495, MPFR_RNDN);
   x = mpfr_get_ld (op, MPFR_RNDN);
 
