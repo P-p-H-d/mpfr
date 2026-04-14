@@ -4821,17 +4821,17 @@ if $n$ is even, $P_n$ is an even function and we write
 $P_n(x) = c_0 + c_2 x^2 + \dots$.
 
 To bound the ratios of the first terms -- $|c_3/c_1|$ for odd polynomials and
-$|c_2/c_0|$ for the even ones, we use a very classical method to derive a
+$|c_2/c_0|$ for the even ones --, we use a very classical method to derive a
 recurrence on the coefficients $c_k$ from the Legendre differential equation
 $(1-x^2)y'' - 2x y' + n(n+1) y = 0$. Here's $y = P_n$ and its derivatives
-$y'$ and $y''$
+$y'$ and $y''$ are:
 \[
-  y   = \sum_{k=0}^{\infty} c_k x^k             \qquad
-  y'  = \sum_{k=1}^{\infty} k c_k x^{k-1}       \qquad
-  y'' = \sum_{k=2}^{\infty} k (k-1) c_k x^{k-2}
+  y   = \sum_{k=0}^{\infty} c_k x^k,             \qquad
+  y'  = \sum_{k=1}^{\infty} k c_k x^{k-1},       \qquad
+  y'' = \sum_{k=2}^{\infty} k (k-1) c_k x^{k-2}.
 \]
 
-Now, we substitute the power series into the ODE computng each term separately.
+Now, we substitute the power series into the ODE computing each term separately.
 The first term $(1 - x^2)y'' = y'' - x^2 y''$ then becomes
 \[
   \sum_{k=2}^{\infty} k(k-1)c_k x^{k-2} - 
@@ -4847,21 +4847,21 @@ And, finally, the third term: $n(n+1)y$,
 \]
 
 We rewrite all the sums so that they are expressed with the same index range.
-As an example, here's the first term reindexed
-$y'' = \sum_{k=0}^{\infty} (k+2)(k+1)c_{k+2} x^k$. Therefore
-the equation becoms
+As an example, the term $y''$ is rewritten
+$\sum_{k=0}^{\infty} (k+2)(k+1)c_{k+2} x^k$. Therefore
+the equation becomes:
 \begin{align*}
   &\sum_{k=0}^{\infty} (k+2)(k+1)c_{k+2} x^k
   - \sum_{k=0}^{\infty} k(k-1)c_k x^k
   - 2 \sum_{k=0}^{\infty} k c_k x^k
-  + n(n+1)\sum_{k=0}^{\infty} c_k x^k = 0 \\
+  + n(n+1)\sum_{k=0}^{\infty} c_k x^k = 0, \\
   &\sum_{k=0}^{\infty}
   \left[
     (k+2)(k+1)c_{k+2}
     - k(k-1)c_k
     - 2k c_k
     + n(n+1)c_k
-  \right] x^k = 0
+  \right] x^k = 0.
 \end{align*}
 
 Since the series is identically zero, each coefficient must be zero, so we
@@ -4873,24 +4873,22 @@ get the recurrence
   + n(n+1)c_k = 0.
 \end{equation}
 
-In order to get the first two coefficients of even degrees, we set $k = 1$
-in Equation \ref{eq:legendre-ode-recurrence}, and we get
+In order to get the first two coefficients for odd degrees, we set $k = 1$
+in Equation (\ref{eq:legendre-ode-recurrence}), and we get
 $(3)(2)c_3 = \big(1 \cdot 2 - n(n+1)\big)c_1$. Hence,
-\begin{align*}
-  \frac{c_3}{c_1}              &= \frac{2 - n(n+1)}{6} \\
-  \left|\frac{c_3}{c_1}\right| &= \frac{n(n+1) - 2}{6} \\
-                               &\le \frac{n(n+1)}{6}   \\
-                               &\le \frac{n^2}{3},~\mathrm{for}~n>1.
-\end{align*}
+\[
+  \left|\frac{c_3}{c_1}\right| = \frac{n(n+1) - 2}{6}
+                               \le \frac{n(n+1)}{6}
+                               \le \frac{n^2}{3}~\mathrm{for}~n \ge 1.
+\]
 
-Now we do the same for the first two coefficients of even degrees, setting $k = 0$
-n Equation \ref{eq:legendre-ode-recurrence}, and we get 
+Now we do the same for the first two coefficients for even degrees, setting $k = 0$
+in Equation (\ref{eq:legendre-ode-recurrence}), and we get 
 $(2)(1)c_2 = - n(n+1)c_0$. Hence,
-\begin{align*}
-  \frac{c_2}{c_0}              &= -\frac{n(n+1)}{2} \\
-  \left|\frac{c_2}{c_0}\right| &= \frac{n(n+1)}{2}  \\
-                               &\le n^2,~\mathrm{for}~n>1.
-\end{align*}
+\[
+  \left|\frac{c_2}{c_0}\right| = \frac{n(n+1)}{2}
+                               \le n^2~\mathrm{for}~n \ge 0.
+\]
 
 \subsection{Summary}
 
