@@ -45,22 +45,23 @@ bug20200703 (void)
 static void
 bug20260429 (void)
 {
-  mpfr_t x;
+  mpfr_t x, y;
 
-  mpfr_init2 (x, 53);
-  mpfr_set_d (x, 135560366840713291235328., MPFR_RNDN);
+  mpfr_inits2 (53, x, y, (mpfr_ptr) 0);
+  mpfr_set_str (x, "0x1.cb4be019405f6p+76", 0, MPFR_RNDN);
+  mpfr_set_str (y, "-0x1.ab854da75a3d2p-41", 0, MPFR_RNDN);
   mpfr_jn (x, -4, x, MPFR_RNDN);
-  /* Result checked with Pari/GP, for c90 compatibility we can't use
-     C99 hexadecimal floating constants */
-#define EXPECTED -7.5942934812144329864965277437e-13
-  if (mpfr_cmp_d (x, EXPECTED))
+  /* Result checked with Pari/GP */
+  if (! mpfr_equal_p (x, y))
     {
       printf ("Error in bug20260429\n");
-      printf ("expected %la\n", EXPECTED);
-      printf ("got      %la\n", mpfr_get_d (x, MPFR_RNDN));
+      printf ("expected ");
+      mpfr_dump (y);
+      printf ("got      ");
+      mpfr_dump (x);
       exit (1);
     }
-  mpfr_clear (x);
+  mpfr_clears (x, y, (mpfr_ptr) 0);
 }
 
 int
