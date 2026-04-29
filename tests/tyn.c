@@ -21,6 +21,28 @@ If not, see <https://www.gnu.org/licenses/>. */
 
 #include "mpfr-test.h"
 
+/* cf https://sympa.inria.fr/sympa/arc/mpfr/2026-04/msg00030.html.
+   Here we also check with yn, since the asymptotic code is shared
+   between jn and yn. */
+static void
+bug20260429 (void)
+{
+  mpfr_t x;
+
+  mpfr_init2 (x, 53);
+  mpfr_set_d (x, 0x1.cb4be019405f6p+76, MPFR_RNDN);
+  mpfr_yn (x, -4, x, MPFR_RNDN);
+  /* result checked with Pari/GP */
+  if (mpfr_cmp_d (x, 0x1.1da5d1658ff1bp-39))
+    {
+      printf ("Error in bug20260429\n");
+      printf ("expected 0x1.1da5d1658ff1bp-39\n");
+      printf ("got      %la\n", mpfr_get_d (x, MPFR_RNDN));
+      exit (1);
+    }
+  mpfr_clear (x);
+}
+
 int
 main (int argc, char *argv[])
 {
@@ -29,6 +51,8 @@ main (int argc, char *argv[])
   mpfr_prec_t prec = 53;
 
   tests_start_mpfr ();
+
+  bug20260429 ();
 
   mpfr_init (x);
   mpfr_init (y);
