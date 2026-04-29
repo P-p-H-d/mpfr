@@ -50,11 +50,13 @@ bug20260429 (void)
   mpfr_init2 (x, 53);
   mpfr_set_d (x, 0x1.cb4be019405f6p+76, MPFR_RNDN);
   mpfr_jn (x, -4, x, MPFR_RNDN);
-  /* result checked with Pari/GP */
-  if (mpfr_cmp_d (x, -0x1.ab854da75a3d2p-41))
+  /* Result checked with Pari/GP, for c90 compatibility we can't use
+     C99 hexadecimal floating constants */
+#define EXPECTED -7.5942934812144329864965277437e-13
+  if (mpfr_cmp_d (x, EXPECTED))
     {
       printf ("Error in bug20260429\n");
-      printf ("expected -0x1.ab854da75a3d2p-41\n");
+      printf ("expected %la\n", EXPECTED);
       printf ("got      %la\n", mpfr_get_d (x, MPFR_RNDN));
       exit (1);
     }
