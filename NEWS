@@ -48,6 +48,8 @@ Changes from versions 4.2.* to version 4.3.0:
 - The binary128 format (a.k.a. IEEE quadruple precision) is now recognized
   for mpfr_get_ld, so that correct rounding with this format is now
   guaranteed (before that, subnormals were affected by double rounding).
+- Bug fixes: the mpfr_jn function did fail for negative n and huge argument,
+  in which case the asymptotic expansion was used.
 - Other bug fixes. In particular, the formatted output functions behaved
   incorrectly with %c on the value 0; such a use is uncommon, but this bug
   may have security implications.

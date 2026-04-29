@@ -53,9 +53,8 @@ FUNCTION (mpfr_ptr res, long n, mpfr_srcptr z, mpfr_rnd_t r)
   /* The terms of the asymptotic expansion grow like mu^(2k)/(8z)^(2k), where
      mu = 4n^2, thus we need mu < 8|z| so that it converges,
      i.e., n^2/2 < |z| */
-  MPFR_ASSERTD (n >= 0);
-  mpfr_set_ui (c, n, MPFR_RNDU);
-  mpfr_mul_ui (c, c, n, MPFR_RNDU);
+  mpfr_set_si (c, n, MPFR_RNDU);
+  mpfr_mul_si (c, c, n, MPFR_RNDU);
   mpfr_div_2ui (c, c, 1, MPFR_RNDU);
   if (mpfr_cmpabs (c, z) >= 0)
     {
