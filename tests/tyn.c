@@ -30,7 +30,7 @@ bug20260429 (void)
   mpfr_t x;
 
   mpfr_init2 (x, 53);
-  mpfr_set_d (x, 0x1.cb4be019405f6p+76, MPFR_RNDN);
+  mpfr_set_d (x, 135560366840713291235328., MPFR_RNDN);
   mpfr_yn (x, -4, x, MPFR_RNDN);
   /* Result checked with Pari/GP, for c90 compatibility we can't use
      C99 hexadecimal floating constants */
