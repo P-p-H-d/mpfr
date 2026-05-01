@@ -21,6 +21,20 @@ If not, see <https://www.gnu.org/licenses/>. */
 
 #include "mpfr-test.h"
 
+static int
+mpfr_jn_swapped (mpfr_ptr res, mpfr_srcptr z, long n, mpfr_rnd_t r)
+{
+  return mpfr_jn (res, n, z, r);
+}
+
+#define TEST_FUNCTION mpfr_jn_swapped
+#define INTEGER_TYPE long
+#define INT_RAND_FUNCTION(x) \
+  (randlimb () % 16 == 0 ? randlong () : (long) (randlimb () % 31) - 15)
+#define RAND_FUNCTION(x) mpfr_random2(x, MPFR_LIMB_SIZE (x), 8, RANDS)
+#define test_generic_ui test_generic_si
+#include "tgeneric_ui.c"
+
 /* mpfr_jn doesn't terminate. Bug reported by Alex Coplan on 2020-07-03.
  * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=96044
  * Note: This test is enabled only with MPFR_CHECK_EXPENSIVE. But do not
@@ -343,6 +357,8 @@ main (int argc, char *argv[])
 
   mpfr_clear (x);
   mpfr_clear (y);
+
+  test_generic_si (MPFR_PREC_MIN, 100, 100);
 
   tests_end_mpfr ();
 
