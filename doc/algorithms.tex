@@ -4924,6 +4924,33 @@ Then the tail is bounded by a geometric series:
 \]
 for $t<1$.
 
+\paragraph{\textbf{Implementation.}} The code does not compute $t$ directly;
+instead, it computes the following exponent bound. The leading term is
+evaluated differently depending on the parity of $n$:
+\begin{itemize}
+\item If $n=2m$ is even, the leading term is $c_0 = P_n(0)$, computed by
+  \[
+    c_0(0)=1, \qquad c_0(j)=c_0(j-1)\,\frac{-(2j-1)}{2j},
+    \quad 1 \leq j \leq m,
+  \]
+  thus
+  \[
+    c_0 = \prod_{j=1}^{m} \frac{-(2j-1)}{2j}.
+  \]
+
+\item If $n=2m+1$ is odd, the leading term is $c_1x$ with $c_1=P_n'(0)$,
+  computed by
+  \[
+    c_1(0)=1, \qquad c_1(j)=c_1(j-1)\,\frac{-(2j+1)}{2j},
+    \quad 1 \leq j \leq m,
+  \]
+  thus
+  \[
+    c_1 = \prod_{j=1}^{m} \frac{-(2j+1)}{2j},
+  \]
+  and leading term is ($c_1x$).
+\end{itemize}
+
 \subsection{Summary}
 
 Table ~\ref{table:genericError} presents the generic error for several operations, assuming all variables have a
