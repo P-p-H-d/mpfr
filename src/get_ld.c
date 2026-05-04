@@ -191,6 +191,25 @@ mpfr_get_ld (mpfr_srcptr x, mpfr_rnd_t rnd_mode)
       double s; /* part of result */
       MPFR_SAVE_EXPO_DECL (expo);
 
+#if defined(HAVE_LDOUBLE_IEEE_QUAD_BIG) || defined(HAVE_LDOUBLE_IEEE_QUAD_LITTLE)
+      /* e is the exponent of the value of x divided by the
+         smallest subnormal 2^(-16494). Thus it should be the
+         rounding precision for subnormal results. */
+      mpfr_exp_t e = MPFR_GET_EXP (x) - (-16494);
+      if (e <= 0)
+        {
+          /* x is smaller than the smallest subnormal. The result is
+             the sign multiplied by either 0 or the smallest subnormal
+             (the value below is GCC's __LDBL_DENORM_MIN__). */
+          int neg = MPFR_IS_NEG (x);
+          r = (MPFR_IS_LIKE_RNDZ (rnd_mode, neg) ||
+               (rnd_mode == MPFR_RNDN &&
+                (e < 0 || mpfr_powerof2_raw (x)))) ?
+            0.0L : 6.47517511943802511092443895822764655e-4966L;
+          return neg ? -r : r;
+        }
+#endif
+
       MPFR_SAVE_EXPO_MARK (expo);
 
 #if defined(HAVE_LDOUBLE_MAYBE_DOUBLE_DOUBLE)
@@ -230,14 +249,21 @@ mpfr_get_ld (mpfr_srcptr x, mpfr_rnd_t rnd_mode)
           long double m;
           mpfr_exp_t sh; /* exponent shift -> x/2^sh is in the double range */
           mpfr_t y, z;
-          int sign;
+          int sign = MPFR_SIGN (x);
+          mpfr_prec_t prec = MPFR_LDBL_MANT_DIG; /* rounding precision */
+
+#if defined(HAVE_LDOUBLE_IEEE_QUAD_BIG) || defined(HAVE_LDOUBLE_IEEE_QUAD_LITTLE)
+          MPFR_ASSERTD (e >= 1);
+          if (e < prec)
+            prec = e;
+#endif
 
           /* First round x to the target long double precision, so that
              all subsequent operations are exact (this avoids double rounding
              problems). However, if the format contains numbers that have
              more precision, MPFR won't be able to generate such numbers. */
-          mpfr_init2 (y, MPFR_LDBL_MANT_DIG);
-          mpfr_init2 (z, MPFR_LDBL_MANT_DIG);
+          mpfr_init2 (y, prec);
+          mpfr_init2 (z, prec);
           /* Note about the precision of z: even though IEEE_DBL_MANT_DIG is
              sufficient, z has been set to the same precision as y so that
              the mpfr_sub below calls mpfr_sub1sp, which is faster than the
@@ -248,7 +274,6 @@ mpfr_get_ld (mpfr_srcptr x, mpfr_rnd_t rnd_mode)
 
           mpfr_set (y, x, rnd_mode);
           sh = MPFR_GET_EXP (y);
-          sign = MPFR_SIGN (y);
           MPFR_SET_EXP (y, 0);
           MPFR_SET_POS (y);
 

@@ -289,7 +289,7 @@ check_mixed (void)
   unsigned long ulo = 1;
   float f = -1.25;
   double d = -1.25;
-#if defined(PRINTF_T) || defined(PRINTF_L)
+#ifdef PRINTF_L
   long double ld = -1.25;
 #endif
 
