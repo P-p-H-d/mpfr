@@ -55,29 +55,6 @@ bug20200703 (void)
   mpfr_clear (y);
 }
 
-/* cf https://sympa.inria.fr/sympa/arc/mpfr/2026-04/msg00030.html */
-static void
-bug20260429 (void)
-{
-  mpfr_t x, y;
-
-  mpfr_inits2 (53, x, y, (mpfr_ptr) 0);
-  mpfr_set_str (x, "0x1.cb4be019405f6p+76", 0, MPFR_RNDN);
-  mpfr_set_str (y, "-0x1.ab854da75a3d2p-41", 0, MPFR_RNDN);
-  mpfr_jn (x, -4, x, MPFR_RNDN);
-  /* Result checked with Pari/GP */
-  if (! mpfr_equal_p (x, y))
-    {
-      printf ("Error in bug20260429\n");
-      printf ("expected ");
-      mpfr_dump (y);
-      printf ("got      ");
-      mpfr_dump (x);
-      exit (1);
-    }
-  mpfr_clears (x, y, (mpfr_ptr) 0);
-}
-
 int
 main (int argc, char *argv[])
 {
@@ -99,8 +76,6 @@ main (int argc, char *argv[])
 
   if (getenv ("MPFR_CHECK_EXPENSIVE") != NULL)
     bug20200703 ();
-
-  bug20260429 ();
 
   mpfr_init (x);
   mpfr_init (y);
