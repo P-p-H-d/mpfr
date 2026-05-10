@@ -2733,8 +2733,10 @@ on @var{op}, rounded in the direction @var{rnd}. When @var{op} is NaN,
 @var{rop} is set to @mm{+}0. When @var{op} is zero, and @var{n} is not zero,
 @var{rop} is set to @mm{+}0 or @minus{}0 depending on the parity and sign of
 @var{n}, and the sign of @var{op}.
-Note: @code{mpfr_jn} might produce an error or loop for tiny input near
-the underflow threshold.
+
+Note: For @tm{@GMPabs{@var{n}} > 1}, @code{mpfr_jn} might produce an error
+or loop for tiny inputs near the underflow threshold in the internally
+extended exponent range.
 @end deftypefun
 
 @deftypefun int mpfr_y0 (mpfr_t @var{rop}, const mpfr_t @var{op}, mpfr_rnd_t @var{rnd})
