@@ -4924,9 +4924,8 @@ Then the tail is bounded by a geometric series:
 \]
 for $t<1$.
 
-\paragraph{\textbf{Implementation.}} The code does not compute $t$ directly;
-instead, it computes the following exponent bound. The leading term is
-evaluated differently depending on the parity of $n$:
+\paragraph{\textbf{Implementation.}} The leading term is evaluated differently
+depending on the parity of $n$:
 \begin{itemize}
 \item If $n=2m$ is even, the leading term is $c_{0,n} = P_n(0)$, computed by
   \[
@@ -4950,6 +4949,28 @@ evaluated differently depending on the parity of $n$:
   \]
 \end{itemize}
 We remark that $c_{1,2m+1} = (2m+1) c_{0,2m}$.
+
+\paragraph{\textbf{Bounding $t$ in the implementation.}}
+In the code, $t = n^2 x^2$ is bounded as follows.
+Let $e_x = \texttt{MPFR\_GET\_EXP}(x)$, which satisfies $2^{e_x-1} \le |x| < 2^{e_x}$,
+and let $\ell = \lceil \log_2 n \rceil$, so that $n \le 2^\ell$.
+Then
+\[
+  t = n^2 x^2 < \left(2^\ell\right)^2 \cdot \left(2^{e_x}\right)^2
+              = 2^{2\ell + 2e_x} = 2^\rho,
+\]
+where $\rho = 2e_x + 2\ell$.
+
+The asymptotic expansion is applied when $\rho \le -2$, which guarantees
+$t < 2^\rho \le 2^{-2} = \tfrac{1}{4}$.
+The relative error from keeping only the leading term equals $t/(1-t)$.
+Since $t < \tfrac{1}{4} < \tfrac{1}{2}$, we have $1 - t > \tfrac{1}{2}$,
+and therefore
+\[
+  \frac{t}{1-t} < \frac{t}{1/2} = 2t < 2 \cdot 2^\rho = 2^{\rho+1}.
+\]
+Truncating the expansion after the first nonzero term yields at least
+$\mathtt{err} = -\rho - 1$ correct bits relative to that term.
 
 \subsection{Summary}
 
