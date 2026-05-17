@@ -30,12 +30,19 @@ mpfr_legendre (mpfr_ptr res, long n, mpfr_srcptr x, mpfr_rnd_t rnd_mode)
 {
   int ternary_value = 0;
   unsigned is_within_domain = 1;
+  mpfr_prec_t res_prec, realprec;
+
+  /* these variables are used (and consequently initialized) only in the
+     "Asymptotic expansion for small |x|" branch */
+  mpfr_exp_t ex, l2n, rho, err;
+  mpfr_t v;
+  int inex_round;
+  long m, j;
 
   /* the following variables are used (and consequently initialized) only
      for n >= 2, where x is not equal to -1, 0 or 1 */
   long i;
   mpfr_t p1, p2, pn, first_term, second_term;
-  mpfr_prec_t res_prec, realprec;
   mpfr_exp_t lost_bits;
   mpfr_exp_t b_i, log2_i_m1, g_i, h_i, q_i, a_i, a_n;
   unsigned int inex;
@@ -101,6 +108,78 @@ mpfr_legendre (mpfr_ptr res, long n, mpfr_srcptr x, mpfr_rnd_t rnd_mode)
     }
 
   res_prec = MPFR_PREC (res);
+
+  /* Asymptotic expansion for small |x| and n >= 2.
+     For the proof of the following bound, see algorithms.tex.
+     Let t = n^2*x^2; the tail after the leading term is bounded by the
+     following geometric series:
+        |tail| <= |lead| * t / (1-t),
+     where |lead| is c0 (for n even), or c1*x (for n odd) */
+  if (!x_is_zero && n >= 2)
+    {
+      /* ex = MPFR_GET_EXP(x), such that 2^(ex-1) <= |x| < 2^ex;
+         l2n = ceil(log2(n)), so n <= 2^l2n;
+         thus, t = n^2*x^2 < (2^l2n)^2 * (2^ex)^2 = 2^{2*l2n+2*ex}.
+         We define rho = 2*l2n+2*ex, therefore t < 2^{rho}.
+         Note: we assume that rho is not going to overflow */
+      ex = MPFR_GET_EXP (x);
+      l2n = (mpfr_exp_t) MPFR_INT_CEIL_LOG2 (n);
+      rho = 2 * l2n + 2 * ex;
+
+      /* This asymptotic expansion is applied when rho <= -2 */
+      if (rho <= -2)
+        {
+          /* See algorithms.tex for the calculation of this error bound */
+          err = -rho - 1;
+
+          if (err > (mpfr_exp_t) res_prec + 4)
+            {
+              realprec = res_prec + MPFR_INT_CEIL_LOG2 (n) + 15;
+              mpfr_init2 (v, realprec);
+
+              if ((n & 1) == 0)
+                {
+                  /* Even n = 2m, m = n/2: c0 = P_n(0),
+                     c0(0) = 1, c0(j) = c0(j-1) * (-(2j-1)) / (2j).
+                     see algorithms.tex for the details */
+                  m = n / 2;
+                  mpfr_set_ui (v, 1, MPFR_RNDN);
+                  for (j = 1; j <= m; j++)
+                    {
+                      mpfr_mul_si (v, v, -(2 * j - 1), MPFR_RNDN);
+                      mpfr_div_ui (v, v, 2 * j, MPFR_RNDN);
+                    }
+                }
+              else
+                {
+                  /* Odd n = 2m+1, m = (n-1)/2: c1 = P'_n(0),
+                     c1(0) = 1, c1(j) = c1(j-1) * (-(2j+1)) / (2j),
+                     then lead = c1*x.
+                     See algorithms.tex for the details */
+                  m = (n - 1) / 2;
+                  mpfr_set_ui (v, 1, MPFR_RNDN); /* exact */
+                  for (j = 1; j <= m; j++)
+                    {
+                      mpfr_mul_si (v, v, -(2 * j + 1), MPFR_RNDN);
+                      mpfr_div_ui (v, v, 2 * j, MPFR_RNDN);
+                    }
+                  mpfr_mul (v, v, x, MPFR_RNDN);
+                }
+
+              inex_round = mpfr_round_near_x (res, v,
+                                              (mpfr_uexp_t) (err - 2),
+                                              0, rnd_mode);
+              mpfr_clear (v);
+
+              /* mpfr_round_near_x returns 0 if it cannot round. In that
+                 case, our asymptotic expansion failed, so we fall back
+                 to the usual Ziv loop */
+              if (inex_round)
+                return inex_round;
+            }
+        }
+    }
+
   /* Analyzing all the test cases where the result is not exact (inex != 0),
      we find that the average number of bits lost per iteration, i.e.,
      lost_bits/(n-1), is about 3.82. We thus add 4*n guard bits.
