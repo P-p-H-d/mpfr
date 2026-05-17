@@ -32,6 +32,7 @@ If not, see <https://www.gnu.org/licenses/>. */
 #define RANDOM_TESTS_N_DEGREE 10
 #define RANDOM_TESTS_BATCH    20
 #define DYADIC_BOUND          35
+#define GENERIC_UI_RAND_MOD   10
 
 #define DUMP_NUMBERS(expected, got)   \
           do                          \
@@ -814,6 +815,25 @@ test_zero_odd (void)
   mpfr_clear (res);
 }
 
+/* Wrapper for tgeneric_ui.c, which calls TEST_FUNCTION(y, x, u, rnd),
+   but mpfr_legendre has the integer argument before x.
+   We also need to bound n because:
+   - n must be non-negative (mpfr_legendre asserts n >= 0);
+   - very large n would be too slow to compute for test purposes. */
+static int
+mpfr_legendre_generic_ui (mpfr_ptr y, mpfr_srcptr x, long n, mpfr_rnd_t rnd)
+{
+  n = (long) ((unsigned long) n % GENERIC_UI_RAND_MOD);
+  return mpfr_legendre (y, n, x, rnd);
+}
+
+#define TEST_FUNCTION mpfr_legendre_generic_ui
+#define TEST_FUNCTION_NAME "mpfr_legendre"
+#define INTEGER_TYPE long
+#define INT_RAND_FUNCTION() \
+        (long) (randlimb () % GENERIC_UI_RAND_MOD)
+#include "tgeneric_ui.c"
+
 int
 main (void)
 {
@@ -868,6 +888,8 @@ main (void)
   bug20260205 ();
 
   test_exact_dyadic ();
+
+  test_generic_ui (ARBITRARILY_LOW_PREC, IEEE754_DOUBLE_PREC, 6);
 
   tests_end_mpfr ();
   return 0;
