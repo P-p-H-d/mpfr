@@ -624,6 +624,7 @@ __MPFR_DECLSPEC int mpfr_pow_z (mpfr_ptr, mpfr_srcptr, mpz_srcptr, mpfr_rnd_t);
 __MPFR_DECLSPEC int mpfr_sqrt (mpfr_ptr, mpfr_srcptr, mpfr_rnd_t);
 __MPFR_DECLSPEC int mpfr_sqrt_ui (mpfr_ptr, unsigned long, mpfr_rnd_t);
 __MPFR_DECLSPEC int mpfr_rec_sqrt (mpfr_ptr, mpfr_srcptr, mpfr_rnd_t);
+__MPFR_DECLSPEC int mpfr_rsqrt (mpfr_ptr, mpfr_srcptr, mpfr_rnd_t);
 
 __MPFR_DECLSPEC int mpfr_add (mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t);
 __MPFR_DECLSPEC int mpfr_sub (mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t);

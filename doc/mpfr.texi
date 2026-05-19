@@ -2091,13 +2091,14 @@ Set @var{rop} to NaN if @var{op} is negative.
 @end deftypefun
 
 @deftypefun int mpfr_rec_sqrt (mpfr_t @var{rop}, const mpfr_t @var{op}, mpfr_rnd_t @var{rnd})
+@deftypefunx int mpfr_rsqrt (mpfr_t @var{rop}, const mpfr_t @var{op}, mpfr_rnd_t @var{rnd})
 Set @var{rop} to @m{1/\sqrt{@var{op}}, the reciprocal square root of @var{op}}
-rounded in the direction @var{rnd}.  Set @var{rop} to @mm{+}Inf if @var{op} is
+rounded in the direction @var{rnd}.  The function @code{mpfr_rec_sqrt},
+which is equivalent to @code{mpfr_rootn_si} with @tm{@var{n} = @minus{}2},
+sets @var{rop} to @mm{+}Inf if @var{op} is
 @pom{}0, @mm{+}0 if @var{op} is @mm{+}Inf, and NaN if @var{op} is negative.
-Warning!  Therefore the result on @minus{}0 is different from the one of the
-rSqrt function recommended by the IEEE@tie{}754 standard (Section@tie{}9.2.1),
-which is @minus{}Inf instead of @mm{+}Inf. However, @code{mpfr_rec_sqrt} is
-equivalent to @code{mpfr_rootn_si} with @tm{@var{n} = @minus{}2}.
+The function @code{mpfr_rsqrt} only differs for @minus{}0, where it returns
+@minus{}Inf instead, following the IEEE@tie{}754 standard (Section@tie{}9.2.1).
 @end deftypefun
 
 @deftypefun int mpfr_cbrt (mpfr_t @var{rop}, const mpfr_t @var{op}, mpfr_rnd_t @var{rnd})
@@ -4650,6 +4651,8 @@ use @code{mpfr_get_z_exp}.
 @item @code{mpfr_rootn_si} in MPFR@tie{}4.2.
 
 @item @code{mpfr_rootn_ui} in MPFR@tie{}4.0.
+
+@item @code{mpfr_rsqrt} in MPFR@tie{}4.3.
 
 @item @code{mpfr_set_decimal128} in MPFR@tie{}4.1.
 
