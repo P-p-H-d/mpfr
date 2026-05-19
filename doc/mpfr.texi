@@ -4935,7 +4935,7 @@ some operations are quiet (even on a signaling NaN)@.
 
 The @code{mpfr_rec_sqrt} function differs from IEEE@tie{}754 on @minus{}0,
 where it gives @mm{+}Inf (like for @mm{+}0), following the usual limit rules,
-instead of @minus{}Inf.
+instead of @minus{}Inf. Use instead @code{mpfr_rsqrt} to follow IEEE@tie{}754.
 
 The @code{mpfr_root} function predates IEEE@tie{}754-2008, where rootn was
 introduced, and behaves differently from the IEEE@tie{}754 rootn operation.
