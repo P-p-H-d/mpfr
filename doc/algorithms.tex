@@ -4912,9 +4912,9 @@ of the same parity as $n$ only:
 \]
 where $s=0$ for even $n$ and $s=1$ for odd $n$.
 From the bound above we have $|c_{i+2}/c_i| \leq n^2$, so each successive tail
-term is at most a factor $n^2|x|^2$ of the previous one. Let
+term is at most a factor $n^2 x^2$ of the previous one. Let
 \[
-  t := n^2|x|^2.
+  t := n^2 x^2.
 \]
 Then the tail is bounded by a geometric series:
 \[
@@ -4940,7 +4940,7 @@ depending on the parity of $n$:
 \item If $n=2m+1$ is odd, the leading term is $c_1x$ with $c_{1,n}=P_n'(0)$,
   computed by
   \[
-    c_{1,0}=1, \qquad c_{1,j}=c_{1,j-2}\,\frac{-(2j+1)}{2j},
+    c_{1,1}=1, \qquad c_{1,j}=c_{1,j-2}\,\frac{-(2j+1)}{2j},
     \quad 1 \leq j \leq m,
   \]
   thus
