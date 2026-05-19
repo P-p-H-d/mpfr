@@ -1,4 +1,4 @@
-/* mpfr_rsqrt -- inverse square root following IEEE 754
+/* mpfr_rsqrt -- inverse square root following IEEE 754 (-Inf for -0)
 
 Copyright 2008-2026 Free Software Foundation, Inc.
 Contributed by the Pascaline and Caramba projects, INRIA.
