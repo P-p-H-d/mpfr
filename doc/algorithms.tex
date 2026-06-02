@@ -6,6 +6,7 @@
 \usepackage{amssymb}
 \usepackage{amsmath}
 \usepackage{url}
+\usepackage{xcolor}
 \usepackage{comment}
 \usepackage[english, lined, linesnumbered]{algorithm2e}
 \usepackage{graphicx}
@@ -4927,28 +4928,53 @@ for $t<1$.
 \paragraph{\textbf{Implementation.}} The leading term is evaluated differently
 depending on the parity of $n$:
 \begin{itemize}
-\item If $n=2m$ is even, the leading term is $c_{0,n} = P_n(0)$, computed by
+\item If $n=2m$ is even, the leading term is $c_{0,m} = P_n(0)$, computed by
   \[
-    c_{0,0}=1, \qquad c_{0,j}=c_{0,j-2}\,\frac{-(2j-1)}{2j},
+    c_{0,0}=1, \qquad c_{0,j}=c_{0,j-1}\,\frac{-(2j-1)}{2j},
     \quad 1 \leq j \leq m,
   \]
   thus
   \[
-    c_{0,2m} = \prod_{j=1}^{m} \frac{-(2j-1)}{2j}.
+    c_{0,m} = \prod_{j=1}^{m} \frac{-(2j-1)}{2j}.
   \]
 
-\item If $n=2m+1$ is odd, the leading term is $c_1x$ with $c_{1,n}=P_n'(0)$,
+\item If $n=2m+1$ is odd, the leading term is $c_1x$ with $c_{1,m}=P_n'(0)$,
   computed by
   \[
-    c_{1,1}=1, \qquad c_{1,j}=c_{1,j-2}\,\frac{-(2j+1)}{2j},
+    c_{1,0}=1, \qquad c_{1,j}=c_{1,j-1}\,\frac{-(2j+1)}{2j},
     \quad 1 \leq j \leq m,
   \]
   thus
   \[
-    c_{1,2m+1} = \prod_{j=1}^{m} \frac{-(2j+1)}{2j}.
+    c_{1,m} = \prod_{j=1}^{m} \frac{-(2j+1)}{2j}.
   \]
 \end{itemize}
-We remark that $c_{1,2m+1} = (2m+1) c_{0,2m}$.
+We remark that $c_{1,m} = (2m+1) c_{0,m}$.
+
+{\color{blue}
+\begin{itemize}
+\item If $n=2m$ is even, the leading term is $c_m^{(0)} = P_n(0)$, computed by
+  \[
+    c_0^{(0)}=1, \qquad c_j^{(0)}=c_{j-1}^{(0)}\,\frac{-(2j-1)}{2j},
+    \quad 1 \leq j \leq m,
+  \]
+  thus
+  \[
+    c_m^{(0)} = \prod_{j=1}^{m} \frac{-(2j-1)}{2j}.
+  \]
+
+\item If $n=2m+1$ is odd, the leading term is $c_m^{(1)} x$ with
+  $c_m^{(1)}=P_n'(0)$, computed by
+  \[
+    c_0^{(1)}=1, \qquad c_j^{(1)}=c_{j-1}^{(1)}\,\frac{-(2j+1)}{2j},
+    \quad 1 \leq j \leq m,
+  \]
+  thus
+  \[
+    c_m^{(1)} = \prod_{j=1}^{m} \frac{-(2j+1)}{2j}.
+  \]
+\end{itemize}
+}
 
 \paragraph{\textbf{Bounding $t$ in the implementation.}}
 In the code, $t = n^2 x^2$ is bounded as follows.
@@ -4961,7 +4987,7 @@ Then
 \]
 where $\rho = 2e_x + 2\ell$.
 
-The asymptotic expansion is applied when $\rho \le -2$, which guarantees
+The condition $\rho \le -2$ guarantees
 $t < 2^\rho \le 2^{-2} = \tfrac{1}{4}$.
 The relative error from keeping only the leading term equals $t/(1-t)$.
 Since $t < \tfrac{1}{4} < \tfrac{1}{2}$, we have $1 - t > \tfrac{1}{2}$,
@@ -4971,6 +4997,38 @@ and therefore
 \]
 Truncating the expansion after the first nonzero term yields at least
 $\mathtt{err} = -\rho - 1$ correct bits relative to that term.
+
+In the implementation, if $p = \texttt{MPFR\_PREC}(\mathrm{res})$, we try this
+shortcut only when
+\[
+  -\rho - 1 \ge p + 64.
+\]
+Since $p \ge 1$, this stronger condition implies $\rho \le -2$, so the
+preceding analysis applies. The extra $64$ guard bits are an heuristic:
+a threshold that ensures the first rounding test is likely to succeed
+in most cases.
+
+\paragraph{\textbf{Error analysis of $c_{0,2m}$ and $c_{0,2m+1}$}}
+
+Since neither algorithm involves any addition or subtraction, there is no
+cancellation, and we can bound the total rounding error \textit{a-priori}.
+In the code, all the intermediate roundings are to nearest, with working
+precision $p$. Each \texttt{mpfr\_mul\_si} and \texttt{mpfr\_div\_ui} call
+rounds the exact arithmetic result, introducing a relative error of at most
+$u = 2^{-p}$ per operation. Denote by $V_k$ the exact real value of the
+$k$-th iterate and by $v_k$ its computed floating-point approximation, with
+$V_1 = v_1 = 1$ exact. After $k$ such rounding operations the accumulated
+relative error satisfies
+\[
+  \frac{|v_k - V_k|}{|V_k|}
+  \le (1+u)^k - 1
+  \le \frac{ku}{1-ku}
+  \le 2ku = k \cdot 2^{1-p},
+\]
+where the first inequality holds by induction (each operation multiplies the
+relative discrepancy by at most $(1+u)$), and the last holds whenever
+$ku \le \tfrac{1}{2}$, i.e. $p \ge 1 + \lceil\log_2 k\rceil$, which is
+satisfied by our choice of working precision.
 
 \subsection{Summary}
 
