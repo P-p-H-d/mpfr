@@ -138,7 +138,7 @@ mpfr_jn (mpfr_ptr res, long n, mpfr_srcptr z, mpfr_rnd_t r)
   /* TODO: add a test to trigger an error when
        inex = _inexact; goto end
      is forgotten in MPFR_FAST_COMPUTE_IF_SMALL_INPUT below. */
-  if (n == 1)
+  if (n == 1 || n == -1)
     {
       /* We first compute 2j1(z) = z - z^3/8 + ..., then divide by 2 using
          the "extra" argument of MPFR_FAST_COMPUTE_IF_SMALL_INPUT. But we
@@ -156,9 +156,15 @@ mpfr_jn (mpfr_ptr res, long n, mpfr_srcptr z, mpfr_rnd_t r)
          but in rounding to nearest, res/2 will yield 0 iff |res| is the
          minimum positive number, so that we just need to test the result
          of the division and the sign of _inexact. */
+
+      mpfr_t minus_z;
+
+      if (n != 1)
+        MPFR_TMP_INIT_NEG (minus_z, z);
+
       MPFR_CLEAR_FLAGS ();
       MPFR_FAST_COMPUTE_IF_SMALL_INPUT
-        (res, z, -2 * MPFR_GET_EXP (z), 3, 0, r, {
+        (res, n == 1 ? z : minus_z, -2 * MPFR_GET_EXP (z), 3, 0, r, {
           int inex2 = mpfr_div_2ui (res, res, 1, r);
           if (MPFR_UNLIKELY (r == MPFR_RNDN && MPFR_IS_ZERO (res)) &&
               (MPFR_ASSERTN (inex2 != 0), VSIGN (_inexact) != MPFR_SIGN (z)))

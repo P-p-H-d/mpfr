@@ -1,4 +1,4 @@
-/* Test file for mpfr_rec_sqrt.
+/* Test file for mpfr_rec_sqrt and mpfr_rsqrt.
 
 Copyright 2008-2026 Free Software Foundation, Inc.
 Contributed by the Pascaline and Caramba projects, INRIA.
@@ -60,6 +60,12 @@ special (void)
   mpfr_neg (x, x, MPFR_RNDN);
   inex = mpfr_rec_sqrt (x, x, MPFR_RNDN);
   MPFR_ASSERTN(mpfr_inf_p (x) && MPFR_IS_POS(x) && inex == 0);
+
+  /* rsqrt(-0) = -Inf */
+  mpfr_set_ui (x, 0, MPFR_RNDN);
+  mpfr_neg (x, x, MPFR_RNDN);
+  inex = mpfr_rsqrt (x, x, MPFR_RNDN);
+  MPFR_ASSERTN(mpfr_inf_p (x) && MPFR_IS_NEG(x) && inex == 0);
 
   /* rec_sqrt(-1) = NaN */
   mpfr_set_si (x, -1, MPFR_RNDN);

@@ -83,6 +83,7 @@ main (int argc, char *argv[])
 {
   mpfr_t x, y;
   long n;
+  int i;
 
   if (argc > 1)
     {
@@ -353,6 +354,17 @@ main (int argc, char *argv[])
       printf ("Expected "); mpfr_dump (x);
       printf ("Got      "); mpfr_dump (y);
       exit (1);
+    }
+
+  /* On 2026-05-27, the case i == 5 loops on 32-bit machines (-m32). */
+  for (i = 4; i <= 5; i++)
+    {
+      mpfr_set_si (x, i, MPFR_RNDN);
+      mpfr_clear_flags ();
+      mpfr_jn (y, -47548569, x, MPFR_RNDN);
+      MPFR_ASSERTN (MPFR_IS_ZERO (y) && MPFR_IS_NEG(y));
+      MPFR_ASSERTN (__gmpfr_flags == (MPFR_FLAGS_INEXACT |
+                                      MPFR_FLAGS_UNDERFLOW));
     }
 
   mpfr_clear (x);

@@ -6,7 +6,7 @@
 @c Note that the 5 occurrences of the version string in this file
 @c should be updated by the tools/update-version script.
 @set VERSION 4.3.0-dev
-@set UPDATED-MONTH March 2026
+@set UPDATED-MONTH May 2026
 @settitle GNU MPFR @value{VERSION}
 @synindex tp fn
 @iftex
@@ -2093,13 +2093,14 @@ Set @var{rop} to NaN if @var{op} is negative.
 @end deftypefun
 
 @deftypefun int mpfr_rec_sqrt (mpfr_t @var{rop}, const mpfr_t @var{op}, mpfr_rnd_t @var{rnd})
+@deftypefunx int mpfr_rsqrt (mpfr_t @var{rop}, const mpfr_t @var{op}, mpfr_rnd_t @var{rnd})
 Set @var{rop} to @m{1/\sqrt{@var{op}}, the reciprocal square root of @var{op}}
-rounded in the direction @var{rnd}.  Set @var{rop} to @mm{+}Inf if @var{op} is
+rounded in the direction @var{rnd}.  The function @code{mpfr_rec_sqrt},
+which is equivalent to @code{mpfr_rootn_si} with @tm{@var{n} = @minus{}2},
+sets @var{rop} to @mm{+}Inf if @var{op} is
 @pom{}0, @mm{+}0 if @var{op} is @mm{+}Inf, and NaN if @var{op} is negative.
-Warning!  Therefore the result on @minus{}0 is different from the one of the
-rSqrt function recommended by the IEEE@tie{}754 standard (Section@tie{}9.2.1),
-which is @minus{}Inf instead of @mm{+}Inf. However, @code{mpfr_rec_sqrt} is
-equivalent to @code{mpfr_rootn_si} with @tm{@var{n} = @minus{}2}.
+The function @code{mpfr_rsqrt} only differs for @minus{}0, where it returns
+@minus{}Inf instead, following the IEEE@tie{}754 standard (Section@tie{}9.2.1).
 @end deftypefun
 
 @deftypefun int mpfr_cbrt (mpfr_t @var{rop}, const mpfr_t @var{op}, mpfr_rnd_t @var{rnd})
@@ -2743,6 +2744,10 @@ on @var{op}, rounded in the direction @var{rnd}. When @var{op} is NaN,
 @var{rop} is set to @mm{+}0. When @var{op} is zero, and @var{n} is not zero,
 @var{rop} is set to @mm{+}0 or @minus{}0 depending on the parity and sign of
 @var{n}, and the sign of @var{op}.
+
+Note: For @tm{@GMPabs{@var{n}} > 1}, @code{mpfr_jn} might produce an error
+or loop for tiny inputs near the underflow threshold in the internally
+extended exponent range.
 @end deftypefun
 
 @deftypefun int mpfr_y0 (mpfr_t @var{rop}, const mpfr_t @var{op}, mpfr_rnd_t @var{rnd})
@@ -4659,6 +4664,8 @@ use @code{mpfr_get_z_exp}.
 
 @item @code{mpfr_rootn_ui} in MPFR@tie{}4.0.
 
+@item @code{mpfr_rsqrt} in MPFR@tie{}4.3.
+
 @item @code{mpfr_set_decimal128} in MPFR@tie{}4.1.
 
 @item @code{mpfr_set_divby0} in MPFR@tie{}3.1 (new divide-by-zero exception).
@@ -4940,7 +4947,7 @@ some operations are quiet (even on a signaling NaN)@.
 
 The @code{mpfr_rec_sqrt} function differs from IEEE@tie{}754 on @minus{}0,
 where it gives @mm{+}Inf (like for @mm{+}0), following the usual limit rules,
-instead of @minus{}Inf.
+instead of @minus{}Inf. Use instead @code{mpfr_rsqrt} to follow IEEE@tie{}754.
 
 The @code{mpfr_root} function predates IEEE@tie{}754-2008, where rootn was
 introduced, and behaves differently from the IEEE@tie{}754 rootn operation.
