@@ -37,46 +37,66 @@ asymptotic_small_x (mpfr_ptr res, long n, mpfr_srcptr x, mpfr_rnd_t rnd_mode,
   unsigned inex;
   mpfr_prec_t res_prec, realprec;
 
+  MPFR_GROUP_DECL (small_x);
+  MPFR_ZIV_DECL (loop);
+
   res_prec = MPFR_PREC (res);
+
   /* a-priori rounding error bound. See algorithms.tex for details.
      After n operations the error is at most n*2*ulp(v) <= 2^(ell+1)*ulp(v),
      where ell = ceil(log2(n)); 15 extra bits has been added for safety */
   realprec = res_prec + MPFR_INT_CEIL_LOG2 (n) + 15;
 
-  mpfr_init2 (v, realprec);
-  /* v = 1 is exact */
-  inex = mpfr_set_ui (v, 1, MPFR_RNDN);
+  MPFR_GROUP_INIT_1 (small_x, realprec, v);
+  MPFR_ZIV_INIT (loop, realprec);
 
-  if ((n & 1) == 0)
+  for (;;)
     {
-      /* Even n = 2m, m = n/2: c0 = P_n(0),
-         c0(0) = 1, c0(j) = c0(j-1) * (-(2j-1)) / (2j).
-         See algorithms.tex for details */
-      m = n / 2;
-      for (j = 1; j <= m; j++)
+      /* v = 1 is exact */
+      inex = mpfr_set_ui (v, 1, MPFR_RNDN);
+
+      if ((n & 1) == 0)
         {
-          inex |= mpfr_mul_si (v, v, -(2 * j - 1), MPFR_RNDN);
-          inex |= mpfr_div_ui (v, v, 2 * j, MPFR_RNDN);
+          /* Even n = 2m, m = n/2: c0 = P_n(0),
+             c0(0) = 1, c0(j) = c0(j-1) * (-(2j-1)) / (2j).
+             See algorithms.tex for details */
+          m = n / 2;
+          for (j = 1; j <= m; j++)
+            {
+              inex |= mpfr_mul_si (v, v, -(2 * j - 1), MPFR_RNDN);
+              inex |= mpfr_div_ui (v, v, 2 * j, MPFR_RNDN);
+            }
         }
-    }
-  else
-    {
-      /* Odd n = 2m+1, m = (n-1)/2: c1 = P'_n(0),
-         c1(0) = 1, c1(j) = c1(j-1) * (-(2j+1)) / (2j),
-         then lead = c1*x. See algorithms.tex for details */
-      m = (n - 1) / 2;
-      for (j = 1; j <= m; j++)
+      else
         {
-          inex |= mpfr_mul_si (v, v, -(2 * j + 1), MPFR_RNDN);
-          inex |= mpfr_div_ui (v, v, 2 * j, MPFR_RNDN);
+          /* Odd n = 2m+1, m = (n-1)/2: c1 = P'_n(0),
+             c1(0) = 1, c1(j) = c1(j-1) * (-(2j+1)) / (2j),
+             then lead = c1*x. See algorithms.tex for details */
+          m = (n - 1) / 2;
+          for (j = 1; j <= m; j++)
+            {
+              inex |= mpfr_mul_si (v, v, -(2 * j + 1), MPFR_RNDN);
+              inex |= mpfr_div_ui (v, v, 2 * j, MPFR_RNDN);
+            }
+          inex |= mpfr_mul (v, v, x, MPFR_RNDN);
         }
-      inex |= mpfr_mul (v, v, x, MPFR_RNDN);
+
+      /* if inex=0, then all the computation was exact, thus v is exactly V,
+         otherwise we call MPFR_CAN_ROUND() to check if we can deduce
+         the correct rounding */
+      if (!inex || MPFR_CAN_ROUND (v, realprec - err, res_prec, rnd_mode))
+        break;
+
+      MPFR_ZIV_NEXT (loop, realprec);
+      MPFR_GROUP_REPREC_1 (small_x, realprec, v);
     }
+
+  MPFR_ZIV_FREE (loop);
 
   *inex_round = mpfr_round_near_x (res, v, (mpfr_uexp_t) (err - 2),
                                    0, rnd_mode);
 
-  mpfr_clear (v);
+  MPFR_GROUP_CLEAR (small_x);
 
   return inex;
 }
