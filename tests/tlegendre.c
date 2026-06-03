@@ -518,7 +518,7 @@ random_test_suite (int num_degrees, int num_tests)
 
   srand(time(NULL));
 
-  test_degrees = (int *) malloc (num_degrees * sizeof(int));
+  test_degrees = (int *) tests_allocate (num_degrees * sizeof(int));
   if (!test_degrees)
     {
       printf ("Could not allocate memory for random tests\n");
@@ -531,7 +531,7 @@ random_test_suite (int num_degrees, int num_tests)
     {
       test_random (test_degrees[i], IEEE754_DOUBLE_PREC, num_tests);
     }
-  free (test_degrees);
+  tests_free (test_degrees, num_degrees * sizeof(int));
 }
 
 static void
@@ -617,8 +617,8 @@ test_exact (int n, int A, int B, mpfr_prec_t p)
   int i, j, a, b, rnd;
   mpfr_t x, y, z;
 
-  P0 = (mpq_t*) malloc ((n + 1) * sizeof (mpq_t));
-  P1 = (mpq_t*) malloc ((n + 1) * sizeof (mpq_t));
+  P0 = (mpq_t*) tests_allocate ((n + 1) * sizeof (mpq_t));
+  P1 = (mpq_t*) tests_allocate ((n + 1) * sizeof (mpq_t));
   for (i = 0; i <= n; i++)
     {
       mpq_init (P0[i]); /* set to 0 */
@@ -701,8 +701,8 @@ test_exact (int n, int A, int B, mpfr_prec_t p)
       mpq_clear (P0[i]);
       mpq_clear (P1[i]);
     }
-  free (P0);
-  free (P1);
+  tests_free (P0, (n + 1) * sizeof (mpq_t));
+  tests_free (P1, (n + 1) * sizeof (mpq_t));
   mpq_clear (t);
   mpq_clear (u);
   mpfr_clear (x);
