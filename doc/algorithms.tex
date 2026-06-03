@@ -6,7 +6,6 @@
 \usepackage{amssymb}
 \usepackage{amsmath}
 \usepackage{url}
-\usepackage{xcolor}
 \usepackage{comment}
 \usepackage[english, lined, linesnumbered]{algorithm2e}
 \usepackage{graphicx}
@@ -4951,31 +4950,6 @@ depending on the parity of $n$:
 \end{itemize}
 We remark that $c_{1,m} = (2m+1) c_{0,m}$.
 
-{\color{blue}
-\begin{itemize}
-\item If $n=2m$ is even, the leading term is $c_m^{(0)} = P_n(0)$, computed by
-  \[
-    c_0^{(0)}=1, \qquad c_j^{(0)}=c_{j-1}^{(0)}\,\frac{-(2j-1)}{2j},
-    \quad 1 \leq j \leq m,
-  \]
-  thus
-  \[
-    c_m^{(0)} = \prod_{j=1}^{m} \frac{-(2j-1)}{2j}.
-  \]
-
-\item If $n=2m+1$ is odd, the leading term is $c_m^{(1)} x$ with
-  $c_m^{(1)}=P_n'(0)$, computed by
-  \[
-    c_0^{(1)}=1, \qquad c_j^{(1)}=c_{j-1}^{(1)}\,\frac{-(2j+1)}{2j},
-    \quad 1 \leq j \leq m,
-  \]
-  thus
-  \[
-    c_m^{(1)} = \prod_{j=1}^{m} \frac{-(2j+1)}{2j}.
-  \]
-\end{itemize}
-}
-
 \paragraph{\textbf{Bounding $t$ in the implementation.}}
 In the code, $t = n^2 x^2$ is bounded as follows.
 Let $e_x = \texttt{MPFR\_GET\_EXP}(x)$, which satisfies $2^{e_x-1} \le |x| < 2^{e_x}$,
@@ -5008,27 +4982,26 @@ preceding analysis applies. The extra $64$ guard bits are an heuristic:
 a threshold that ensures the first rounding test is likely to succeed
 in most cases.
 
-\paragraph{\textbf{Error analysis of $c_{0,2m}$ and $c_{0,2m+1}$}}
+\paragraph{\textbf{Error analysis of $c_{0,m}$ and $c_{1,m}$}}
 
 Since neither algorithm involves any addition or subtraction, there is no
 cancellation, and we can bound the total rounding error \textit{a-priori}.
 In the code, all the intermediate roundings are to nearest, with working
-precision $p$. Each \texttt{mpfr\_mul\_si} and \texttt{mpfr\_div\_ui} call
+precision $q$. Each \texttt{mpfr\_mul\_si} and \texttt{mpfr\_div\_ui} call
 rounds the exact arithmetic result, introducing a relative error of at most
-$u = 2^{-p}$ per operation. Denote by $V_k$ the exact real value of the
+$u = 2^{-q}$ per operation. Denote by $V_k$ the exact real value of the
 $k$-th iterate and by $v_k$ its computed floating-point approximation, with
 $V_1 = v_1 = 1$ exact. After $k$ such rounding operations the accumulated
 relative error satisfies
 \[
   \frac{|v_k - V_k|}{|V_k|}
-  \le (1+u)^k - 1
   \le \frac{ku}{1-ku}
-  \le 2ku = k \cdot 2^{1-p},
+  \le 2ku = k \cdot 2^{1-q},
 \]
-where the first inequality holds by induction (each operation multiplies the
-relative discrepancy by at most $(1+u)$), and the last holds whenever
-$ku \le \tfrac{1}{2}$, i.e. $p \ge 1 + \lceil\log_2 k\rceil$, which is
-satisfied by our choice of working precision.
+where the first inequality follows from Lemma~\ref{lemma_graillat} with all
+$\delta_i = u$ (writing $v_k/V_k = \prod_{i=1}^k(1+\delta_i)$), and the last
+holds whenever $ku \le \tfrac{1}{2}$, i.e. $p \ge 1 + \lceil\log_2 k\rceil$,
+which is satisfied by our choice of working precision.
 
 \subsection{Summary}
 
