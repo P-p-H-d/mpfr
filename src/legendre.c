@@ -121,7 +121,7 @@ mpfr_legendre (mpfr_ptr res, long n, mpfr_srcptr x, mpfr_rnd_t rnd_mode)
   mpfr_exp_t b_i, log2_i_m1, g_i, h_i, q_i, a_i, a_n;
   int x_is_zero;
 
-  MPFR_GROUP_DECL (main);
+  MPFR_GROUP_DECL (group);
   MPFR_ZIV_DECL (loop);
 
   MPFR_LOG_FUNC
@@ -229,7 +229,7 @@ mpfr_legendre (mpfr_ptr res, long n, mpfr_srcptr x, mpfr_rnd_t rnd_mode)
   realprec = res_prec + 4 * n + 20;
   realprec += MPFR_INT_CEIL_LOG2 (realprec);
 
-  MPFR_GROUP_INIT_5 (main, realprec,
+  MPFR_GROUP_INIT_5 (group, realprec,
                      p1, p2, pn, first_term, second_term);
 
   MPFR_ZIV_INIT (loop, realprec);
@@ -347,14 +347,14 @@ mpfr_legendre (mpfr_ptr res, long n, mpfr_srcptr x, mpfr_rnd_t rnd_mode)
         break;
 
       MPFR_ZIV_NEXT (loop, realprec);
-      MPFR_GROUP_REPREC_5 (main, realprec,
+      MPFR_GROUP_REPREC_5 (group, realprec,
                            p1, p2, pn, first_term, second_term);
     }
   MPFR_ZIV_FREE (loop);
 
   ternary_value = mpfr_set (res, p1, rnd_mode);
 
-  MPFR_GROUP_CLEAR (main);
+  MPFR_GROUP_CLEAR (group);
 
   return ternary_value;
 }
