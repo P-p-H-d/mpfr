@@ -2238,7 +2238,9 @@ and underflows.
 rounded in the direction of @var{rnd}, where @var{n} stands for the degree of
 the polynomial (@var{n} is assumed to be non-negative).
 If the input variable @var{x} is outside the [-1,1] domain,
-then @var{res} is set to NaN and 0 is returned.
+then @var{res} is set to @samp{NaN} and 0 is returned.
+
+Note: it contains an assertion that ensures @var{n} >= 0.
 @end deftypefun
 
 For the power functions (with an integer exponent or not), see @ref{mpfr_pow}
