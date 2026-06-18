@@ -759,6 +759,16 @@ Table of contents:
   that do not work with it are disabled at configure time, we need to
   disable -fanalyzer for the configure tests.
 
+- add the ".DELETE_ON_ERROR:" special target to the Makefiles?
+  For instance, src/Makefile.am has
+    $(GET_PATCHES_SH) $(PATCHES) > $@ || { rm -f $@; exit 1; }
+  The "|| ..." is correct, but removing a partially updated target on
+  recipe failure is generally what is wanted, and this could be handled
+  globally with the ".DELETE_ON_ERROR:" special target, thus without the
+  risk of forgetting some recipes. This is what is recommended by the
+  GNU Make manual. But first, check the portability and whether there
+  could be any drawback.
+
 
 ##############################################################################
 7. Portability

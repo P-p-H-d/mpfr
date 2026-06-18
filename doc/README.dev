@@ -817,12 +817,13 @@ with code like MPFR_EXP_MIN/n).
    =====================================================================
 
 Don't use the following identifiers since they are keywords for some
-compilers:
+compilers or have special use:
   - "bool", "true" and "false": keywords in ISO C23.
   - "near" and "far": keywords in some old DOS compiler.
   - "pm", which is used by the C compiler 'sharp' to design variables
     that should be stored in the flash memory.
   - "new", which is reserved in C++.
+  - "main", as this might clash with the usual main() function.
 
 Note: This list is not exhaustive; these are just the simplest keywords,
 which are likely to be used by mistake.
@@ -1834,8 +1835,13 @@ result will depend on the floating-point arithmetic of the system;
 this has shown many problems in the past and problems may still occur
 with new systems. Use `mpfr_set_si` or `mpfr_set_str` instead.
 
-To check the result of some function, use mpfr_equal_p rather than
-mpfr_cmp, as mpfr_cmp will return 0 (equality) if the result is NaN.
+To check the result of some function, do not use mpfr_cmp as it will
+return 0 (equality) if the result is NaN. For an equality test, use
+mpfr_equal_p (most often with the negation operator: !mpfr_equal_p).
+For an inequality test, use one of the other similar predicates
+(mpfr_greater_p, etc.), also in the negated form if a result NaN needs
+to trigger an error. Use the mpfr_cmp0 macro (defined in mpfr-test.h)
+to get a ternary value with an assertion failure on NaN.
 
 Do not use functions that need optional features (except in a context
 where such features are required). For instance, the mpfr_printf-like
