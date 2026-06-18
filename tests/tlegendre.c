@@ -685,7 +685,7 @@ test_exact (int n, int A, int B, mpfr_prec_t p)
             if (mpfr_cmp (y, z))
               {
                 printf ("Error in test_exact for n=%d a=%d b=%d p=%lu rnd=%s\n",
-                        n, a, b, p, mpfr_print_rnd_mode (r));
+                        n, a, b, (unsigned long) p, mpfr_print_rnd_mode (r));
                 printf ("expected ");
                 mpfr_out_str (stdout, 16, 0, y, MPFR_RNDN);
                 printf ("\ngot      ");
@@ -755,7 +755,8 @@ test_zero_even (void)
               if (mpfr_cmp (y, z))
                 {
                   printf ("test_zero failed for n=%ld p=%lu rnd=%s\n",
-                          n, p, mpfr_print_rnd_mode ((mpfr_rnd_t) rnd));
+                          n, (unsigned long) p,
+                          mpfr_print_rnd_mode ((mpfr_rnd_t) rnd));
                   DUMP_NUMBERS(z, y);
                   exit (1);
                 }
@@ -763,7 +764,8 @@ test_zero_even (void)
                 {
                   printf ("test_zero: incompatible ternary values for "
                           "n=%ld p=%lu rnd=%s\n",
-                          n, p, mpfr_print_rnd_mode ((mpfr_rnd_t) rnd));
+                          n, (unsigned long) p,
+                          mpfr_print_rnd_mode ((mpfr_rnd_t) rnd));
                   printf ("got %d expected %d\n", ret, ret2);
                   exit (1);
                 }
