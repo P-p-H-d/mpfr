@@ -52,6 +52,7 @@ static const unsigned degrees[] =
   128,     /* The maximum degree officially supported by C++17 */
   1024,    /* 2^10 */
 };
+
 static const char *expected_vals[] =
 {
   "-0.00100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
@@ -64,7 +65,7 @@ static const char *expected_vals[] =
   "-0.10011011001100111110110010111111011011111101111001101010111101000000001111110101001101100011100101011001000110111010100000110000101101111101100001001111100111001111111011111101111001000000011000100010e-10",
 };
 
-static const int n_degrees_test = sizeof(degrees)/sizeof(unsigned);
+static const int n_degrees_test = numberof_const (degrees);
 
 static void
 test_domain (void)
@@ -458,10 +459,12 @@ test_random (int n, mpfr_prec_t p, unsigned long K)
   mpfr_t x, y, z, t;
   unsigned long k;
   int rnd;
+
   mpfr_init2 (x, p);
   mpfr_init2 (y, p);
   mpfr_init2 (z, p + 20);
   mpfr_init2 (t, p);
+
   for (k = 0; k < K; k++)
     {
       mpfr_urandomb (x, RANDS); /* x is in [0,1] */
@@ -474,7 +477,7 @@ test_random (int n, mpfr_prec_t p, unsigned long K)
           if (mpfr_can_round (z, p + 20, MPFR_RNDN, (mpfr_rnd_t) rnd, p))
             {
               mpfr_set (t, z, (mpfr_rnd_t) rnd);
-              if (mpfr_cmp (y, t))
+              if (!mpfr_equal_p (y, t))
                 {
                   printf ("Error in mpfr_legendre for n=%d x=", n);
                   mpfr_out_str (stdout, 16, 0, x, MPFR_RNDN);
@@ -485,6 +488,7 @@ test_random (int n, mpfr_prec_t p, unsigned long K)
             }
         }
     }
+
   mpfr_clear (x);
   mpfr_clear (y);
   mpfr_clear (z);
@@ -495,6 +499,7 @@ static void
 random_array (int *array, int size, int inf, int sup)
 {
   int i, tmp;
+
   for (i = 0; i < size; i++)
     {
       if (inf > sup)
@@ -516,7 +521,7 @@ random_test_suite (int num_degrees, int num_tests)
   int i, min_degree = 2, max_degree = 128;
   int *test_degrees;
 
-  srand(time(NULL));
+  srand (time (NULL));
 
   test_degrees = (int *) tests_allocate (num_degrees * sizeof(int));
   if (!test_degrees)
@@ -538,6 +543,7 @@ static void
 bug20251001 (void)
 {
   mpfr_t x, y;
+
   mpfr_init2 (x, 53);
   mpfr_init2 (y, 53);
 
@@ -548,11 +554,12 @@ bug20251001 (void)
   mpfr_set_str (x, "-4.7184833984611241e-1", 10, MPFR_RNDN);
   mpfr_legendre (y, 2, x, MPFR_RNDD);
   mpfr_set_str_binary (x, "-0.10101010000001100000110110100001000111001110111100001E-2");
-  if (mpfr_cmp (y, x) != 0) {
-    printf ("Error in bug20251001 (1)\n");
-    DUMP_NUMBERS (x,y);
-    exit (1);
-  }
+  if (!mpfr_equal_p (y, x))
+    {
+      printf ("Error in bug20251001 (1)\n");
+      DUMP_NUMBERS (x,y);
+      exit (1);
+    }
 
   /* bug found with GMP_CHECK_RANDOMIZE=1759308817539561:
      Error in mpfr_legendre for n=10 x=4.608a667782dd0@-1 rnd=MPFR_RNDU
@@ -561,11 +568,12 @@ bug20251001 (void)
   mpfr_set_str (x, "4.608a667782dd0@-1", 16, MPFR_RNDN);
   mpfr_legendre (y, 10, x, MPFR_RNDU);
   mpfr_set_str_binary (x, "0.11111010001111111110111110101011110010000001110000001E-2");
-  if (mpfr_cmp (y, x) != 0) {
-    printf ("Error in bug20251001 (2)\n");
-    DUMP_NUMBERS (x,y);
-    exit (1);
-  }
+  if (!mpfr_equal_p (y, x))
+    {
+      printf ("Error in bug20251001 (2)\n");
+      DUMP_NUMBERS (x,y);
+      exit (1);
+    }
 
   /* bug found with GMP_CHECK_RANDOMIZE=1759309465303933:
      Error in mpfr_legendre for n=3 x=5.6a59d5d01d9d0@-1 rnd=MPFR_RNDZ
@@ -574,11 +582,12 @@ bug20251001 (void)
   mpfr_set_str (x, "5.6a59d5d01d9d0@-1", 16, MPFR_RNDN);
   mpfr_legendre (y, 3, x, MPFR_RNDZ);
   mpfr_set_str_binary (x, "-0.11010010010011110110100000101001000001111000100101111E-1");
-  if (mpfr_cmp (y, x) != 0) {
-    printf ("Error in bug20251001 (3)\n");
-    DUMP_NUMBERS (x,y);
-    exit (1);
-  }
+  if (!mpfr_equal_p (y, x))
+    {
+      printf ("Error in bug20251001 (3)\n");
+      DUMP_NUMBERS (x,y);
+      exit (1);
+    }
 
   mpfr_clear (x);
   mpfr_clear (y);
@@ -588,6 +597,7 @@ static void
 bug20260205 (void)
 {
   mpfr_t x, y;
+
   mpfr_init2 (x, 53);
   mpfr_init2 (y, 53);
 
@@ -597,11 +607,12 @@ bug20260205 (void)
   mpfr_set_str (x, "-9.3dbaa2fd514c0@-1", 16, MPFR_RNDN);
   mpfr_legendre (y, 2, x, MPFR_RNDZ);
   mpfr_set_str_binary (x, "0.11001000000101110011101010100100001111111000011100111E-11");
-  if (mpfr_cmp (y, x) != 0) {
-    printf ("Error in bug20260205\n");
-    DUMP_NUMBERS (x,y);
-    exit (1);
-  }
+  if (!mpfr_equal_p (y, x))
+    {
+      printf ("Error in bug20260205\n");
+      DUMP_NUMBERS (x,y);
+      exit (1);
+    }
 
   mpfr_clear (x);
   mpfr_clear (y);
@@ -617,8 +628,8 @@ test_exact (int n, int A, int B, mpfr_prec_t p)
   int i, j, a, b, rnd;
   mpfr_t x, y, z;
 
-  P0 = (mpq_t*) tests_allocate ((n + 1) * sizeof (mpq_t));
-  P1 = (mpq_t*) tests_allocate ((n + 1) * sizeof (mpq_t));
+  P0 = (mpq_t *) tests_allocate ((n + 1) * sizeof (mpq_t));
+  P1 = (mpq_t *) tests_allocate ((n + 1) * sizeof (mpq_t));
   for (i = 0; i <= n; i++)
     {
       mpq_init (P0[i]); /* set to 0 */
@@ -682,7 +693,7 @@ test_exact (int n, int A, int B, mpfr_prec_t p)
             mpfr_rnd_t r = (mpfr_rnd_t) rnd;
             mpfr_set_q (y, t, (mpfr_rnd_t) rnd); /* expected result */
             mpfr_legendre (z, n, x, r);
-            if (mpfr_cmp (y, z))
+            if (!mpfr_equal_p (y, z))
               {
                 printf ("Error in test_exact for n=%d a=%d b=%d p=%lu rnd=%s\n",
                         n, a, b, (unsigned long) p, mpfr_print_rnd_mode (r));
@@ -728,8 +739,10 @@ test_zero_even (void)
   long n;
   mpfr_prec_t p;
   mpq_t q, r;
+
   mpq_init (q);
   mpq_init (r);
+
   for (n = 0; n <= 100; n+=2)
     {
       /* invariant: q = Pn(0) for n even */
@@ -752,7 +765,7 @@ test_zero_even (void)
             {
               ret = mpfr_legendre (y, n, x, (mpfr_rnd_t) rnd);
               ret2 = mpfr_set_q (z, q, (mpfr_rnd_t) rnd);
-              if (mpfr_cmp (y, z))
+              if (!mpfr_equal_p (y, z))
                 {
                   printf ("test_zero failed for n=%ld p=%lu rnd=%s\n",
                           n, (unsigned long) p,
@@ -775,6 +788,7 @@ test_zero_even (void)
           mpfr_clear (z);
         }
     }
+
   mpq_clear (q);
   mpq_clear (r);
 }
