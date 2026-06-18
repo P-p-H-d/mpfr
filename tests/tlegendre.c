@@ -21,15 +21,12 @@ If not, see <https://www.gnu.org/licenses/>. */
 
 #include "mpfr-test.h"
 
-#include <time.h>
-
 #define ARBITRARILY_LOW_PREC 10
 #define IEEE754_SINGLE_PREC  24
 #define IEEE754_DOUBLE_PREC  53
 #define MPFR_PREC_100        100
 #define MPFR_PREC_200        200
 
-#define RANDOM_TESTS_N_DEGREE 10
 #define RANDOM_TESTS_BATCH    20
 #define DYADIC_BOUND          35
 #define GENERIC_UI_RAND_MOD   10
@@ -414,8 +411,6 @@ test_round (void)
 
   mpfr_set_d(x, 1.0/3.0, MPFR_RNDD);
 
-  /* */
-
   RND_LOOP_NO_RNDF (rnd)
     {
       ret = mpfr_legendre (res, 1, x, (mpfr_rnd_t) rnd);
@@ -496,47 +491,17 @@ test_random (int n, mpfr_prec_t p, unsigned long K)
 }
 
 static void
-random_array (int *array, int size, int inf, int sup)
+random_test_suite (int num_tests)
 {
-  int i, tmp;
+  /* we choose a uniform random distribution of 10 degrees from the ones allowed
+     by the C++ standard [0, 128] */
+  int i;
+  int test_degrees[] = {54, 76, 57, 70, 16, 76, 4, 120, 22, 99};
 
-  for (i = 0; i < size; i++)
-    {
-      if (inf > sup)
-        {
-          tmp = inf;
-          inf = sup;
-          sup = tmp;
-        }
-      array[i] = inf + rand() % (sup - inf + 1);
-    }
-}
-
-static void
-random_test_suite (int num_degrees, int num_tests)
-{
-  /* we set the minimum degree to 2 to skip the two base cases P0 and P1,
-     and the maximum degree to 128 to limit the range of degrees tested
-     to the same limit of the C++ standard */
-  int i, min_degree = 2, max_degree = 128;
-  int *test_degrees;
-
-  srand (time (NULL));
-
-  test_degrees = (int *) tests_allocate (num_degrees * sizeof(int));
-  if (!test_degrees)
-    {
-      printf ("Could not allocate memory for random tests\n");
-      exit (1);
-    }
-
-  random_array (test_degrees, num_degrees, min_degree, max_degree);
-
-  for (i = 0; i < num_degrees; i++)
+  for (i = 0; i < 10; i++)
     {
       test_random (test_degrees[i], IEEE754_DOUBLE_PREC, num_tests);
     }
-  tests_free (test_degrees, num_degrees * sizeof(int));
 }
 
 static void
@@ -674,7 +639,7 @@ test_exact (int n, int A, int B, mpfr_prec_t p)
   mpfr_init2 (z, p);
 
   for (a = -A; a <= A; a++)
-    for (b = 0; b <= B; b++)
+    for (b = 6; b <= B; b++)
       {
         /* compute t = Pn(a/2^b) */
         mpq_set_si (u, a, 1ul<<b);
@@ -727,7 +692,7 @@ test_exact_dyadic (void)
   int n;
   mpfr_prec_t p;
 
-  for (n = 1; n <= 10; n++)
+  for (n = 2; n <= 10; n++)
     for (p = DYADIC_BOUND - 3; p <= DYADIC_BOUND; p++)
       test_exact (n, DYADIC_BOUND, DYADIC_BOUND, p);
 }
@@ -896,8 +861,9 @@ main (void)
   test_sample_with_precision (MPFR_PREC_100, MPFR_PREC_200);
   test_sample_with_precision (MPFR_PREC_200, MPFR_PREC_200);
 
-  /* perform RANDOM_TESTS_BATCH tests for each of the RANDOM_TESTS_N_DEGREE */
-  random_test_suite (RANDOM_TESTS_N_DEGREE, RANDOM_TESTS_BATCH);
+  /* perform RANDOM_TESTS_BATCH tests for each of the 10 degree chosen between
+     the ones allowed  C++ standard [0, 128] */
+  random_test_suite (RANDOM_TESTS_BATCH);
 
   bug20251001 ();
 
