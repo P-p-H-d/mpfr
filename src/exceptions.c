@@ -316,6 +316,11 @@ mpfr_check_range (mpfr_ptr x, int t, mpfr_rnd_t rnd_mode)
   MPFR_RET (t);  /* propagate inexact ternary value, unlike most functions */
   /* Note that MPFR_RET() on non-zero sets the inexact flag as required,
      because MPFR_SAVE_EXPO_FREE() may unset it.
+     However, the NaN flag is not propagated, because in almost all cases,
+     a NaN result (occurring due to a domain error) can be detected before
+     the exponent range is extended. This allows us to detect an unexpected
+     NaN result (due to a bug) in the testsuite by checking the consistency
+     between the result and the NaN flag, as done by tgeneric.c.
      FIXME: Should we also ensure that the underflow flag is set when the
      result is an inexact zero? If an inexact zero is possible without an
      explicit underflow detection that sets the underflow flag in the code,
