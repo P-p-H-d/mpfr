@@ -258,6 +258,9 @@ mpfr_set_erangeflag (void)
 int
 mpfr_check_range (mpfr_ptr x, int t, mpfr_rnd_t rnd_mode)
 {
+  /* Since the purpose of this function is to check the range of x after
+     restoring the exponent range, do not use MPFR_IS_PURE_FP(x), which
+     has a debug check that x belongs to the current exponent range. */
   if (MPFR_LIKELY (! MPFR_IS_SINGULAR (x)))
     { /* x is a non-zero FP */
       mpfr_exp_t exp = MPFR_EXP (x);  /* Do not use MPFR_GET_EXP */
