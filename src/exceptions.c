@@ -316,14 +316,20 @@ mpfr_check_range (mpfr_ptr x, int t, mpfr_rnd_t rnd_mode)
       MPFR_ASSERTD (! MPFR_IS_LIKE_RNDZ (rnd_mode, MPFR_IS_NEG(x)));
       __gmpfr_flags |= MPFR_FLAGS_OVERFLOW;
     }
+  /* Debug check: MPFR_IS_NAN (x) implies that the NaN flag is set.
+     A failure means that either the NaN flag was forgotten or that the
+     NaN result is incorrect due to a bug. Instead of the MPFR_ASSERTD
+     below, we could have chosen to propagate the NaN flag in order to
+     slightly simplify the MPFR code. But detecting a potential bug is
+     probably a better choice. Moreover, in almost all cases, a NaN
+     result (occurring due to a domain error) can be detected before
+     the exponent range is extended (meaning hat mpfr_check_range would
+     not be involved), so that the potential simplification would not
+     have really been useful. */
+  MPFR_ASSERTD (! MPFR_IS_NAN (x) || (__gmpfr_flags & MPFR_FLAGS_NAN) != 0);
   MPFR_RET (t);  /* propagate inexact ternary value, unlike most functions */
   /* Note that MPFR_RET() on non-zero sets the inexact flag as required,
      because MPFR_SAVE_EXPO_FREE() may unset it.
-     However, the NaN flag is not propagated, because in almost all cases,
-     a NaN result (occurring due to a domain error) can be detected before
-     the exponent range is extended. This allows us to detect an unexpected
-     NaN result (due to a bug) in the testsuite by checking the consistency
-     between the result and the NaN flag, as done by tgeneric.c.
      FIXME: Should we also ensure that the underflow flag is set when the
      result is an inexact zero? If an inexact zero is possible without an
      explicit underflow detection that sets the underflow flag in the code,
