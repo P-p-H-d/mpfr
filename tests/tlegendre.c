@@ -122,7 +122,6 @@ test_domain (void)
           exit (1);
         }
     }
-
   for (i = 0; i < 10; i++)
     {
       ret = mpfr_legendre (res, i, outer, MPFR_RNDN);
@@ -808,6 +807,12 @@ mpfr_legendre_generic_ui (mpfr_ptr y, mpfr_srcptr x, long n, mpfr_rnd_t rnd)
   return mpfr_legendre (y, n, x, rnd);
 }
 
+static int
+mpfr_legendre_generic_n2 (mpfr_ptr y, mpfr_srcptr x, mpfr_rnd_t rnd)
+{
+  return mpfr_legendre (y, 2, x, rnd);
+}
+
 #define TEST_FUNCTION mpfr_legendre_generic_ui
 #define TEST_FUNCTION_NAME "mpfr_legendre"
 #define INTEGER_TYPE long
@@ -815,11 +820,25 @@ mpfr_legendre_generic_ui (mpfr_ptr y, mpfr_srcptr x, long n, mpfr_rnd_t rnd)
         (long) (randlimb () % GENERIC_UI_RAND_MOD)
 #include "tgeneric_ui.c"
 
+#undef TEST_FUNCTION
+#undef TEST_FUNCTION_NAME
+#undef INTEGER_TYPE
+
+#define TEST_FUNCTION mpfr_legendre_generic_n2
+#define TEST_RANDOM_EMIN (-5)
+#define TEST_RANDOM_EMAX 5
+#include "tgeneric.c"
+
+#undef TEST_FUNCTION
+#undef TEST_RANDOM_EMIN
+#undef TEST_RANDOM_EMAX
+
 int
 main (void)
 {
   tests_start_mpfr ();
 
+  /* Test for the special case x = 0 */
   test_zero_even ();
   test_zero_odd ();
 
@@ -872,6 +891,8 @@ main (void)
   test_exact_dyadic ();
 
   test_generic_ui (ARBITRARILY_LOW_PREC, IEEE754_DOUBLE_PREC, 6);
+
+  test_generic (2, 100, 100);
 
   tests_end_mpfr ();
   return 0;

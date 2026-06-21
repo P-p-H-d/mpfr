@@ -30,11 +30,12 @@ If not, see <https://www.gnu.org/licenses/>. */
 
 static int
 asymptotic_small_x (mpfr_ptr res, long n, mpfr_srcptr x, mpfr_rnd_t rnd_mode,
-                    int *inex_round, mpfr_exp_t err)
+                    mpfr_exp_t err)
 {
   mpfr_t v;
   long m, j;
   unsigned inex;
+  int inex_round;
   mpfr_prec_t res_prec, realprec;
 
   MPFR_GROUP_DECL (small_x);
@@ -93,12 +94,12 @@ asymptotic_small_x (mpfr_ptr res, long n, mpfr_srcptr x, mpfr_rnd_t rnd_mode,
 
   MPFR_ZIV_FREE (loop);
 
-  *inex_round = mpfr_round_near_x (res, v, (mpfr_uexp_t) (err - 2),
-                                   0, rnd_mode);
+  inex_round = mpfr_round_near_x (res, v, (mpfr_uexp_t) (err - 2),
+                                  0, rnd_mode);
 
   MPFR_GROUP_CLEAR (small_x);
 
-  return inex;
+  return inex_round;
 }
 
 int
@@ -111,7 +112,7 @@ mpfr_legendre (mpfr_ptr res, long n, mpfr_srcptr x, mpfr_rnd_t rnd_mode)
   /* these variables are used (and consequently initialized) only in the
      "Asymptotic expansion for small |x|" branch */
   mpfr_exp_t ex, l2n, rho, err;
-    int inex_round;
+  int inex_round;
 
   /* the following variables are used (and consequently initialized) only
      for n >= 2, where x is not equal to -1, 0 or 1 */
@@ -121,6 +122,7 @@ mpfr_legendre (mpfr_ptr res, long n, mpfr_srcptr x, mpfr_rnd_t rnd_mode)
   mpfr_exp_t b_i, log2_i_m1, g_i, h_i, q_i, a_i, a_n;
   int x_is_zero;
 
+  MPFR_SAVE_EXPO_DECL (expo);
   MPFR_GROUP_DECL (group);
   MPFR_ZIV_DECL (loop);
 
@@ -207,15 +209,23 @@ mpfr_legendre (mpfr_ptr res, long n, mpfr_srcptr x, mpfr_rnd_t rnd_mode)
 
           if (err >= (mpfr_exp_t) res_prec + MPFR_LEGENDRE_SMALL_X_GUARD)
             {
-              inex = asymptotic_small_x (res, n, x, rnd_mode,
-                                         &inex_round, err);
+              /* Compute in the extended exponent range so that the final
+                 overflow/underflow with respect to the caller's range is
+                 handled uniformly by mpfr_check_range. */
+              MPFR_SAVE_EXPO_MARK (expo);
+              inex_round = asymptotic_small_x (res, n, x, rnd_mode, err);
 
-              /* if asymptotic_small_x sets inex_round to 0, then it cannot
-                 round. In that case, our asymptotic expansion failed, so we
-                 fall back to the usual Ziv loop. Otherwise, we return the
-                 inex flag */
+              /* if asymptotic_small_x returns 0, then it cannot round.
+                 In that case, our asymptotic expansion failed, so we
+                 fall back to the usual Ziv loop. Otherwise, we return
+                 the correctly rounded result. */
               if (inex_round)
-                return inex;
+                {
+                  MPFR_SAVE_EXPO_FREE (expo);
+                  return mpfr_check_range (res, inex_round, rnd_mode);
+                }
+
+              MPFR_SAVE_EXPO_FREE (expo);
             }
         }
     }
@@ -232,6 +242,7 @@ mpfr_legendre (mpfr_ptr res, long n, mpfr_srcptr x, mpfr_rnd_t rnd_mode)
   MPFR_GROUP_INIT_5 (group, realprec,
                      p1, p2, pn, first_term, second_term);
 
+  MPFR_SAVE_EXPO_MARK (expo);
   MPFR_ZIV_INIT (loop, realprec);
   for (;;)
     {
@@ -254,15 +265,6 @@ mpfr_legendre (mpfr_ptr res, long n, mpfr_srcptr x, mpfr_rnd_t rnd_mode)
           MPFR_LOG_MSG (("i = %ld\n", i));
           MPFR_LOG_VAR (p1);
           MPFR_LOG_VAR (p2);
-
-          /* FIXME: Extend the exponent range as usual? (There are currently
-             no failures in the testsuite, but the tests may be incomplete.)
-             Intermediate underflows are probably harmless, but must be
-             taken into account in the error analysis. Final underflows
-             (in mpfr_sub or mpfr_div_ui) might also be possible, and also
-             need to be taken into account.
-             Note: in the extended exponent range, underflows could occur
-             only in very high precisions (thus only on 32-bit machines). */
 
           if (x_is_zero)
             {
@@ -350,11 +352,14 @@ mpfr_legendre (mpfr_ptr res, long n, mpfr_srcptr x, mpfr_rnd_t rnd_mode)
       MPFR_GROUP_REPREC_5 (group, realprec,
                            p1, p2, pn, first_term, second_term);
     }
-  MPFR_ZIV_FREE (loop);
 
   ternary_value = mpfr_set (res, p1, rnd_mode);
 
+  MPFR_ZIV_FREE (loop);
   MPFR_GROUP_CLEAR (group);
+  MPFR_SAVE_EXPO_FREE (expo);
 
-  return ternary_value;
+  /* Handle a possible overflow/underflow; the computation was done in the
+     extended exponent range set by MPFR_SAVE_EXPO_MARK */
+  return mpfr_check_range (res, ternary_value, rnd_mode);
 }
