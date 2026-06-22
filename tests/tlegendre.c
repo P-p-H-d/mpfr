@@ -807,26 +807,29 @@ mpfr_legendre_generic_ui (mpfr_ptr y, mpfr_srcptr x, long n, mpfr_rnd_t rnd)
   return mpfr_legendre (y, n, x, rnd);
 }
 
-static int
-mpfr_legendre_generic_n2 (mpfr_ptr y, mpfr_srcptr x, mpfr_rnd_t rnd)
-{
-  return mpfr_legendre (y, 2, x, rnd);
-}
-
 #define TEST_FUNCTION mpfr_legendre_generic_ui
 #define TEST_FUNCTION_NAME "mpfr_legendre"
 #define INTEGER_TYPE long
 #define INT_RAND_FUNCTION() \
         (long) (randlimb () % GENERIC_UI_RAND_MOD)
 #include "tgeneric_ui.c"
-
 #undef TEST_FUNCTION
 #undef TEST_FUNCTION_NAME
 #undef INTEGER_TYPE
 
-#define TEST_FUNCTION mpfr_legendre_generic_n2
-#define TEST_RANDOM_EMIN (-5)
-#define TEST_RANDOM_EMAX 5
+#define DEFN(N)                                                         \
+  static int mpfr_legendre##N (mpfr_ptr y, mpfr_srcptr x, mpfr_rnd_t r) \
+  { return mpfr_legendre (y, N, x, r); }
+
+DEFN(2)
+DEFN(3)
+
+#define TEST_FUNCTION mpfr_legendre2
+#define test_generic test_generic_legendre2
+#include "tgeneric.c"
+
+#define TEST_FUNCTION mpfr_legendre3
+#define test_generic test_generic_legendre3
 #include "tgeneric.c"
 
 #undef TEST_FUNCTION
@@ -892,7 +895,8 @@ main (void)
 
   test_generic_ui (ARBITRARILY_LOW_PREC, IEEE754_DOUBLE_PREC, 6);
 
-  test_generic (2, 100, 100);
+  test_generic_legendre2 (MPFR_PREC_MIN, 100, 100);
+  test_generic_legendre3 (MPFR_PREC_MIN, 100, 100);
 
   tests_end_mpfr ();
   return 0;
