@@ -258,6 +258,9 @@ mpfr_set_erangeflag (void)
 int
 mpfr_check_range (mpfr_ptr x, int t, mpfr_rnd_t rnd_mode)
 {
+  /* Since the purpose of this function is to check the range of x after
+     restoring the exponent range, do not use MPFR_IS_PURE_FP(x), which
+     has a debug check that x belongs to the current exponent range. */
   if (MPFR_LIKELY (! MPFR_IS_SINGULAR (x)))
     { /* x is a non-zero FP */
       mpfr_exp_t exp = MPFR_EXP (x);  /* Do not use MPFR_GET_EXP */
@@ -313,6 +316,17 @@ mpfr_check_range (mpfr_ptr x, int t, mpfr_rnd_t rnd_mode)
       MPFR_ASSERTD (! MPFR_IS_LIKE_RNDZ (rnd_mode, MPFR_IS_NEG(x)));
       __gmpfr_flags |= MPFR_FLAGS_OVERFLOW;
     }
+  /* Debug check: MPFR_IS_NAN (x) implies that the NaN flag is set.
+     A failure means that either the NaN flag was forgotten or that the
+     NaN result is incorrect due to a bug. Instead of the MPFR_ASSERTD
+     below, we could have chosen to propagate the NaN flag in order to
+     slightly simplify the MPFR code. But detecting a potential bug is
+     probably a better choice. Moreover, in almost all cases, a NaN
+     result (occurring due to a domain error) can be detected before
+     the exponent range is extended (meaning hat mpfr_check_range would
+     not be involved), so that the potential simplification would not
+     have really been useful. */
+  MPFR_ASSERTD (! MPFR_IS_NAN (x) || (__gmpfr_flags & MPFR_FLAGS_NAN) != 0);
   MPFR_RET (t);  /* propagate inexact ternary value, unlike most functions */
   /* Note that MPFR_RET() on non-zero sets the inexact flag as required,
      because MPFR_SAVE_EXPO_FREE() may unset it.
