@@ -641,7 +641,8 @@ test_exact (int n, int A, int B, mpfr_prec_t p)
     for (b = 6; b <= B; b++)
       {
         /* compute t = Pn(a/2^b) */
-        mpq_set_si (u, a, 1ul<<b);
+        mpq_set_si (u, a, 1);
+        mpq_div_2exp (u, u, b);
         mpq_set (t, P1[n]);
         for (i = n-1; i >= 0; i--)
           {
