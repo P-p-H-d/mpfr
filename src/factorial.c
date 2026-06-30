@@ -75,9 +75,7 @@ mpfr_fac_ui (mpfr_ptr y, unsigned long int x, mpfr_rnd_t rnd_mode)
 
       err = Nt - 1 - MPFR_INT_CEIL_LOG2 (Nt);
 
-      round = !inexact || MPFR_CAN_ROUND (t, err, Ny, rnd_mode);
-
-      if (MPFR_LIKELY (round))
+      if (MPFR_LIKELY (!inexact || MPFR_CAN_ROUND (t, err, Ny, rnd_mode)))
         {
           /* If inexact = 0, then t is exactly x!, so round is the
              correct inexact flag.
