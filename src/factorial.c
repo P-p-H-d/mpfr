@@ -34,7 +34,7 @@ mpfr_fac_ui (mpfr_ptr y, unsigned long int x, mpfr_rnd_t rnd_mode)
 {
   mpfr_t t;       /* Variable of Intermediary Calculation*/
   unsigned long i;
-  int round, inexact;
+  int inexact;
 
   mpfr_prec_t Ny;   /* Precision of output variable */
   mpfr_prec_t Nt;   /* Precision of Intermediary Calculation variable */
@@ -66,7 +66,7 @@ mpfr_fac_ui (mpfr_ptr y, unsigned long int x, mpfr_rnd_t rnd_mode)
       inexact = mpfr_set_ui (t, 1, rnd);
       for (i = 2 ; i <= x ; i++)
         {
-          round = mpfr_mul_ui (t, t, i, rnd);
+          int round = mpfr_mul_ui (t, t, i, rnd);
           /* assume the first inexact product gives the sign
              of difference: is that always correct? */
           if (inexact == 0)
@@ -80,14 +80,14 @@ mpfr_fac_ui (mpfr_ptr y, unsigned long int x, mpfr_rnd_t rnd_mode)
           /* If inexact = 0, then t is exactly x!, so round is the
              correct inexact flag.
              Otherwise, t != x! since we rounded to zero or away. */
-          round = mpfr_set (y, t, rnd_mode);
+          int round = mpfr_set (y, t, rnd_mode);
           if (inexact == 0)
             {
               inexact = round;
               break;
             }
-          else if ((inexact < 0 && round <= 0)
-                   || (inexact > 0 && round >= 0))
+          else if ((inexact < 0 && round <= 0) ||
+                   (inexact > 0 && round >= 0))
             break;
           else /* inexact and round have opposite signs: we cannot
                   compute the inexact flag. Restart using the
