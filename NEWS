@@ -29,6 +29,7 @@ Changes from versions 4.2.* to version 4.3.0:
 - New functions mpfr_set_bfloat16 and mpfr_get_bfloat16 (when the __bf16
   data type is available).
 - New functions mpfr_buildopt_float16_p and mpfr_buildopt_bfloat16_p.
+- New function mpfr_legendre() to compute Legendre polynomials.
 - New function mpfr_nrandom_v2 for sampling from the unit nrandom
   distribution. mpfr_nrandom has been renamed mpfr_nrandom_v1.
   mpfr_nrandom now just invokes mpfr_nrandom_v1, but will switch to

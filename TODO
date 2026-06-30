@@ -129,8 +129,7 @@ Table of contents:
   https://en.cppreference.com/w/cpp/numeric/special_functions
   assoc_laguerre, assoc_legendre, comp_ellint_1, comp_ellint_2, comp_ellint_3,
   cyl_bessel_i, cyl_bessel_j, cyl_bessel_k, cyl_neumann, ellint_1, ellint_2,
-  ellint_3, hermite, legendre, laguerre, sph_bessel, sph_legendre,
-  sph_neumann.
+  ellint_3, hermite, laguerre, sph_bessel, sph_legendre, sph_neumann.
   Already in mpfr4: beta and riemann_zeta.
   See also https://isocpp.org/files/papers/P0226R1.pdf and §29.9.5 in the
   C++17 draft:

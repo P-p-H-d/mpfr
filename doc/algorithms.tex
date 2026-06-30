@@ -61,6 +61,7 @@
 \SetKwData{precc}{prec}
 \SetKwData{cond}{cond}
 \SetKwData{assumedExp}{assumedExp}
+\SetKwComment{Comment}{\qquad$\triangleright$\,}{}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \DeclareMathOperator{\Ai}{Ai}
@@ -3110,7 +3111,7 @@ For $x \rightarrow \infty$ we have the following non-converging
 expansion \cite[formula 5.1.51]{AbSt73}:
 \[ {\rm Ei}(x) \sim e^x (\frac{1}{x} + \frac{1}{x^2} + \frac{2}{x^3}
     + \frac{6}{x^4} + \frac{24}{x^5} + \cdots). \]
-The $k$th term is of the form $k! x^{-k-1}$. The smallest value is obtained for
+The $k$th is of the form $k! x^{-k-1}$. The smallest value is obtained for
 $k \approx x$, and is of the order of $e^{-x}$. Thus assuming the error
 term is bounded by the first neglected term, we can use that expansion
 as long as $e^{-x} \leq 2^{-p}$ where $p$ is the target precision,
@@ -4608,6 +4609,399 @@ independently by Mark Dickinson:
 \end{tabular}
 \end{center}
 The smallest bound is $e=186564318007$ for $b=7$ and $b=49$.
+
+\subsection{Legendre polynomials}
+
+Legendre polynomials $P_n(x)$, with $n \geq 0$ and $\vert x \vert \leq 1$, form
+a sequence of orthogonal polynomials that have many applications in physics and
+engineering. While they are typically defined on the interval $[-1,1]$,
+where their orthogonality holds with respect to the standard inner product,
+the recurrence relation and closed-form expressions also allow their
+evaluation outside this interval. However, extending them beyond
+$\vert x \vert \leq 1$ comes at the cost of losing some of their most
+useful properties, most notably orthogonality, which is crucial in
+approximation and expansion methods. We thus assume $|x| \le 1$.
+These polynomials are computed
+through Bonnet's recursion, a simple recursive formula that
+expresses $P_n(x)$ in terms of lower-degree polynomials.
+Here's the recursion step:
+\begin{equation} \label{eq:bonnet-recursion}
+  \begin{cases}
+      P_0(x) = 1\\
+      P_1(x) = x\\
+      P_n(x) = \frac{(2n - 1)\, x \, P_{n-1}(x) - (n - 1)\, P_{n-2}(x)}{n}
+  \end{cases}
+\end{equation}
+Some values of $x$ and $n$ are
+treated as special cases. These cases are:
+\begin{itemize}
+\item[(a)] The base cases $P_0$ and $P_1$.
+\item[(b)] $P_n(1) = 1$.
+\item[(c)] $P_n(-1) = (-1)^n$.
+\item[(d)] If $n \ge 1$ is odd, then $P_n(0) = 0$.
+\end{itemize}
+
+\noindent Equations (b)--(d) are simple consequences of well known properties of
+Legendre polynomials. In particular, (d) is a straightforward consequence of Equation
+(\ref{eq:legendre-parity-eq}), that establishes the parity rule of Legendre polynomials.
+\begin{equation} \label{eq:legendre-parity-eq}
+  P_n(-x) = (-1)^nP_n(x).
+\end{equation}
+Equations (b) and (c) can be proven by induction from Bonnet recursion formula,
+i.e., Equation~(\ref{eq:bonnet-recursion}).
+
+\noindent\textbf{Implementation and error analysis.}
+
+In Algorithm \ref{algo:legendre-special} below, we find the pseudo--language input
+parameters validation and special cases (a)--(d).
+\vspace{.5cm}
+
+\begin{algorithm}[H]
+  \caption{\texttt{mpfr\_legendre} special cases}
+  \label{algo:legendre-special}
+  \KwData{mpfr\_ptr res, unsigned n, mpfr\_srcptr x, mpfr\_rnd\_t rnd\_mode}
+  \KwResult{ternary value}
+  \BlankLine
+  \tcc{We have to check the domain bounds of the parameter $x$}
+  \lIf{$|x| > 1$}{
+    res $\gets$ NaN;
+    \Return 0\;
+  }
+  \tcc{The following are the hard-coded special cases}
+  \lIf{$~~(x=1)~~$}{
+    res $\gets$ 1;
+    \Return 0\;
+  }
+  \lIf{$~~(x=-1)~~$}{
+    res $\gets$ ((n\&1) = 0) ? 1 : -1;
+    \Return 0\;
+  }
+  \lIf{$~~(n=0)~~$}{
+    res $\gets$ 1;
+    \Return 0\;
+  }
+  \lIf{$~~(n=1)~~$}{
+    \Return mpfr\_set(res, x, rnd\_mode)\;
+  }
+  \lIf{$~~(x=0~\mathbf{and}~(n\&1) = 1)~~$}{
+    res $\gets$ 0;
+    \Return 0\;
+  }
+  \BlankLine
+\end{algorithm}
+\vspace{.3cm}
+
+\begin{algorithm}[H]
+  \caption{\texttt{mpfr\_legendre} Bonnet's recursion}
+  \label{algo:legendre-bonnet}
+  $b~\gets{}~1$;
+  $a~\gets~\N(x)$\;
+  $i~\gets~2$\;
+  \tcc{Loop from 2 to $n$, where $n$ is the degree of the polynomial}
+  \While{$i \leq n$}{
+    $f~\gets~\N{}(x\cdot{}(2i - 1))$\;
+    $g~\gets~\N{}(b\cdot{}(i - 1))$\;
+    $h~\gets~\N{}(f\cdot{}a)$\;
+    $q~\gets~\N{}(h - g)$\;
+    $b~\gets~a$\;
+    $a~\gets~\N{}(q/i)$\;
+    $i~\gets~i+1$\;
+  }
+\end{algorithm}
+\vspace{.3cm}
+
+Algorithm \ref{algo:legendre-bonnet} shows how Bonnet's recursion is
+implemented. For the error analysis, we will name $a_i$ and $b_i$ the
+values of the variables $a$ and $b$ at the start of loop $i$,
+where $a_i$ approximates $P_{i-1}(x)$ and $b_i$ approximates
+$P_{i-2}(x)$,
+and $f_i$, $g_i$, $h_i$, $q_i$, $b_{i+1}$, $a_{i+1}$ the values of the variables
+$f$, $g$, $h$, $q$, $b$, $a$ computed during loop $i$.
+We are interested in the final value $a_{n+1}$, which approximates $P_n(x)$.
+
+For the error analysis, we will associate to each variable, say $x_i$ at loop $i$,
+an integer $e_{x,i}$ such that the total rounding error on $x_i$ with respect
+to the exact value $X_i$ it approximates is bounded as follows:
+\[ |x_i - X_i| \le 2^{e_{x,i}}. \]
+This error bound $e_{x,i}$ will be computed at runtime within the code
+(due to the possible cancellation in $q = \N{}(h - g)$, it is not possible
+to compute an error bound a priori).
+
+We assume all roundings are to nearest, with working precision $p$.
+
+\par\noindent
+\textbf{Analysis of $f_i = \N{}(x\cdot{}(2i - 1))$.} Here, we use the
+\texttt{mpfr\_mul\_ui} function, with exact input $x$ and $2i-1$
+(we assume $2i-1$ fits into a long).
+There is thus only one error, due to the rounding in $\N{}(x\cdot{}(2i - 1))$.
+This error is bounded by $\frac{1}{2} \ulp(f_i) \le \frac{1}{2} 2^{\Exp(f_i) - p}$:
+\[ e_{f,i} \le \Exp(f_i) - p - 1. \]
+
+\par\noindent
+\textbf{Analysis of $g_i = \N{}(b_i \cdot{}(i - 1))$.}
+Here we have two sources of error: the rounding error on $g_i$, and
+the induced error on $b_i$. The first one is bounded by $\frac{1}{2} \ulp(g_i)$,
+the second one by $2^{e_{b,i}} (i-1)$. Since $2^x+2^y \le 2^{\max(x,y)+1}$:
+\[ e_{g,i} \le \max(\Exp(g_i)-p, e_{b,i} + \lceil \log_2(i-1) \rceil + 1). \]
+
+\par\noindent
+\textbf{Analysis of $h_i = \N{}(f_i\cdot{}a_i)$.}
+Here we have three sources of error: the rounding error on $h_i$,
+the induced error on $f_i$, which approximates $(2i-1)x$,
+and the induced error on $a_i$, which approximates $P_{i-1}(x)$:
+\begin{eqnarray*}
+  |h_i - (2i-1)x P_{i-1}(x)| & \le &
+  |h_i - f_i a_i| + |f_i a_i - (2i-1)x a_i| + |(2i-1)x a_i - (2i-1)x P_{i-1}(x)| \\
+  & \le & 2^{\Exp(h_i)-p-1} + 2^{e_{f,i} + \Exp(a_i)} + 2^{\lceil \log_2(2i-1)
+                                     \rceil + \Exp(x) + e_{a,i}}.
+\end{eqnarray*}
+If $x = 0$, $\Exp(x)$ is not defined, but in this case, the third term is $0$,
+thus so is its error bound. Writing
+\[e_\mathrm{aux} = 1 + \max(\Exp(h_i)-p-1, e_{f,i} + \Exp(a_i)),\]
+it follows:
+\[\left\{
+\begin{array}{lcl}
+  e_{h,i} \le e_\mathrm{aux} & \text{ if } & x = 0 \\
+  e_{h,i} \le 1 + \max(e_\mathrm{aux},
+    \lceil \log_2(2i-1) \rceil + \Exp(x) + e_{a,i}) & \text{ if } & x \ne 0.
+\end{array}
+\right.\]
+
+\par\noindent
+\textbf{Analysis of $q_i = \N{}(h_i - g_i)$.}
+Here again, we have three sources of error: the rounding error on $q_i$,
+the induced error on $h_i$, which approximates $H_i := (2i-1)x P_{i-1}(x)$,
+and the induced error on $g_i$, which approximates $G_i := (i-1)P_{i-2}(x)$:
+\[ |q_i - (H_i - G_i)| \le 2^{\Exp(q_i)-p-1} + 2^{e_{h,i}} + 2^{e_{g,i}}. \]
+Using again $2^x + 2^y + 2^z \le 2^{\max(x,y,z)+2}$, it follows:
+\[ e_{q,i} \le 2 + \max(\Exp(q_i)-p-1, e_{h,i}, e_{g,i}). \]
+
+\par\noindent
+\textbf{Analysis of $a_{i+1} = \N{}(q_i/i)$.}
+Here, we have two sources of error: the rounding error on $a_{i+1}$,
+which approximates $P_i(x)$, and the induced error on $q_i$, which
+approximates $Q_i := H_i - G_i$:
+\[ |a_{i+1} - P_i(x)| \le 2^{\Exp(a_{i+1})-p-1} + 2^{e_{q,i}}/i. \]
+Since $1/i$ is bounded by $2^{-\lfloor \log_2(i) \rfloor}$, and for
+$i \ge 2$, $-\lfloor \log_2(i) \rfloor \le -\lceil \log_2(i-1) \rceil +1$
+(Lemma~\ref{lemma8}),
+we can reuse the computation of $\lceil \log_2(i-1) \rceil$ done above:
+\[ e_{a,i+1} \le \max(\Exp(a_{i+1})-p, e_{q,i} - \lceil \log_2(i-1) \rceil + 2). \]
+At the end of the loop, we will get an approximation $a_{n+1}$ of $P_n(x)$ such
+that:
+\[ |a_{n+1} - P_n(x)| \le 2^{e_{a,n+1}}. \]
+This error bound will be used in the rounding test, and if it fails, we will try
+again with a larger working precision $p' > p$.
+
+\begin{lemma} \label{lemma8}
+  For $i \ge 2$ integer, we have
+  \[ \lfloor \log_2(i) \rfloor \ge \lceil \log_2(i-1) \rceil - 1. \]
+\end{lemma}
+\begin{proof}
+  First since $i \ge 2$, both $\log_2(i)$ and $\log_2(i-1)$ are well defined.
+  If $i$ and $i-1$ are in the same binade, with the bounds excluded, i.e.,
+  if $2^{k-1} < i-1 < i < 2^k$ for some integer $k$, then
+  $\lfloor \log_2(i) \rfloor = k-1$ and $\lceil \log_2(i-1) \rceil = k$,
+  thus the statement of the lemma holds.
+  It remains to deal with the cases where either $i$ or $i-1$ is a power of $2$.
+  If $i=2$, the statement holds.
+  If $i=2^k \ge 4$, then $\lfloor \log_2(i) \rfloor = k$ and
+  $\lceil \log_2(i-1) \rceil = k$, thus the statement holds.
+  Finally if $i=2^k+1$, then $\lfloor \log_2(i) \rfloor = k$ and
+  $\lceil \log_2(i-1) \rceil = k$, thus	the statement holds.
+\end{proof}
+
+\subsubsection{Handling small inputs}
+
+When $|x|$ is very small, $P_n(x)$ can be well approximated by the leading
+term of its Taylor expansion around $x=0$, avoiding the full Bonnet recursion.
+If $n$ is odd, $P_n$ is an odd function and we write
+$P_n(x) = c_1 x + c_3 x^3 + \dots$;
+if $n$ is even, $P_n$ is an even function and we write
+$P_n(x) = c_0 + c_2 x^2 + \dots$.
+
+To bound the ratios of the first terms -- $|c_3/c_1|$ for odd polynomials and
+$|c_2/c_0|$ for the even ones --, we use a very classical method to derive a
+recurrence on the coefficients $c_k$ from the Legendre differential equation
+$(1-x^2)y'' - 2x y' + n(n+1) y = 0$. Here's $y = P_n$ and its derivatives
+$y'$ and $y''$ are:
+\[
+  y   = \sum_{k=0}^{\infty} c_k x^k,             \qquad
+  y'  = \sum_{k=1}^{\infty} k c_k x^{k-1},       \qquad
+  y'' = \sum_{k=2}^{\infty} k (k-1) c_k x^{k-2}.
+\]
+
+Now, we substitute the power series into the ODE computing each term separately.
+The first term $(1 - x^2)y'' = y'' - x^2 y''$ then becomes
+\[
+  \sum_{k=2}^{\infty} k(k-1)c_k x^{k-2} - 
+  \sum_{k=2}^{\infty} k(k-1)c_k x^k.
+\]
+The second term: $-2x y'$,
+\[
+  -2x y' = -2 \sum_{k=1}^{\infty} k c_k x^k.
+\]
+And, finally, the third term: $n(n+1)y$,
+\[
+  n(n+1)y = n(n+1)\sum_{k=0}^{\infty} c_k x^k.
+\]
+
+We rewrite all the sums so that they are expressed with the same index range.
+As an example, the term $y''$ is rewritten
+$\sum_{k=0}^{\infty} (k+2)(k+1)c_{k+2} x^k$. Therefore
+the equation becomes:
+\begin{align*}
+  &\sum_{k=0}^{\infty} (k+2)(k+1)c_{k+2} x^k
+  - \sum_{k=0}^{\infty} k(k-1)c_k x^k
+  - 2 \sum_{k=0}^{\infty} k c_k x^k
+  + n(n+1)\sum_{k=0}^{\infty} c_k x^k = 0, \\
+  &\sum_{k=0}^{\infty}
+  \left[
+    (k+2)(k+1)c_{k+2}
+    - k(k-1)c_k
+    - 2k c_k
+    + n(n+1)c_k
+  \right] x^k = 0.
+\end{align*}
+
+Since the series is identically zero, each coefficient must be zero, so we
+get the recurrence
+\begin{equation} \label{eq:legendre-ode-recurrence}
+  (k+2)(k+1)c_{k+2}
+  - k(k-1)c_k
+  - 2k c_k
+  + n(n+1)c_k = 0.
+\end{equation}
+
+In order to get the first two coefficients for odd degrees, we set $k = 1$
+in Equation (\ref{eq:legendre-ode-recurrence}), and we get
+$(3)(2)c_3 = \big(1 \cdot 2 - n(n+1)\big)c_1$. Hence,
+\[
+  \left|\frac{c_3}{c_1}\right| = \frac{n(n+1) - 2}{6}
+                               \le \frac{n(n+1)}{6}
+                               \le \frac{n^2}{3}~\mathrm{for}~n \ge 1.
+\]
+
+Now we do the same for the first two coefficients for even degrees,
+setting $k = 0$ in Equation (\ref{eq:legendre-ode-recurrence}), and we
+get $(2)(1)c_2 = - n(n+1)c_0$. Hence,
+\[
+  \left|\frac{c_2}{c_0}\right| = \frac{n(n+1)}{2}
+                               \le n^2~\mathrm{for}~n \ge 0.
+\]
+
+For generic terms, Equation (\ref{eq:legendre-ode-recurrence}) gives
+\[
+  \frac{c_{i+2}}{c_i} = \frac{i(i+1)-n(n+1)}{(i+2)(i+1)}
+  = \frac{(i-n)(i+n+1)}{(i+2)(i+1)}.
+\]
+Thus
+\[
+  \left|\frac{c_{i+2}}{c_i}\right|
+  = \left|\frac{i-n}{i+2}\right|\,\frac{i+n+1}{i+1}
+  \leq \frac{i+n+1}{i+1}
+  = 1 + \frac{n}{i+1}
+  \leq n+1 \leq n^2
+\]
+for $i \geq 0$ and $n \geq 2$.
+
+When $|x|$ is small, we write $P_n(x)$ as ``leading term + tail'', with terms
+of the same parity as $n$ only:
+\[
+  P_n(x) = c_s x^s + c_{s+2}x^{s+2} + c_{s+4}x^{s+4} + \cdots,
+\]
+where $s=0$ for even $n$ and $s=1$ for odd $n$.
+From the bound above we have $|c_{i+2}/c_i| \leq n^2$, so each successive tail
+term is at most a factor $n^2 x^2$ of the previous one. Let
+\[
+  t := n^2 x^2.
+\]
+Then the tail is bounded by a geometric series:
+\[
+  \left|\sum_{k\geq 1} c_{s+2k}x^{s+2k}\right|
+  \leq |c_s x^s|\sum_{k\geq 1} t^k
+  = |c_s x^s|\frac{t}{1-t}
+\]
+for $t<1$.
+
+\paragraph{\textbf{Implementation.}} The leading term is evaluated differently
+depending on the parity of $n$:
+\begin{itemize}
+\item If $n=2m$ is even, the leading term is $c_{0,m} = P_n(0)$, computed by
+  \[
+    c_{0,0}=1, \qquad c_{0,j}=c_{0,j-1}\,\frac{-(2j-1)}{2j},
+    \quad 1 \leq j \leq m,
+  \]
+  thus
+  \[
+    c_{0,m} = \prod_{j=1}^{m} \frac{-(2j-1)}{2j}.
+  \]
+
+\item If $n=2m+1$ is odd, the leading term is $c_1x$ with $c_{1,m}=P_n'(0)$,
+  computed by
+  \[
+    c_{1,0}=1, \qquad c_{1,j}=c_{1,j-1}\,\frac{-(2j+1)}{2j},
+    \quad 1 \leq j \leq m,
+  \]
+  thus
+  \[
+    c_{1,m} = \prod_{j=1}^{m} \frac{-(2j+1)}{2j}.
+  \]
+\end{itemize}
+We remark that $c_{1,m} = (2m+1) c_{0,m}$.
+
+\paragraph{\textbf{Bounding $t$ in the implementation.}}
+In the code, $t = n^2 x^2$ is bounded as follows.
+Let $e_x = \texttt{MPFR\_GET\_EXP}(x)$, which satisfies $2^{e_x-1} \le |x| < 2^{e_x}$,
+and let $\ell = \lceil \log_2 n \rceil$, so that $n \le 2^\ell$.
+Then
+\[
+  t = n^2 x^2 < \left(2^\ell\right)^2 \cdot \left(2^{e_x}\right)^2
+              = 2^{2\ell + 2e_x} = 2^\rho,
+\]
+where $\rho = 2e_x + 2\ell$.
+
+The condition $\rho \le -2$ guarantees
+$t < 2^\rho \le 2^{-2} = \tfrac{1}{4}$.
+The relative error from keeping only the leading term equals $t/(1-t)$.
+Since $t < \tfrac{1}{4} < \tfrac{1}{2}$, we have $1 - t > \tfrac{1}{2}$,
+and therefore
+\[
+  \frac{t}{1-t} < \frac{t}{1/2} = 2t < 2 \cdot 2^\rho = 2^{\rho+1}.
+\]
+Truncating the expansion after the first nonzero term yields at least
+$\mathtt{err} = -\rho - 1$ correct bits relative to that term.
+
+In the implementation, if $p = \texttt{MPFR\_PREC}(\mathrm{res})$, we try this
+shortcut only when
+\[
+  -\rho - 1 \ge p + 64.
+\]
+Since $p \ge 1$, this stronger condition implies $\rho \le -2$, so the
+preceding analysis applies. The extra $64$ guard bits are an heuristic:
+a threshold that ensures the first rounding test is likely to succeed
+in most cases.
+
+\paragraph{\textbf{Error analysis of $c_{0,m}$ and $c_{1,m}$}}
+
+Since neither algorithm involves any addition or subtraction, there is no
+cancellation, and we can bound the total rounding error \textit{a-priori}.
+In the code, all the intermediate roundings are to nearest, with working
+precision $q$. Each \texttt{mpfr\_mul\_si} and \texttt{mpfr\_div\_ui} call
+rounds the exact arithmetic result, introducing a relative error of at most
+$u = 2^{-q}$ per operation. Denote by $V_k$ the exact real value of the
+$k$-th iterate and by $v_k$ its computed floating-point approximation, with
+$V_1 = v_1 = 1$ exact. After $k$ such rounding operations the accumulated
+relative error satisfies
+\[
+  \frac{|v_k - V_k|}{|V_k|}
+  \le \frac{ku}{1-ku}
+  \le 2ku = k \cdot 2^{1-q},
+\]
+where the first inequality follows from Lemma~\ref{lemma_graillat} with all
+$\delta_i = u$ (writing $v_k/V_k = \prod_{i=1}^k(1+\delta_i)$), and the last
+holds whenever $ku \le \tfrac{1}{2}$, i.e. $q \ge 1 + \lceil\log_2 k\rceil$,
+which is satisfied by our choice of working precision.
 
 \subsection{Summary}
 
