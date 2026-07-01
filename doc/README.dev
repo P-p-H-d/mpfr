@@ -2152,8 +2152,8 @@ Spelling:
 ===========================================================================
 
 Git:
-  * When creating a branch, add an associated <branch>-root tag on the
-    root commit (i.e. just before the first commit in the new branch).
+  * When creating a branch <branch>, add an annotated <branch>-root tag on
+    the root commit (i.e. just before the first commit in the new branch).
     This can be useful for commands like "git diff <branch>-root" to get
     the commits done in the branch since its creation, and such tags are
     used in tests/Makefile.am for output_info (Git information output by
