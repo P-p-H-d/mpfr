@@ -2736,6 +2736,8 @@ extern "C" {
 
    --------
 
+   [NOTE] Added on 2020-03-26 (commit 98d053b0bc)
+
    A workaround to avoid breaking aliasing rules should be to use mpfr_ptr
    to access the usual mpfr_t members and mpfr_ubf_ptr to access the
    additional member _mpfr_zexp. And never use __mpfr_ubf_struct as a
@@ -2762,9 +2764,35 @@ extern "C" {
    (see changeset r13820 in the ubf2 branch). So, for the time being,
    as long as the code does not break, do not change anything.
 
-   [Added on 2024-09-30] The above suggestion may not be correct. Any use
-   of __mpfr_ubf_struct will lead to a break of the aliasing rules at some
-   point. A solution might be to define something like
+   [NOTE] Added on 2020-10-21 (commit 6d782e61bf)
+
+   Note: The condition "use mpfr_ptr to access the usual mpfr_t members and
+   mpfr_ubf_ptr to access the additional member _mpfr_zexp" may be ignored
+   if the union type is visible within the function (see ISO C99 6.5.2.3#5
+   and 6.5.2.3#8 for the example, this implementation being very similar to
+   the valid fragment of this example), which must be the case as the union
+   is declared globally. However, this seems to be buggy in GCC:
+
+     https://gcc.gnu.org/bugzilla/show_bug.cgi?id=14319
+     https://gcc.gnu.org/bugzilla/show_bug.cgi?id=65892
+
+   [NOTE] Updated on 2020-10-21 (commit e045753e5d)
+
+   Alternatively, GCC's may_alias attribute could conditionally be used
+   on the __mpfr_ubf_struct and __mpfr_struct types (though it would be
+   much stronger than needed since only these two types may alias each
+   other).
+
+   --------
+
+   [NOTE] Added then updated on
+      2024-09-30 02:22:29 +0000 (commit 7348bb03e5)
+      2025-03-28 14:17:25 +0000 (commit e04e5ed3ca)
+      2025-03-28 15:54:36 +0000 (commit 0b869c1d5c)
+
+   The above suggestion may not be correct. Any use of __mpfr_ubf_struct
+   will lead to a break of the aliasing rules at some point. A solution
+   might be to define something like
      typedef struct {
        __mpfr_struct _mpfr_m;
        mpz_t _mpfr_zexp;
@@ -2789,21 +2817,6 @@ extern "C" {
    with such macros will be detected. Moreover, the use of _Generic would
    be cleaner and give a clearer error message if an incorrect type is
    provided.
-
-   Note: The condition "use mpfr_ptr to access the usual mpfr_t members and
-   mpfr_ubf_ptr to access the additional member _mpfr_zexp" may be ignored
-   if the union type is visible within the function (see ISO C99 6.5.2.3#5
-   and 6.5.2.3#8 for the example, this implementation being very similar to
-   the valid fragment of this example), which must be the case as the union
-   is declared globally. However, this seems to be buggy in GCC:
-
-     https://gcc.gnu.org/bugzilla/show_bug.cgi?id=14319
-     https://gcc.gnu.org/bugzilla/show_bug.cgi?id=65892
-
-   Alternatively, GCC's may_alias attribute could conditionally be used
-   on the __mpfr_ubf_struct and __mpfr_struct types (though it would be
-   much stronger than needed since only these two types may alias each
-   other).
 */
 
 typedef struct {
