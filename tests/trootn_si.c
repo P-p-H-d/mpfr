@@ -225,8 +225,6 @@ main (void)
 {
   tests_start_mpfr ();
 
-  bug20260720 ();
-
   special ();
   bug20260720 ();
 
