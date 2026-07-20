@@ -206,7 +206,7 @@ bug20260720 ()
           mpfr_dump (y);
           printf ("with inex < 0\n");
           printf ("Got      ");
-          mpfr_dump (x);
+          mpfr_dump (z);
           printf ("with inex = %d\n", inexact);
           exit (1);
         }
