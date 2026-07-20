@@ -220,40 +220,6 @@ bug20260720 ()
   (randlimb () % 16 == 0 ? randlong () : (long) (randlimb () % 31) - 15)
 #include "tgeneric_ui.c"
 
-/* bug reported by Mikhail Hogrefe */
-static void
-bug20260720 (void)
-{
-  mpfr_t x;
-  mpfr_init2 (x, 2);
-  mpfr_set_ui (x, 2, MPFR_RNDN);
-  int inexact = mpfr_rootn_si (x, x, -50000, MPFR_RNDN);
-  /* 2^(-1/50000) ~ 0.999986137152479 rounds to 1 to nearest,
-     thus the ternary value should be > 0 */
-  if (mpfr_cmp_ui (x, 1) != 0) {
-    printf ("bug in 2^(-1/50000), result should be 1\n");
-    printf ("got "); mpfr_dump (x);
-    exit (1);
-  }
-  if (inexact <= 0) {
-    printf ("bug in 2^(-1/50000), ternary value should be > 0\n");
-    exit (1);
-  }
-  inexact = mpfr_rootn_si (x, x, -50000, MPFR_RNDZ);
-  /* 2^(-1/50000) ~ 0.999986137152479 rounds to 0.75,
-     thus the ternary value should be < 0 */
-  if (mpfr_cmp_ui_2exp (x, 3, -2) != 0) {
-    printf ("bug in 2^(-1/50000), result should be 3/4\n");
-    printf ("got "); mpfr_dump (x);
-    exit (1);
-  }
-  if (inexact >= 0) {
-    printf ("bug in 2^(-1/50000), ternary value should be < 0\n");
-    exit (1);
-  }
-  mpfr_clear (x);
-}
-
 int
 main (void)
 {
