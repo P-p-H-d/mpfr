@@ -183,6 +183,33 @@ special (void)
   mpfr_clears (x, y, (mpfr_ptr) 0);
 }
 
+/* Bug reported by Mikhail Hogrefe on 2026-07-20:
+   https://sympa.inria.fr/sympa/arc/mpfr/2026-07/msg00003.html */
+static void
+bug20260720 ()
+{
+  mpfr_t x, y;
+  int inexact;
+
+  mpfr_inits2 (2, x, y, (mpfr_ptr) 0);
+  mpfr_set_ui (x, 2, MPFR_RNDN);
+  mpfr_set_ui (y, 1, MPFR_RNDN);
+  mpfr_nextbelow (y);
+  inexact = mpfr_rootn_si (x, x, -50000, MPFR_RNDZ);
+  if (!mpfr_equal_p (x, y) || inexact >= 0)
+    {
+      printf ("Error in bug20260720:\n");
+      printf ("Expected ");
+      mpfr_dump (y);
+      printf ("with inex < 0\n");
+      printf ("Got      ");
+      mpfr_dump (x);
+      printf ("with inex = %d\n", inexact);
+      exit (1);
+    }
+  mpfr_clears (x, y, (mpfr_ptr) 0);
+}
+
 #define TEST_FUNCTION mpfr_rootn_si
 #define INTEGER_TYPE long
 #define INT_RAND_FUNCTION() \
@@ -195,6 +222,7 @@ main (void)
   tests_start_mpfr ();
 
   special ();
+  bug20260720 ();
 
   /* The sign of the random value y (used to generate a potential bad case)
      is negative with a probability 256/512 = 1/2 for odd n, and never
