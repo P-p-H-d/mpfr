@@ -304,7 +304,7 @@ mpfr_rootn_si (mpfr_ptr y, mpfr_srcptr x, long k, mpfr_rnd_t rnd_mode)
   MPFR_SAVE_EXPO_DECL (expo);
 
   MPFR_LOG_FUNC
-    (("x[%Pd]=%.*Rg k=%lu rnd=%d",
+    (("x[%Pd]=%.*Rg k=%ld rnd=%d",
       mpfr_get_prec (x), mpfr_log_prec, x, k, rnd_mode),
      ("y[%Pd]=%.*Rg", mpfr_get_prec (y), mpfr_log_prec, y));
 
