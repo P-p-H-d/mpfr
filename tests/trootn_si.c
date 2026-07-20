@@ -188,26 +188,30 @@ special (void)
 static void
 bug20260720 ()
 {
-  mpfr_t x, y;
-  int inexact;
+  mpfr_t x, y, z;
+  long n[] = { 5, 50, 500, 5000, 50000, LONG_MAX };
+  int i, inexact;
 
-  mpfr_inits2 (2, x, y, (mpfr_ptr) 0);
+  mpfr_inits2 (2, x, y, z, (mpfr_ptr) 0);
   mpfr_set_ui (x, 2, MPFR_RNDN);
   mpfr_set_ui (y, 1, MPFR_RNDN);
   mpfr_nextbelow (y);
-  inexact = mpfr_rootn_si (x, x, -50000, MPFR_RNDZ);
-  if (!mpfr_equal_p (x, y) || inexact >= 0)
+  for (i = 0; i < numberof (n); i++)
     {
-      printf ("Error in bug20260720:\n");
-      printf ("Expected ");
-      mpfr_dump (y);
-      printf ("with inex < 0\n");
-      printf ("Got      ");
-      mpfr_dump (x);
-      printf ("with inex = %d\n", inexact);
-      exit (1);
+      inexact = mpfr_rootn_si (z, x, -n[i], MPFR_RNDZ);
+      if (!mpfr_equal_p (z, y) || inexact >= 0)
+        {
+          printf ("Error in bug20260720 for i = %d, n = %ld:\n", i, n[i]);
+          printf ("Expected ");
+          mpfr_dump (y);
+          printf ("with inex < 0\n");
+          printf ("Got      ");
+          mpfr_dump (x);
+          printf ("with inex = %d\n", inexact);
+          exit (1);
+        }
     }
-  mpfr_clears (x, y, (mpfr_ptr) 0);
+  mpfr_clears (x, y, z, (mpfr_ptr) 0);
 }
 
 #define TEST_FUNCTION mpfr_rootn_si
