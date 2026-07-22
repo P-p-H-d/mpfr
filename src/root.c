@@ -402,16 +402,14 @@ mpfr_rootn_si (mpfr_ptr y, mpfr_srcptr x, long k, mpfr_rnd_t rnd_mode)
     MPFR_ZIV_INIT (loop, Nt);
     for (;;)
       {
+        unsigned int inex2;
+
         /* Compute the root before the division, in particular to avoid
            overflows and underflows.
            Moreover, midpoints are impossible. And an exact case implies
-           that both |x| and the result are powers of 2. So such a case
-           occurs if and only if the whole computation is exact. */
-        unsigned int inex2;
-
-        /* Let's use MPFR_RNDF to avoid the potentially costly detection
-           of exact cases in mpfr_rootn_ui (we just lose one bit in the
-           final approximation). */
+           that both x and the result are powers of 2 in magnitude.
+           So such a case occurs if and only if the whole computation is
+           exact. */
         inex2 = mpfr_rootn_ui (t, x, - (unsigned long) k, MPFR_RNDN);
         inex2 |= mpfr_ui_div (t, 1, t, rnd_mode);
 
