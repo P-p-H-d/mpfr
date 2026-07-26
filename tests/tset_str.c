@@ -108,6 +108,66 @@ bug20180908 (void)
   mpfr_clear (y);
 }
 
+/* Bug found by Mikhail Hogrefe in strtofr.c:
+     https://sympa.inria.fr/sympa/arc/mpfr/2026-07/msg00009.html
+
+   With --enable-assert, one gets:
+   strtofr.c:583: MPFR assertion failed: real_ysize <= ysize + extra_limbs
+
+   Otherwise an incorrect value is obtained. However, get_str.c also
+   seems to be buggy, since to obtain a string for the error message,
+   one gets (due to a MPFR_ASSERTN):
+   get_str.c:161: MPFR assertion failed: size_s1 >= m
+*/
+static void
+bug20260725 (void)
+{
+  const size_t n = 760455;           /* number of digits */
+  const mpfr_prec_t prec = 3340000;  /* bits */
+  mpfr_t x, y;
+  mpz_t z;
+  mpfr_exp_t ex, ey;
+  char *s, *sx, *sy;
+  int err;
+
+  /* The base-21 string "kkk...k" (n copies of the digit 20)
+     denotes 21^n - 1. */
+  s = (char *) tests_allocate (n + 1);
+  memset (s, 'k', n);
+  s[n] = '\0';
+
+  mpfr_init2 (x, prec);
+  mpfr_set_str (x, s, 21, MPFR_RNDN);
+
+  tests_free (s, n + 1);
+
+  /* The same value, reached by a different route. */
+  mpz_init (z);
+  mpz_ui_pow_ui (z, 21, n);
+  mpz_sub_ui (z, z, 1);
+  mpfr_init2 (y, prec);
+  mpfr_set_z (y, z, MPFR_RNDN);
+
+  err = ! mpfr_equal_p (x, y);
+  if (err)
+    printf ("Error in bug20260725:\n");
+
+  /* The following strings will be used in the error message in case of error.
+     But let's always compute them so that mpfr_get_str is tested too:
+     On 2026-07-26, the first one triggers an assertion failure. */
+  sx = mpfr_get_str (NULL, &ex, 21, 20, x, MPFR_RNDN);
+  sy = mpfr_get_str (NULL, &ey, 21, 20, y, MPFR_RNDN);
+
+  if (err)
+    {
+      printf ("  mpfr_set_str: 0.%s@%ld\n", sx, (long) ex);
+      printf ("  mpfr_set_z:   0.%s@%ld\n", sy, (long) ey);
+      mpfr_free_str (sx);
+      mpfr_free_str (sy);
+      exit (1);
+    }
+}
+
 int
 main (int argc, char *argv[])
 {
@@ -860,6 +920,14 @@ main (int argc, char *argv[])
   check_underflow ();
   bug20081028 ();
   bug20180908 ();
+
+  if (getenv ("MPFR_CHECK_LARGEMEM") != NULL)
+    {
+      /* Increase tests_memory_limit to the maximum in order to avoid
+         an obvious failure due to insufficient memory. */
+      tests_memory_limit = (size_t) -1;  /* no memory limit */
+      bug20260725 ();
+    }
 
   tests_end_mpfr ();
   return 0;
