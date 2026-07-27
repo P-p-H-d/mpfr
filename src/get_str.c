@@ -2461,6 +2461,9 @@ const __mpfr_struct __gmpfr_l2b[BASE_MAX-1][2] = {
    For i=0, uses a 23-bit upper approximation to log(beta)/log(2).
    For i=1, uses a 77-bit upper approximation to log(2)/log(beta).
    Note: this function should be called only in the extended exponent range.
+   If GMP_NUMB_BITS=64 and e is a multiple of GMP_NUMB_BITS (as called from
+   parsed_string_to_mpfr), this function delivers ceil(e/log2(b)) for i=1
+   and e <= 1000000 (this is checked in tstrtofr).
 */
 mpfr_exp_t
 mpfr_ceil_mul (mpfr_exp_t e, int beta, int i)
@@ -2469,6 +2472,13 @@ mpfr_ceil_mul (mpfr_exp_t e, int beta, int i)
   mpfr_t t;
   mpfr_exp_t r;
   mp_limb_t tmpmant[MPFR_EXP_LIMB_SIZE];
+
+  /* If i=1 and beta = 2^k, then return ceil(e/k). */
+  if (i == 1 && ((beta & (beta-1)) == 0))
+    {
+      int k = MPFR_INT_CEIL_LOG2 (beta);
+      return 1 + (e - 1) / k;
+    }
 
   p = &__gmpfr_l2b[beta-2][i];
   MPFR_TMP_INIT1(tmpmant, t, sizeof (mpfr_exp_t) * CHAR_BIT - 1);

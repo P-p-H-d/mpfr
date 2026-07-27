@@ -1601,10 +1601,94 @@ random_tests (void)
     }
 }
 
+#define TEST_CEIL_MUL_LIMIT 1000000
+
+/* check mpfr_ceil_mul(e,beta,1) is exact for e <= TEST_CEIL_MUL_LIMIT,
+   with e multiple of GMP_NUMB_BITS (as used in strtofr) */
+static void
+test_ceil_mul (void)
+{
+  mpfr_exp_t e, s, u, v;
+  int beta, inex;
+  mpfr_t h, l, sh, sl;
+  mpfr_prec_t prec = 63;
+  mpfr_init2 (h, prec);
+  mpfr_init2 (l, prec);
+  mpfr_init2 (sh, prec + 64); /* +64 ensures mpfr_mul_ui is exact below */
+  mpfr_init2 (sl, prec + 64);
+  for (beta = 2; beta <= BASE_MAX; beta++)
+    {
+      mpfr_set_ui (l, beta, MPFR_RNDD);
+      mpfr_log2 (l, l, MPFR_RNDD);
+      mpfr_set_ui (h, beta, MPFR_RNDU);
+      mpfr_log2 (h, h, MPFR_RNDD);
+      /* l <= log2(beta) <= h */
+      for (e = GMP_NUMB_BITS; e <= TEST_CEIL_MUL_LIMIT; e += GMP_NUMB_BITS)
+        {
+          s = mpfr_ceil_mul (e, beta, 1);
+          /* s is exact iff s-1 < e/log2(beta) <= s
+             thus (s-1)*log2(beta) < e <= s*log2(beta).
+             If (s-1)*l and (s-1)*h round toward zero to the same value,
+             so does (s-1)*log2(beta).
+             If s*l and s*h round toward zero to the same value,
+             so does s*log2(beta). */
+          inex = mpfr_mul_ui (sl, l, s-1, MPFR_RNDZ);
+          MPFR_ASSERTN(inex == 0);
+          MPFR_ASSERTN(mpfr_fits_ulong_p (sl, MPFR_RNDZ));
+          u = mpfr_get_ui (sl, MPFR_RNDZ);
+          inex = mpfr_mul_ui (sh, h, s-1, MPFR_RNDZ);
+          MPFR_ASSERTN(inex == 0);
+          MPFR_ASSERTN(mpfr_fits_ulong_p (sh, MPFR_RNDZ));
+          v = mpfr_get_ui (sh, MPFR_RNDZ);
+          if (u != v)
+            {
+              printf ("floor((s-1)*l) differs from floor((s-1)*h)\n");
+              printf ("beta=%d e=%lu\n", beta, e);
+              exit (1);
+            }
+          /* check u < e */
+          if (u >= e)
+            {
+              printf ("Error in test_ceil_mul for beta=%d e=%ld\n", beta, e);
+              printf ("get s=%ld whereas (s-1)*log2(beta) >= e\n", s);
+              exit (1);
+            }
+          /* same for s*l and s*h */
+          inex = mpfr_mul_ui (sl, l, s, MPFR_RNDZ);
+          MPFR_ASSERTN(inex == 0);
+          MPFR_ASSERTN(mpfr_fits_ulong_p (sl, MPFR_RNDZ));
+          u = mpfr_get_ui (sl, MPFR_RNDZ);
+          inex = mpfr_mul_ui (sh, h, s, MPFR_RNDZ);
+          MPFR_ASSERTN(inex == 0);
+          MPFR_ASSERTN(mpfr_fits_ulong_p (sh, MPFR_RNDZ));
+          v = mpfr_get_ui (sh, MPFR_RNDZ);
+          if (u != v)
+            {
+              printf ("floor(s*l) differs from floor(s*h)\n");
+              printf ("beta=%d e=%lu\n", beta, e);
+              exit (1);
+            }
+          /* check e <= u */
+          if (u < e)
+            {
+              printf ("Error in test_ceil_mul for beta=%d e=%ld\n", beta, e);
+              printf ("get s=%ld whereas s*log2(beta) < e\n", s);
+              exit (1);
+            }
+        }
+    }
+  mpfr_clear (h);
+  mpfr_clear (l);
+  mpfr_clear (sh);
+  mpfr_clear (sl);
+}
+
 int
 main (int argc, char *argv[])
 {
   tests_start_mpfr ();
+
+  test_ceil_mul ();
 
   coverage ();
   check_special();
