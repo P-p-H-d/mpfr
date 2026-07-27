@@ -47,7 +47,8 @@ static const char num_to_text62[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 #define MPFR_ROUND_FAILED 3
 
-/* Input: an approximation r*2^f to a real Y, with |r*2^f - Y| <= 2^(e+f).
+/* Input: an approximation r*2^f to a real Y, with |r*2^f - Y| <= 2^(e+f),
+   where r = r[0] + r[1]*B + ... + r[n-1]*B^(n-1), where B = 2^GMP_NUMB_BITS.
 
    If rounding is possible, returns:
    - in s: a string representing the significand corresponding to

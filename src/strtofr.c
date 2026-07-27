@@ -475,6 +475,8 @@ parse_string (mpfr_ptr x, struct parsed_string *pstr,
 static int
 parsed_string_to_mpfr (mpfr_ptr x, struct parsed_string *pstr, mpfr_rnd_t rnd)
 {
+  printf ("enter parsed_string_to_mpfr, prec(x)=%lu pstr->prec=%lu rnd=%s\n",
+          mpfr_get_prec(x), pstr->prec, mpfr_print_rnd_mode (rnd));
   mpfr_prec_t precx, prec, ysize_bits, pstr_size;
   mpfr_exp_t exp;
   mp_limb_t *result;
