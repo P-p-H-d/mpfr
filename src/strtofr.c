@@ -422,9 +422,15 @@ parsed_string_to_mpfr (mpfr_ptr x, struct parsed_string *pstr, mpfr_rnd_t rnd)
          real_ysize <= ysize + extra_limbs might no longer hold below.
          FIXME: determine up to which value of ysize_bits,
          pstr_size is exactly ceil(ysize_bits/log2(base))+1, and for larger
-         values, use Ziv's loop in mpfr_ceil_mul(). */
-         pstr_size = mpfr_ceil_mul (ysize_bits, pstr->base, 1) + 1;
-         MPFR_ASSERTD (pstr_size <= 1 + ysize_bits);
+         values, use Ziv's loop in mpfr_ceil_mul().
+         We need to enlarge the exponent range before calling mpfr_ceil_mul. */
+      {
+        mpfr_exp_t e_saved = mpfr_get_emax ();
+        mpfr_set_emax (mpfr_get_emax_max ());
+        pstr_size = mpfr_ceil_mul (ysize_bits, pstr->base, 1) + 1;
+        MPFR_ASSERTD (pstr_size <= 1 + ysize_bits);
+        mpfr_set_emax (e_saved);
+      }
 
       /* Since pstr_size corresponds to at least ysize_bits bits,
          and ysize_bits >= prec, the weight of the neglected part of
