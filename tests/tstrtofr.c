@@ -1604,7 +1604,7 @@ random_tests (void)
 #define TEST_CEIL_MUL_LIMIT 1000000
 
 /* check mpfr_ceil_mul(e,beta,1) is exact for e <= TEST_CEIL_MUL_LIMIT,
-   with e multiple of GMP_NUMB_BITS (as used in strtofr) */
+   with e multiple of 32 (as used in strtofr for 32-bit and 64-bit processors) */
 static void
 test_ceil_mul (void)
 {
@@ -1623,7 +1623,7 @@ test_ceil_mul (void)
       mpfr_set_ui (h, beta, MPFR_RNDU);
       mpfr_log2 (h, h, MPFR_RNDD);
       /* l <= log2(beta) <= h */
-      for (e = GMP_NUMB_BITS; e <= TEST_CEIL_MUL_LIMIT; e += GMP_NUMB_BITS)
+      for (e = 32; e <= TEST_CEIL_MUL_LIMIT; e += 32)
         {
           s = mpfr_ceil_mul (e, beta, 1);
           /* s is exact iff s-1 < e/log2(beta) <= s
