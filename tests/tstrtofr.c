@@ -1653,7 +1653,7 @@ test_ceil_mul (void)
           if (u >= e)
             {
               printf ("Error in test_ceil_mul for beta=%d e=%lu\n", beta, e);
-              printf ("get s=%ld whereas (s-1)*log2(beta) >= e\n", s);
+              printf ("get s=%ld whereas (s-1)*log2(beta) >= e\n", (long) s);
               exit (1);
             }
           /* same for s*l and s*h */
@@ -1675,7 +1675,7 @@ test_ceil_mul (void)
           if (u < e)
             {
               printf ("Error in test_ceil_mul for beta=%d e=%lu\n", beta, e);
-              printf ("get s=%ld whereas s*log2(beta) < e\n", s);
+              printf ("get s=%ld whereas s*log2(beta) < e\n", (long) s);
               exit (1);
             }
         }
