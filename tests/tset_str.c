@@ -184,14 +184,6 @@ main (int argc, char *argv[])
 
   tests_start_mpfr ();
 
-  if (getenv ("MPFR_CHECK_LARGEMEM") != NULL)
-    {
-      /* Increase tests_memory_limit to the maximum in order to avoid
-         an obvious failure due to insufficient memory. */
-      tests_memory_limit = (size_t) -1;  /* no memory limit */
-      bug20260725 ();
-    }
-
   if (argc >= 2) /* tset_str <string> [<prec>] [<ibase>] [<obase>] */
     {
       prec = (argc >= 3) ? atoi (argv[2]) : 53;
@@ -934,6 +926,14 @@ main (int argc, char *argv[])
   check_underflow ();
   bug20081028 ();
   bug20180908 ();
+
+  if (getenv ("MPFR_CHECK_LARGEMEM") != NULL)
+    {
+      /* Increase tests_memory_limit to the maximum in order to avoid
+         an obvious failure due to insufficient memory. */
+      tests_memory_limit = (size_t) -1;  /* no memory limit */
+      bug20260725 ();
+    }
 
   tests_end_mpfr ();
   return 0;
