@@ -2474,7 +2474,7 @@ mpfr_ceil_mul (mpfr_exp_t e, int beta, int i)
   mp_limb_t tmpmant[MPFR_EXP_LIMB_SIZE];
 
   /* If i=1 and beta = 2^k, then return ceil(e/k). */
-  if (i == 1 && ((beta & (beta-1)) == 0))
+  if (i == 1 && IS_POW2 (beta))
     {
       int k = MPFR_INT_CEIL_LOG2 (beta);
       return 1 + (e - 1) / k;
