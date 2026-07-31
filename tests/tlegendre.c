@@ -653,12 +653,8 @@ test_exact (int n, int A, int B, mpfr_prec_t p)
         /* now t = Pn(a/2^b) exactly */
 
         mpfr_set_si_2exp (x, a, -b, MPFR_RNDN);
-        RND_LOOP (rnd)
+        RND_LOOP_NO_RNDF (rnd)
           {
-            /* For RNDF, we can't compare to the result of mpfr_set_q,
-               since unless P(n,a/2^b) is exact, two results are allowed. */
-            if (rnd == MPFR_RNDF)
-              continue;
             mpfr_rnd_t r = (mpfr_rnd_t) rnd;
             mpfr_set_q (y, t, (mpfr_rnd_t) rnd); /* expected result */
             mpfr_legendre (z, n, x, r);
