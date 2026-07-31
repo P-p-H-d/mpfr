@@ -1608,10 +1608,12 @@ random_tests (void)
 static void
 test_ceil_mul (void)
 {
-  mpfr_exp_t e, s, u, v;
+  mpfr_exp_t s;
+  unsigned long e, u, v;
   int beta, inex;
   mpfr_t h, l, sh, sl;
   mpfr_prec_t prec = 63;
+
   mpfr_init2 (h, prec);
   mpfr_init2 (l, prec);
   mpfr_init2 (sh, prec + 64); /* +64 ensures mpfr_mul_ui is exact below */
@@ -1626,6 +1628,7 @@ test_ceil_mul (void)
       for (e = 32; e <= TEST_CEIL_MUL_LIMIT; e += 32)
         {
           s = mpfr_ceil_mul (e, beta, 1);
+          MPFR_ASSERTN (s >= 1 && s-1 <= ULONG_MAX);  /* assumed below */
           /* s is exact iff s-1 < e/log2(beta) <= s
              thus (s-1)*log2(beta) < e <= s*log2(beta).
              If (s-1)*l and (s-1)*h round toward zero to the same value,
@@ -1649,7 +1652,7 @@ test_ceil_mul (void)
           /* check u < e */
           if (u >= e)
             {
-              printf ("Error in test_ceil_mul for beta=%d e=%ld\n", beta, e);
+              printf ("Error in test_ceil_mul for beta=%d e=%lu\n", beta, e);
               printf ("get s=%ld whereas (s-1)*log2(beta) >= e\n", s);
               exit (1);
             }
@@ -1671,7 +1674,7 @@ test_ceil_mul (void)
           /* check e <= u */
           if (u < e)
             {
-              printf ("Error in test_ceil_mul for beta=%d e=%ld\n", beta, e);
+              printf ("Error in test_ceil_mul for beta=%d e=%lu\n", beta, e);
               printf ("get s=%ld whereas s*log2(beta) < e\n", s);
               exit (1);
             }
