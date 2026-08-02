@@ -147,6 +147,7 @@ bug20260725 (void)
   mpz_sub_ui (z, z, 1);
   mpfr_init2 (y, prec);
   mpfr_set_z (y, z, MPFR_RNDN);
+  mpz_clear (z);
 
   err = ! mpfr_equal_p (x, y);
   if (err)
@@ -166,6 +167,11 @@ bug20260725 (void)
       mpfr_free_str (sy);
       exit (1);
     }
+
+  mpfr_clear (x);
+  mpfr_clear (y);
+  mpfr_free_str (sx);
+  mpfr_free_str (sy);
 }
 
 int

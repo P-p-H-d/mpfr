@@ -47,7 +47,8 @@ static const char num_to_text62[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 #define MPFR_ROUND_FAILED 3
 
-/* Input: an approximation r*2^f to a real Y, with |r*2^f - Y| <= 2^(e+f).
+/* Input: an approximation r*2^f to a real Y, with |r*2^f - Y| <= 2^(e+f),
+   where r = r[0] + r[1]*B + ... + r[n-1]*B^(n-1), where B = 2^GMP_NUMB_BITS.
 
    If rounding is possible, returns:
    - in s: a string representing the significand corresponding to
@@ -2456,10 +2457,13 @@ const __mpfr_struct __gmpfr_l2b[BASE_MAX-1][2] = {
 
 /***************************************************************************/
 
-/* returns ceil(e * log2(b)^((-1)^i)), or ... + 1.
+/* returns ceil(e * log2(beta)^((-1)^i)), or ... + 1.
    For i=0, uses a 23-bit upper approximation to log(beta)/log(2).
    For i=1, uses a 77-bit upper approximation to log(2)/log(beta).
    Note: this function should be called only in the extended exponent range.
+   If e is a multiple of 32 (as called from parsed_string_to_mpfr),
+   this function delivers ceil(e/log2(b)) for i=1 and e <= 10^9
+   (checked in tstrtofr with TEST_CEIL_MUL_LIMIT=10^9).
 */
 mpfr_exp_t
 mpfr_ceil_mul (mpfr_exp_t e, int beta, int i)
@@ -2468,6 +2472,13 @@ mpfr_ceil_mul (mpfr_exp_t e, int beta, int i)
   mpfr_t t;
   mpfr_exp_t r;
   mp_limb_t tmpmant[MPFR_EXP_LIMB_SIZE];
+
+  /* If i=1 and beta = 2^k, then return ceil(e/k). */
+  if (i == 1 && IS_POW2 (beta))
+    {
+      int k = MPFR_INT_CEIL_LOG2 (beta);
+      return 1 + (e - 1) / k;
+    }
 
   p = &__gmpfr_l2b[beta-2][i];
   MPFR_TMP_INIT1(tmpmant, t, sizeof (mpfr_exp_t) * CHAR_BIT - 1);
