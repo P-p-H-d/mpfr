@@ -119,6 +119,7 @@ jobs:
     - name: make (assert)
       run: make -j2
     - name: make check (assert)
+      timeout-minutes: 120
       run: make check -j2
       env:
         GMP_CHECK_RANDOMIZE: 1
@@ -133,6 +134,7 @@ jobs:
     - name: make (assert)
       run: make -j2
     - name: make check (assert)
+      timeout-minutes: 120
       run: make check -j2
       env:
         GMP_CHECK_RANDOMIZE: 1
@@ -149,6 +151,7 @@ jobs:
       run:  vcpkg install gmp:x64-windows
     - name: Build MPFR
       shell: cmd
+      timeout-minutes: 120
       run:  .github\visual\build.bat
       
   build_freebsd:
