@@ -222,7 +222,7 @@ check_huge (void)
       mpz_clear (z);
 
       mpz_init_set_ui (z, 17);
-      mpz_mul_2exp (z, z, 0xffffffb0);
+      mpz_mul_2exp (z, z, 0xffffff70);
       mpz_add_ui (z, z, 1);
       mpfr_set_z_2exp (x, z, -1, MPFR_RNDN);
       if (! MPFR_IS_INF (x) || MPFR_IS_NEG (x))
@@ -234,6 +234,31 @@ check_huge (void)
           exit (1);
         }
       mpz_clear (z);
+
+      /* The following test would trigger an mpz overflow when
+         unsigned long has 32 bits and mp_limb_t has 64 bits.
+         See commit b561b58f397208d4d317a373a2f4b304676ee42b and
+           https://sympa.inria.fr/sympa/arc/mpfr/2026-07/msg00014.html
+           https://sympa.inria.fr/sympa/arc/mpfr/2026-08/msg00000.html
+           https://sympa.inria.fr/sympa/arc/mpfr/2026-08/msg00008.html
+           https://sympa.inria.fr/sympa/arc/mpfr/2026-08/msg00010.html
+      */
+      if (sizeof (mp_limb_t) <= sizeof (unsigned long))
+        {
+          mpz_init_set_ui (z, 17);
+          mpz_mul_2exp (z, z, 0xffffffb0);
+          mpz_add_ui (z, z, 1);
+          mpfr_set_z_2exp (x, z, -1, MPFR_RNDN);
+          if (! MPFR_IS_INF (x) || MPFR_IS_NEG (x))
+            {
+              printf ("Error 3 in check_huge\n");
+              printf ("Expected @Inf@\n");
+              printf ("Got      ");
+              mpfr_dump (x);
+              exit (1);
+            }
+          mpz_clear (z);
+        }
 
       mpfr_clear (x);
     }
