@@ -139,6 +139,7 @@ dnl va_copy macro
 AC_MSG_CHECKING([how to copy va_list])
 AC_LINK_IFELSE([AC_LANG_SOURCE([[
 #include <stdarg.h>
+void f (va_list);
 void f (va_list ap)
 {
   va_list ap2;
@@ -151,6 +152,7 @@ int main (void) { return 0; }
    AC_DEFINE(HAVE_VA_COPY)
 ], [AC_LINK_IFELSE([AC_LANG_SOURCE([[
 #include <stdarg.h>
+void f (va_list);
 void f (va_list ap)
 {
   va_list ap2;
