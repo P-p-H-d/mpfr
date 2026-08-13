@@ -137,19 +137,27 @@ AC_TYPE_UINTPTR_T
 
 dnl va_copy macro
 AC_MSG_CHECKING([how to copy va_list])
-AC_LINK_IFELSE([AC_LANG_PROGRAM([[
+AC_LINK_IFELSE([AC_LANG_SOURCE([[
 #include <stdarg.h>
-]], [[
-   va_list ap1, ap2;
-   va_copy(ap1, ap2);
+void f (va_list ap)
+{
+  va_list ap2;
+  va_copy (ap2, ap);
+  va_end (ap2);
+}
+int main (void) { return 0; }
 ]])], [
    AC_MSG_RESULT([va_copy])
    AC_DEFINE(HAVE_VA_COPY)
-], [AC_LINK_IFELSE([AC_LANG_PROGRAM([[
+], [AC_LINK_IFELSE([AC_LANG_SOURCE([[
 #include <stdarg.h>
-]], [[
-   va_list ap1, ap2;
-   __va_copy(ap1, ap2);
+void f (va_list ap)
+{
+  va_list ap2;
+  __va_copy (ap2, ap);
+  va_end (ap2);
+}
+int main (void) { return 0; }
 ]])], [AC_DEFINE([HAVE___VA_COPY]) AC_MSG_RESULT([__va_copy])],
    [AC_MSG_RESULT([memcpy])])])
 
