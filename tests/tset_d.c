@@ -172,7 +172,8 @@ main (int argc, char *argv[])
     }
   mpfr_set_prec (x, 53);
   mpfr_init2 (y, 53);
-  mpfr_set_d (x, d=-1.08007920352320089721e+150, (mpfr_rnd_t) 0);
+  d = -1.08007920352320089721e+150;
+  mpfr_set_d (x, -1.08007920352320089721e+150, (mpfr_rnd_t) 0);
   if (mpfr_get_d1 (x) != d)
     {
       mpfr_dump (x);

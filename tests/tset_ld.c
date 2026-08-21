@@ -629,7 +629,7 @@ main (int argc, char *argv[])
 
   /* check the smallest power of two */
   d = 1.0;
-  while ((e = d / 2.0) != (long double) 0.0 && e != d)
+  while (e = d / 2.0, e != (long double) 0.0 && e != d)
     d = e;
   check_set_get (d);
   check_set_get (-d);
