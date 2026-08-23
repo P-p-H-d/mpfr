@@ -203,7 +203,7 @@ Table of contents:
      classical Bessel Functions, also noted j0, j1, jn, y0, y1, yn in C99
      and mpfr.
      Cf https://en.wikipedia.org/wiki/Bessel_function#Spherical_Bessel_functions
-   *Irregular Spherical Bessel Functions y_n: y_0(x) = -\cos(x)/x,
+   * Irregular Spherical Bessel Functions y_n: y_0(x) = -\cos(x)/x,
      y_1(x)= -(\cos(x)/x+\sin(x))/x &
      y_2(x)= (-3/x^3+1/x)\cos(x)-(3/x^2)\sin(x)
    * Regular Modified Spherical Bessel Functions i_n:
