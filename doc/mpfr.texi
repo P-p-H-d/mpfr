@@ -2750,6 +2750,8 @@ on @var{op}, rounded in the direction @var{rnd}. When @var{op} is NaN,
 Note: For @tm{@GMPabs{@var{n}} > 1}, @code{mpfr_jn} might produce an error
 or loop for tiny inputs near the underflow threshold in the internally
 extended exponent range.
+
+These functions are usually denoted by @mm{J_n(x)}.
 @end deftypefun
 
 @deftypefun int mpfr_y0 (mpfr_t @var{rop}, const mpfr_t @var{op}, mpfr_rnd_t @var{rnd})
@@ -2761,6 +2763,11 @@ on @var{op}, rounded in the direction @var{rnd}. When @var{op} is
 NaN or negative, @var{rop} is always set to NaN@. When @var{op} is @mm{+}Inf,
 @var{rop} is set to @mm{+}0. When @var{op} is zero, @var{rop} is set to
 @mm{+}Inf or @minus{}Inf depending on the parity and sign of @var{n}.
+
+These functions are usually denoted by @mm{Y_n(x)} or @mm{N_n(x)}, and also
+called Neumann functions.
+@c Note: The ISO 80000-2:2009 standard uses "Neumann functions" and
+@c prefers the N_n(x) notation.
 @end deftypefun
 
 @deftypefun int mpfr_agm (mpfr_t @var{rop}, const mpfr_t @var{op1}, const mpfr_t @var{op2}, mpfr_rnd_t @var{rnd})
