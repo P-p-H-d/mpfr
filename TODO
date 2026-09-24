@@ -769,6 +769,11 @@ Table of contents:
   GNU Make manual. But first, check the portability and whether there
   could be any drawback.
 
+- design a way to test with lower initial working precisions in order to
+  find mistakes in error bounds with failures triggered by the testsuite.
+  Example: commit 1687639364f15c5e8f00ff1be564071e22ee65f0 in the
+  factorial branch.
+
 
 ##############################################################################
 7. Portability
