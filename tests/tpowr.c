@@ -83,7 +83,8 @@ check_ieee754_2019 (void)
   mpfr_powr (z, x, y, MPFR_RNDN);
   MPFR_ASSERTN(mpfr_inf_p (z) && mpfr_sgn (z) > 0 && !mpfr_divby0_p ());
 
-  /* powr (±0, y) is +0 for y > 0 - FIXME: wrong for pow(-0,17) */
+  /* powr (±0, y) is +0 for y > 0 (whatever y is integer or not,
+     and its parity in case it is integer) */
   mpfr_set_ui (y, 17, MPFR_RNDN);
   mpfr_set_zero (x, 1);
   mpfr_powr (z, x, y, MPFR_RNDN);
@@ -91,6 +92,44 @@ check_ieee754_2019 (void)
   mpfr_set_zero (x, -1);
   mpfr_powr (z, x, y, MPFR_RNDN);
   MPFR_ASSERTN(mpfr_zero_p (z) && !mpfr_signbit (z));
+  mpfr_set_ui (y, 16, MPFR_RNDN);
+  mpfr_set_zero (x, 1);
+  mpfr_powr (z, x, y, MPFR_RNDN);
+  MPFR_ASSERTN(mpfr_zero_p (z) && !mpfr_signbit (z));
+  mpfr_set_zero (x, -1);
+  mpfr_powr (z, x, y, MPFR_RNDN);
+  MPFR_ASSERTN(mpfr_zero_p (z) && !mpfr_signbit (z));
+  mpfr_set_d (y, 16.5, MPFR_RNDN);
+  mpfr_set_zero (x, 1);
+  mpfr_powr (z, x, y, MPFR_RNDN);
+  MPFR_ASSERTN(mpfr_zero_p (z) && !mpfr_signbit (z));
+  mpfr_set_zero (x, -1);
+  mpfr_powr (z, x, y, MPFR_RNDN);
+  MPFR_ASSERTN(mpfr_zero_p (z) && !mpfr_signbit (z));
+
+  /* powr (±0, y) is +Inf for finite y < 0 (whatever y is integer or not,
+     and its parity in case it is integer) */
+  mpfr_set_si (y, -17, MPFR_RNDN);
+  mpfr_set_zero (x, 1);
+  mpfr_powr (z, x, y, MPFR_RNDN);
+  MPFR_ASSERTN(mpfr_inf_p (z) && !mpfr_signbit (z));
+  mpfr_set_zero (x, -1);
+  mpfr_powr (z, x, y, MPFR_RNDN);
+  MPFR_ASSERTN(mpfr_inf_p (z) && !mpfr_signbit (z));
+  mpfr_set_si (y, -16, MPFR_RNDN);
+  mpfr_set_zero (x, 1);
+  mpfr_powr (z, x, y, MPFR_RNDN);
+  MPFR_ASSERTN(mpfr_inf_p (z) && !mpfr_signbit (z));
+  mpfr_set_zero (x, -1);
+  mpfr_powr (z, x, y, MPFR_RNDN);
+  MPFR_ASSERTN(mpfr_inf_p (z) && !mpfr_signbit (z));
+  mpfr_set_d (y, -16.5, MPFR_RNDN);
+  mpfr_set_zero (x, 1);
+  mpfr_powr (z, x, y, MPFR_RNDN);
+  MPFR_ASSERTN(mpfr_inf_p (z) && !mpfr_signbit (z));
+  mpfr_set_zero (x, -1);
+  mpfr_powr (z, x, y, MPFR_RNDN);
+  MPFR_ASSERTN(mpfr_inf_p (z) && !mpfr_signbit (z));
 
   /* powr (+1, y) is 1 for finite y */
   mpfr_set_ui (x, 1, MPFR_RNDN);

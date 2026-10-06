@@ -39,23 +39,22 @@ mpfr_powr (mpfr_ptr z, mpfr_srcptr x, mpfr_srcptr y, mpfr_rnd_t rnd_mode)
       MPFR_RET_NAN;
     }
 
-  /* for finite y < 0, powr(-0,y) is +Inf, whereas pow(-0,y) is -Inf for y an
-     odd integer, and +Inf otherwise */
+  /* for finite y < 0, powr(-0,y) is always +Inf, whereas pow differs:
+     pow(-0,y) is -Inf for y an odd integer, and +Inf otherwise */
   if (MPFR_IS_ZERO (x) && MPFR_IS_NEG (x) && !MPFR_IS_SINGULAR (y)
       && MPFR_IS_NEG (y))
     {
-      /* FIXME: The case y odd integer has been ignored. Add a test first. */
       MPFR_SET_INF (z);
       MPFR_SET_POS (z);
       MPFR_SET_DIVBY0 ();
       MPFR_RET (0);
     }
 
-  /* for y > 0, powr(-0,y) is +0, whereas pow gives -0 for y an odd integer */
+  /* for finite y > 0, powr(-0,y) is always +0, whereas pow differs:
+     pow gives -0 for y an odd integer */
   if (MPFR_IS_ZERO (x) && MPFR_IS_NEG (x) && !MPFR_IS_SINGULAR (y)
       && MPFR_IS_POS (y))
     {
-      /* FIXME: The case y odd integer has been ignored. Add a test first. */
       MPFR_SET_ZERO (z);
       MPFR_SET_POS (z);
       MPFR_RET (0);
