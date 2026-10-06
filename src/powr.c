@@ -28,10 +28,12 @@ mpfr_powr (mpfr_ptr z, mpfr_srcptr x, mpfr_srcptr y, mpfr_rnd_t rnd_mode)
      powr(+/-0,+/-0) is NaN whereas pow(x,+/-0) = 1 if x is not NaN (b)
      powr(+Inf,+/-0) is NaN whereas pow(x,+/-0) = 1 if x is not NaN (b)
      We can use MPFR_IS_SINGULAR since we already excluded x=NaN and x=-Inf.
-     powr(1,+/-Inf) = NaN whereas pow(1,+/-Inf) = 1 (c) */
+     powr(1,+/-Inf) = NaN whereas pow(1,+/-Inf) = 1 (c)
+     powr(x,qNaN) = qNaN for x>=0, even for x=1 (d) */
   if (MPFR_IS_NAN (x) || MPFR_IS_STRICTNEG(x) ||      /* case (a) */
       (MPFR_IS_SINGULAR(x) && MPFR_IS_ZERO(y)) ||     /* case (b) */
-      (mpfr_cmp_ui (x, 1) == 0 && MPFR_IS_INF(y)))    /* case (c) */
+      (mpfr_cmp_ui (x, 1) == 0 && (MPFR_IS_INF(y) ||
+                                   MPFR_IS_NAN(y))))  /* cases (c)-(d) */
     {
       MPFR_SET_NAN (z);
       MPFR_RET_NAN;

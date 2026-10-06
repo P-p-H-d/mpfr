@@ -2444,7 +2444,8 @@ Set @var{rop} to @m{@var{op1}^{@var{op2}}, @var{op1} raised to @var{op2}},
 rounded in the direction @var{rnd}.
 The @code{mpfr_powr} function corresponds to the @code{powr} function
 from IEEE@tie{}754, i.e., it computes the exponential of
-@var{op2} multiplied by the logarithm of @var{op1}.
+@var{op2} multiplied by the logarithm of @var{op1},
+with special values handled as described in the IEEE@tie{}754 standard.
 The @code{mpfr_pown} function is just an alias for @code{mpfr_pow_sj}
 (defined with @code{#define mpfr_pown mpfr_pow_sj}), to follow the
 C2x function @code{pown}.

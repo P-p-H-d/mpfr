@@ -147,13 +147,17 @@ check_ieee754_2019 (void)
   mpfr_powr (z, x, y, MPFR_RNDN);
   MPFR_ASSERTN(mpfr_nan_p (z) && mpfr_nanflag_p ());
 
-  /* powr (x, qNaN) is qNaN for x ≥ 0 */
+  /* powr (x, qNaN) is qNaN for x ≥ 0, even for x=1 */
   mpfr_set_nan (y);
   mpfr_set_zero (x, -1);
   mpfr_clear_nanflag ();
   mpfr_powr (z, x, y, MPFR_RNDN);
   MPFR_ASSERTN(mpfr_nan_p (z) && mpfr_nanflag_p ());
   mpfr_set_zero (x, 1);
+  mpfr_clear_nanflag ();
+  mpfr_powr (z, x, y, MPFR_RNDN);
+  MPFR_ASSERTN(mpfr_nan_p (z) && mpfr_nanflag_p ());
+  mpfr_set_ui (x, 1, MPFR_RNDN);
   mpfr_clear_nanflag ();
   mpfr_powr (z, x, y, MPFR_RNDN);
   MPFR_ASSERTN(mpfr_nan_p (z) && mpfr_nanflag_p ());
