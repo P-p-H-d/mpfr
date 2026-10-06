@@ -83,7 +83,7 @@ check_ieee754_2019 (void)
   mpfr_powr (z, x, y, MPFR_RNDN);
   MPFR_ASSERTN(mpfr_inf_p (z) && mpfr_sgn (z) > 0 && !mpfr_divby0_p ());
 
-  /* powr (±0, y) is +0 for y > 0 */
+  /* powr (±0, y) is +0 for y > 0 - FIXME: wrong for pow(-0,17) */
   mpfr_set_ui (y, 17, MPFR_RNDN);
   mpfr_set_zero (x, 1);
   mpfr_powr (z, x, y, MPFR_RNDN);
