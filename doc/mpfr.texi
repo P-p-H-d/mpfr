@@ -2443,7 +2443,7 @@ rounded in the direction @var{rnd}.
 Set @var{rop} to @m{@var{op1}^{@var{op2}}, @var{op1} raised to @var{op2}},
 rounded in the direction @var{rnd}.
 The @code{mpfr_powr} function corresponds to the @code{powr} function
-from IEEE@tie{}754, i.e., it computes the exponential of
+from IEEE@tie{}754, i.e., it is defined as the exponential of
 @var{op2} multiplied by the logarithm of @var{op1},
 with special values handled as described in the IEEE@tie{}754 standard.
 The @code{mpfr_pown} function is just an alias for @code{mpfr_pow_sj}
@@ -2471,6 +2471,9 @@ standards for the @code{pow} function:
 Note: When 0 is of integer type, it is regarded as @mm{+}0 by these functions.
 We do not use the usual limit rules in this case, as these rules are not
 used for @code{pow}.
+
+Warning! If @var{y} is an odd integer, @code{pow(-0, @var{y})} has a
+negative sign while @code{powr(-0, @var{y})} has a positive sign.
 @end deftypefun
 
 @deftypefun int mpfr_compound (mpfr_t @var{rop}, const mpfr_t @var{op1}, const mpfr_t @var{op2}, mpfr_rnd_t @var{rnd})

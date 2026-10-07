@@ -46,11 +46,12 @@ test_pow (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mpfr_rnd_t rnd_mode)
   return res;
 }
 #else
-/* TODO: Since when it returns non-NaN, mpfr_powr should match mpfr_pow,
-   it would be interesting to check that mpfr_pow and mpfr_powr agree
-   in such cases, as done in pow_ui2 below. If this takes too much time,
-   restrict the cases where both x and y are regular to a random subset
-   (as in such cases, mpfr_powr would just call mpfr_pow). */
+/* TODO: Since mpfr_powr should match mpfr_pow except in some particular
+   cases (which can be detected and excluded here), it would be interesting
+   to check that mpfr_pow and mpfr_powr agree in such cases, as done in
+   pow_ui2 below. If this takes too much time, restrict the cases where
+   both x and y are regular to a random subset (as in such cases, mpfr_powr
+   would just call mpfr_pow). */
 #define test_pow mpfr_pow
 #endif
 
