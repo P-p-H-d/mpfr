@@ -35,9 +35,6 @@ asymptotic_small_x (mpfr_ptr res, long n, mpfr_srcptr x, mpfr_rnd_t rnd_mode,
   mpfr_t v;
   long m, j;
   int inex_round;
-  mpfr_prec_t res_prec;
-
-  MPFR_GROUP_DECL (small_x);
 
   mpfr_init2 (v, realprec);
 
@@ -91,7 +88,7 @@ mpfr_hermite (mpfr_ptr res, long n, mpfr_srcptr x, mpfr_rnd_t rnd_mode)
   /* these variables are used (and consequently initialized) only in the
      "Asymptotic expansion for small |x|" branch */
   mpfr_exp_t ex, l2n, rho, err;
-  int inex_round, is_x_tiny = 0;
+  int is_x_tiny = 0;
 
   MPFR_GROUP_DECL (group);
   MPFR_SAVE_EXPO_DECL (expo);
