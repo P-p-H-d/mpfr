@@ -21,6 +21,9 @@ If not, see <https://www.gnu.org/licenses/>. */
 
 #include "mpfr-impl.h"
 
+/* Warning! As usual, changing z must be done after all the tests
+   (due to the support of reused arguments). */
+
 int
 mpfr_powr (mpfr_ptr z, mpfr_srcptr x, mpfr_srcptr y, mpfr_rnd_t rnd_mode)
 {
@@ -39,23 +42,25 @@ mpfr_powr (mpfr_ptr z, mpfr_srcptr x, mpfr_srcptr y, mpfr_rnd_t rnd_mode)
       MPFR_RET_NAN;
     }
 
-  /* for finite y < 0, powr(-0,y) is always +Inf, whereas pow differs:
-     pow(-0,y) is -Inf for y an odd integer, and +Inf otherwise */
-  if (MPFR_IS_ZERO (x) && MPFR_IS_NEG (x) && !MPFR_IS_SINGULAR (y)
-      && MPFR_IS_NEG (y))
+  /* It is faster to handle all the remaining cases x being -0 here
+     (fewer tests). */
+  if (MPFR_IS_ZERO (x) && MPFR_IS_NEG (x))
     {
-      MPFR_SET_INF (z);
-      MPFR_SET_POS (z);
-      MPFR_SET_DIVBY0 ();
-      MPFR_RET (0);
-    }
-
-  /* for finite y > 0, powr(-0,y) is always +0, whereas pow differs:
-     pow gives -0 for y an odd integer */
-  if (MPFR_IS_ZERO (x) && MPFR_IS_NEG (x) && !MPFR_IS_SINGULAR (y)
-      && MPFR_IS_POS (y))
-    {
-      MPFR_SET_ZERO (z);
+      MPFR_ASSERTD (MPFR_IS_INF (y) || !MPFR_IS_SINGULAR (y));
+      /* For y <> 0, powr(-0,y) always has a positive sign (the result
+         is +Inf for y < 0 and +0 for y > 0), whereas pow differs (the
+         sign is negative for y an odd integer, positive otherwise). */
+      if (MPFR_IS_NEG (y))
+        {
+          if (!MPFR_IS_INF (y))
+            MPFR_SET_DIVBY0 ();
+          MPFR_SET_INF (z);
+        }
+      else
+        {
+          MPFR_ASSERTD (MPFR_IS_POS (y));
+          MPFR_SET_ZERO (z);
+        }
       MPFR_SET_POS (z);
       MPFR_RET (0);
     }
