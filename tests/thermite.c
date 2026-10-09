@@ -296,8 +296,8 @@ test_exact (int n, int A, int B, mpfr_prec_t p)
   int i, j, a, b, rnd;
   mpfr_t x, y, z;
 
-  P0 = (mpq_t*) malloc ((n + 1) * sizeof (mpq_t));
-  P1 = (mpq_t*) malloc ((n + 1) * sizeof (mpq_t));
+  P0 = (mpq_t *) tests_allocate ((n + 1) * sizeof (mpq_t));
+  P1 = (mpq_t *) tests_allocate ((n + 1) * sizeof (mpq_t));
   for (i = 0; i <= n; i++)
     {
       mpq_init (P0[i]); /* set to 0 */
@@ -378,8 +378,8 @@ test_exact (int n, int A, int B, mpfr_prec_t p)
       mpq_clear (P1[i]);
     }
 
-  free (P0);
-  free (P1);
+  tests_free (P0, (n + 1) * sizeof (mpq_t));
+  tests_free (P1, (n + 1) * sizeof (mpq_t));
   mpq_clear (t);
   mpq_clear (u);
   mpfr_clear (x);
