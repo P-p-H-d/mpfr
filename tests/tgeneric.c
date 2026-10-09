@@ -456,6 +456,7 @@ test_generic (mpfr_prec_t p0, mpfr_prec_t p1, unsigned int nmax)
                 if (test_of > 0 && e - 1 >= emax)  /* overflow test */
                   {
                     mpfr_flags_t ex_flags;
+                    int dir;
 
                     /* Exponent e of the result > exponents of the inputs;
                        let's set emax to e - 1, so that one should get an
@@ -487,11 +488,13 @@ test_generic (mpfr_prec_t p0, mpfr_prec_t p1, unsigned int nmax)
                     flags = __gmpfr_flags;
                     set_emax (oemax);
                     ex_flags = MPFR_FLAGS_OVERFLOW | MPFR_FLAGS_INEXACT;
+                    dir = (MPFR_IS_INF (w) ^ MPFR_IS_NEG (w)) ? 1 : -1;
                     /* For RNDF, this test makes no sense, since RNDF
                        might return either the maximal floating-point
                        value or infinity, and the flags might differ in
                        those two cases. */
-                    if (flags != ex_flags && rnd != MPFR_RNDF)
+                    if (rnd != MPFR_RNDF &&
+                        (flags != ex_flags || ! SAME_SIGN (inexact, dir)))
                       {
                         printf ("tgeneric: error for " MAKE_STR(TEST_FUNCTION)
                                 ", reduced exponent range [%"
@@ -522,6 +525,7 @@ test_generic (mpfr_prec_t p0, mpfr_prec_t p1, unsigned int nmax)
                 if (test_uf > 0 && e + 1 <= emin)  /* underflow test */
                   {
                     mpfr_flags_t ex_flags;
+                    int dir;
 
                     /* Exponent e of the result < exponents of the inputs;
                        let's set emin to e + 1, so that one should get an
@@ -553,11 +557,13 @@ test_generic (mpfr_prec_t p0, mpfr_prec_t p1, unsigned int nmax)
                     flags = __gmpfr_flags;
                     set_emin (oemin);
                     ex_flags = MPFR_FLAGS_UNDERFLOW | MPFR_FLAGS_INEXACT;
+                    dir = (MPFR_IS_ZERO (w) ^ MPFR_IS_NEG (w)) ? -1 : 1;
                     /* For RNDF, this test makes no sense, since RNDF
                        might return either the maximal floating-point
                        value or infinity, and the flags might differ in
                        those two cases. */
-                    if (flags != ex_flags && rnd != MPFR_RNDF)
+                    if (rnd != MPFR_RNDF &&
+                        (flags != ex_flags || ! SAME_SIGN (inexact, dir)))
                       {
                         printf ("tgeneric: error for " MAKE_STR(TEST_FUNCTION)
                                 ", reduced exponent range [%"
