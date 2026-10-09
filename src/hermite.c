@@ -60,7 +60,6 @@ asymptotic_small_x (mpfr_ptr res, long n, mpfr_srcptr x, mpfr_rnd_t rnd_mode,
       mpfr_mul (v, v, x, MPFR_RNDN);
     }
 
-
   inex_round = mpfr_round_near_x (res, v, (mpfr_uexp_t) (err - 2),
                                   0, rnd_mode);
 
@@ -113,15 +112,11 @@ mpfr_hermite (mpfr_ptr res, long n, mpfr_srcptr x, mpfr_rnd_t rnd_mode)
       MPFR_RET_NAN;
     }
 
-  /* H_0(x) = 1. In this case, since the output is const and does not depend
-     on the value of x, no further analysis on the value of x is performed */
+  /* H_0(x) = 1 for any value of x except NaN (unlike usual rules for
+     constant cases). Warning! Overflow or underflow is possible in a
+     reduced exponent range. */
   if (n == 0)
-    {
-      mpfr_set_ui (res, 1, rnd_mode);
-      /* 1 is exactly representable in MPFR regardless of precision,
-        so this will always return 0 */
-      MPFR_RET (0);
-    }
+    return mpfr_set_ui (res, 1, rnd_mode);
 
   /* we check +/-Inf after n=0 since n=0 is special */
   if (MPFR_IS_INF (x))
@@ -155,8 +150,9 @@ mpfr_hermite (mpfr_ptr res, long n, mpfr_srcptr x, mpfr_rnd_t rnd_mode)
   /* H_1(x) = 2x */
   if (n == 1)
     {
-      /* result is set to 2x. The ternary value of mpfr_set is returned */
-      return mpfr_mul_ui (res, x, 2, rnd_mode);
+      /* result is set to 2x. The ternary value of mpfr_mul_ui is returned
+         (possible overflow). */
+      return mpfr_mul_2ui (res, x, 1, rnd_mode);
     }
 
   /* Taylor expansion for small |x| and n >= 2.
