@@ -457,7 +457,7 @@ test_overflow (void)
           if (rnd == MPFR_RNDF)
             continue;
 
-          /* For rounding towards zero (RNDZ and RNDD for positive, or 
+          /* For rounding towards zero (RNDZ and RNDD for positive, or
              RNDZ and RNDU for negative), the result is maxnum.
              Otherwise +\-Inf (depending on the sign of x) */
           is_towards_zero = (rnd == MPFR_RNDZ);
