@@ -554,10 +554,20 @@ mpfr_hermite_generic_ui (mpfr_ptr y, mpfr_srcptr x, long n, mpfr_rnd_t rnd)
   static int mpfr_hermite##N (mpfr_ptr y, mpfr_srcptr x, mpfr_rnd_t r) \
   { return mpfr_hermite (y, N, x, r); }
 
+DEFN(0)
+DEFN(1)
 DEFN(2)
 DEFN(3)
 DEFN(4)
 DEFN(5)
+
+#define TEST_FUNCTION mpfr_hermite0
+#define test_generic test_generic_hermite0
+#include "tgeneric.c"
+
+#define TEST_FUNCTION mpfr_hermite1
+#define test_generic test_generic_hermite1
+#include "tgeneric.c"
 
 #define TEST_FUNCTION mpfr_hermite2
 #define test_generic test_generic_hermite2
@@ -612,6 +622,8 @@ main (void)
 
   test_generic_ui (ARBITRARILY_LOW_PREC, IEEE754_DOUBLE_PREC, 6);
 
+  test_generic_hermite0 (MPFR_PREC_MIN, 100, 10);
+  test_generic_hermite1 (MPFR_PREC_MIN, 100, 10);
   test_generic_hermite2 (MPFR_PREC_MIN, 100, 100);
   test_generic_hermite3 (MPFR_PREC_MIN, 100, 100);
   test_generic_hermite4 (MPFR_PREC_MIN, 100, 100);
