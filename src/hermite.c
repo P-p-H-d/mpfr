@@ -103,7 +103,7 @@ mpfr_hermite (mpfr_ptr res, long n, mpfr_srcptr x, mpfr_rnd_t rnd_mode)
   res_prec = MPFR_PREC (res);
   x_is_zero = MPFR_IS_ZERO (x);
 
-  /* NaN are checke *before* any other check, according to C++ specs:
+  /* NaNs are checked *before* any other check, according to C++ specs:
      "If the argument is NaN, NaN is returned [...]". */
   if (MPFR_IS_NAN (x))
     {
