@@ -364,8 +364,9 @@ test_exact (int n, int A, int B, mpfr_prec_t p)
             mpfr_hermite (z, n, x, r);
             if (!mpfr_equal_p (y, z))
               {
-                printf ("Error in test_exact for n=%d a=%d b=%d p=%lu rnd=%s\n",
-                        n, a, b, p, mpfr_print_rnd_mode (r));
+                printf ("Error in test_exact for "
+                        "n=%d a=%d b=%d p=%ld rnd=%s\n",
+                        n, a, b, (long) p, mpfr_print_rnd_mode (r));
                 DUMP_NUMBERS (y, z);
                 exit (1);
               }
