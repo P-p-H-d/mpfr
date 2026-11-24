@@ -85,7 +85,7 @@ mpfr_get_flt (mpfr_srcptr src, mpfr_rnd_t rnd_mode)
         (rnd_mode == MPFR_RNDZ || rnd_mode == MPFR_RNDD ?
          FLT_MAX : MPFR_FLT_INFP);
     }
-  else /* -148 <= e <= 127 */
+  else /* -148 <= e <= 128 */
     {
       int nbits;
       mp_limb_t tp[MPFR_LIMBS_PER_FLT];
@@ -101,6 +101,12 @@ mpfr_get_flt (mpfr_srcptr src, mpfr_rnd_t rnd_mode)
         }
       carry = mpfr_round_raw_4 (tp, MPFR_MANT(src), MPFR_PREC(src), negative,
                                 nbits, rnd_mode);
+      /* If e = 128, a carry gives 2^128, which overflows: do not let the
+         final conversion (float) dd round it according to the current
+         rounding mode of the processor. A carry is only possible when
+         rounding away from zero, so that the result is an infinity. */
+      if (MPFR_UNLIKELY (carry && e == 128))
+        return negative ? MPFR_FLT_INFM : MPFR_FLT_INFP;
       /* we perform the reconstruction using the 'double' type here,
          knowing the result is exactly representable as 'float' */
       if (MPFR_UNLIKELY(carry))
