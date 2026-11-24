@@ -20,6 +20,7 @@ along with the GNU MPFR Library; see the file COPYING.LESSER.
 If not, see <https://www.gnu.org/licenses/>. */
 
 #include <float.h>     /* for FLT_MIN */
+#include <fenv.h>
 
 #include "mpfr-test.h"
 #include "ieee_floats.h"
@@ -47,6 +48,34 @@ equal_flt (float f, float g)
     }
 }
 
+/* reported by Per Magnus Veierland <pveierland@gmail.com> */
+static void
+bug20261124 (void)
+{
+  const int modes[] = { FE_TONEAREST, FE_TOWARDZERO, FE_UPWARD, FE_DOWNWARD };
+  const char *names[] = { "FE_TONEAREST", "FE_TOWARDZERO", "FE_UPWARD",
+                              "FE_DOWNWARD" };
+  mpfr_t x;
+  int i;
+  mpfr_init2 (x, 128);
+  mpfr_set_ui_2exp (x, 1, 128, MPFR_RNDN);
+  mpfr_sub_ui (x, x, 1, MPFR_RNDN);           /* x = 2^128 - 1, exact */
+  for (i = 0; i < 4; i++)
+    {
+      float f;
+      fesetround (modes[i]);
+      f = mpfr_get_flt (x, MPFR_RNDN);
+      fesetround (FE_TONEAREST);
+      if (f != 0x1p127f + 0x1p127f)
+        {
+          printf ("Error for mpfr_get_flt(2^128-1,RNDN) with %s\n", names[i]);
+          printf ("expected Inf, got %a\n", f);
+          exit (1);
+        }
+    }
+  mpfr_clear (x);
+}
+
 int
 main (void)
 {
@@ -58,6 +87,8 @@ main (void)
 #endif
 
   tests_start_mpfr ();
+
+  bug20261124 ();
 
 #if !defined(MPFR_ERRDIVZERO)
   infp = (float) MPFR_DBL_INFP;
