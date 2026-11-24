@@ -66,7 +66,7 @@ bug20261124 (void)
       fesetround (modes[i]);
       f = mpfr_get_flt (x, MPFR_RNDN);
       fesetround (FE_TONEAREST);
-      if (f != 0x1p127f + 0x1p127f)
+      if (f != FLT_MAX + FLT_MAX)
         {
           printf ("Error for mpfr_get_flt(2^128-1,RNDN) with %s\n", names[i]);
           printf ("expected Inf, got %a\n", f);
